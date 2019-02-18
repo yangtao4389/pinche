@@ -195,7 +195,7 @@ mui.ready(function () {
 window.onerror = function (errorMessage, scriptURI, lineNumber, columnNumber, errorObj) {
     try {
         if (errorMessage.indexOf("WeixinJSBridge") == -1 && errorMessage.indexOf("SignalR") == -1 && !!scriptURI && location.href.indexOf("Location")==-1) {
-            mui.post("/WebApp/Error/JsError", { msg: "url:" + location.href + "\n msg:" + errorMessage + "\n jsurl:" + scriptURI + "\n line:" + lineNumber + "\n col:" + columnNumber + "\n obj:" + errorObj }, function (json) {
+            mui.post("/carPooling/Error/JsError", { msg: "url:" + location.href + "\n msg:" + errorMessage + "\n jsurl:" + scriptURI + "\n line:" + lineNumber + "\n col:" + columnNumber + "\n obj:" + errorObj }, function (json) {
                 if (console)
                     console.log(json);
             });

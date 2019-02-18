@@ -3,26 +3,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Home</title>
+    <title>来往拼车</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/static/carPooling/images/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
 
     <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.showLoading.css">
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
     <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font_526810_qk3yrpzlw4.css">
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
     <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mystyle.css">
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
    <style>
        .mui-modal{display:none;}
    </style>
     
-    <link href="/static/carPooling/css/mui.indexedlist.css" rel="stylesheet" />
+    <link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.indexedlist.css" rel="stylesheet" />
     <style>
         .mui-tab-label{color:#f60;}
       
@@ -40,7 +40,7 @@
 
 <div id="app">
     <nav class="mui-bar mui-bar-tab ">
-        <a class="mui-tab-item" v-on:tap="hh.go('/Home')">
+        <a class="mui-tab-item" v-on:tap="hh.go('/WebApp/Home')">
             <span class="mui-icon mui-icon-home"></span>
             <span class="mui-tab-label">首页</span>
         </a>
@@ -60,7 +60,7 @@
             <div class="mui-slider-group  ">
                         <div class="mui-slider-item">
                             <a  >
-                                <img src="/static/carPooling/images/banner-1.jpg" alt="来往拼车" />
+                                <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/banner/banner-1.jpg" alt="来往拼车" />
                             </a>
                         </div>
             </div>
@@ -94,7 +94,7 @@
                     <div class="car-banner"><h2><i class="hh-icon hh-icon-yuyue"></i>当前预约</h2></div>
                     <div class="car-home-trip">
                         <div class="car-home-trip-box" >
-                            <h3 v-on:click="hh.go('/UserRec/Subscribe?id='+curRecSubscribe.Id)">{{curRecSubscribe.StartCity}} -&gt; {{curRecSubscribe.EndCity}}<span>{{formatGoTime(curRecSubscribe.GoTime)}}</span></h3>
+                            <h3 v-on:click="hh.go('/WebApp/UserRec/Subscribe?id='+curRecSubscribe.Id)">{{curRecSubscribe.StartCity}} -&gt; {{curRecSubscribe.EndCity}}<span>{{formatGoTime(curRecSubscribe.GoTime)}}</span></h3>
                             <p>系统持续为您匹配中<i class="fa fa-spinner fa-spin"></i></p>
                             <span  class="mbtn car-home-trip-btn" v-on:click="cancelRecSubscribe()">取消</span>
                         </div>
@@ -104,9 +104,9 @@
                     <div class="car-banner"><h2><i class="hh-icon hh-icon-dizhi"></i>当前行程</h2></div>
                     <div class="car-home-trip">
                         <div class="car-home-trip-box" >
-                            <h3 v-on:click="hh.go('/UserRec/Detail?id='+curRec.Id)">{{curRec.StartCity}} -&gt; {{curRec.EndCity}}<span>{{formatGoTime(curRec.GoTime)}}</span></h3>
+                            <h3 v-on:click="hh.go('/WebApp/UserRec/Detail?id='+curRec.Id)">{{curRec.StartCity}} -&gt; {{curRec.EndCity}}<span>{{formatGoTime(curRec.GoTime)}}</span></h3>
                             <p>行程进行中<i class="fa fa-spinner fa-spin"></i></p>
-                            <span  class="mbtn car-home-trip-btn" v-on:click="hh.go('/UserRec/Detail?id='+curRec.Id)">查看</span>
+                            <span  class="mbtn car-home-trip-btn" v-on:click="hh.go('/WebApp/UserRec/Detail?id='+curRec.Id)">查看</span>
                         </div>
                     </div>
                 </div>
@@ -114,9 +114,9 @@
                     <div class="car-banner"><h2><i class="hh-icon hh-icon-dizhi"></i>当前行程</h2></div>
                     <div class="car-home-trip">
                         <div class="car-home-trip-box">
-                            <h3 v-on:click="hh.go('/UserAss/Detail?id='+curAss.Id)">{{curAss.StartCity}} -&gt; {{curAss.EndCity}}<span>{{formatGoTime(curAss.GoTime)}}</span></h3>
+                            <h3 v-on:click="hh.go('/WebApp/UserAss/Detail?id='+curAss.Id)">{{curAss.StartCity}} -&gt; {{curAss.EndCity}}<span>{{formatGoTime(curAss.GoTime)}}</span></h3>
                             <p>订/余座：{{curAss.BookedSeat}}/{{curAss.Seat}}人   &nbsp;&nbsp;&nbsp;&nbsp;行程进行中<i class="fa fa-spinner fa-spin"></i></p>
-                            <span class="mbtn car-home-trip-btn" v-on:click="hh.go('/UserAss/Detail?id='+curAss.Id)">查看</span>
+                            <span class="mbtn car-home-trip-btn" v-on:click="hh.go('/WebApp/UserAss/Detail?id='+curAss.Id)">查看</span>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <template>
                             <ul class="rowmar10">
                                 <li class="coltwo" v-for="nearCar in nearCars">
-                                    <div class="car-items" v-on:click="hh.go('/Home/AssList?startCity='+nearCar.StartCity+'&endCity='+nearCar.EndCity+'&_p=hot')">
+                                    <div class="car-items" v-on:click="hh.go('/WebApp/Home/AssList?startCity='+nearCar.StartCity+'&endCity='+nearCar.EndCity+'&_p=hot')">
                                         <div class="fl car-name">{{nearCar.StartCity}} → {{nearCar.EndCity}} </div>
                                     </div>
                                 </li>
@@ -193,49 +193,48 @@
                         <p class="mui-text-left mui-h5">
                             微信“扫一扫”下方二维码。
                         </p>
-                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
+                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
             </div>
         </div>
     </div>
    
 
-    <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/carPooling/js/vue.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/static/carPooling/js/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
     
-    <script src="/static/carPooling/js/qqmap.js"></script>
-    <script src="/static/carPooling/js/mui.indexedlist.js"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/qqmap.js?v=20190214210354"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.indexedlist.js"></script>
     <script type="text/javascript">
         mui.init();
         mui.ready(function () {
-             //hotline
-             mui.post("/WebApp/Home/GetCurTripTip", function(curTrip) {
-                 if (!!curTrip)
-                 {
-                     if (curTrip.Type == 1)
-                     {
-                         app.curRecSubscribe = curTrip;
-                     }
-                     else if (curTrip.Type == 2)
-                     {
-                         app.curRec = curTrip;
-                     }
-                     else if (curTrip.Type == 3)
-                     {
-                         app.curAss = curTrip;
-                     }
-                 } else {
-                         mui.post("/WebApp/Home/GetHotLine", function (hotline) {
-                             if (hotline && hotline.length > 20)
-                             {
-                                 hotline = hotline.slice(0, 20);
-                                 console.log(hotline);
-                             }
-                             app.nearCars = hotline;
-                         });
-                 }
+            //hotline
+            mui.post("/WebApp/Home/GetCurTripTip", function(curTrip) {
+                if (!!curTrip)
+                {
+                    if (curTrip.Type == 1)
+                    {
+                        app.curRecSubscribe = curTrip;
+                    }
+                    else if (curTrip.Type == 2)
+                    {
+                        app.curRec = curTrip;
+                    }
+                    else if (curTrip.Type == 3)
+                    {
+                        app.curAss = curTrip;
+                    }
+                } else {
+                        mui.post("/WebApp/Home/GetHotLine", function (hotline) {
+                            if (hotline && hotline.length > 20)
+                            {
+                                hotline = hotline.slice(0, 20);
+                            }
+                            app.nearCars = hotline;
+                        });
+                }
             });
                
             
@@ -424,7 +423,7 @@
                         return false;
                     }
 
-                    hh.go('/Home/AssList?startCity=' + app.line.startCity + '&endCity=' + app.line.endCity + '&_p=btn')
+                    hh.go('/WebApp/Home/AssList?startCity=' + app.line.startCity + '&endCity=' + app.line.endCity + '&_p=btn')
                 }
             }
         });
@@ -457,15 +456,13 @@
         });
     </script>
     <script>
-//var _hmt = _hmt || [];
-
-// 百度统计，暂时不需要
-//(function() {
-//  var hm = document.createElement("script");
-//  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
-//  var s = document.getElementsByTagName("script")[0];
-//  s.parentNode.insertBefore(hm, s);
-//})();
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
 </script>
 
 

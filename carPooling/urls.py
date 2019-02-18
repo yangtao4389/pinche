@@ -16,10 +16,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include,re_path
 from django.conf.urls import url
-from carPooling import views
+from carPooling import views,api,error
 
+# 静态页面
 urlpatterns = [
-    url(r"^Home/$", views.Home),
+    url(r"^Home$", views.Home),
+    url(r"^Home/Index$", views.Home),
+    url(r"^Home/AssList$", views.AssList),
+]
 
 
+# ajax请求
+urlpatterns += [
+    url(r"^Home/GetCityList$", api.GetCityList),
+    url(r"^Home/GetHotLine$", api.GetHotLine),
+    url(r"^Home/GetCurTripTip$", api.GetCurTripTip),
+
+]
+
+# 错误信息
+urlpatterns += [
+    url(r"^Error/JsError$", error.JsError),
 ]
