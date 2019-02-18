@@ -52,7 +52,7 @@
         <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('Index')"><span class="mui-icon mui-icon-left-nav"></span>首页</a>
         <a class="mui-btn  mui-btn-link mui-pull-right" v-bind:class="{'fb desc_green':search.goTime!=null || search.seatNum!=1}" onclick="showSearch()" v-text="search.goTime!=null || search.seatNum!=1?'已筛选':'筛选'">筛选</a>
 
-        <h1 class="mui-title" onclick="goTop()"><span v-text="search.startCity"></span>  <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/tran_a.png" alt=""> <span v-text="search.endCity"></span></h1>
+        <h1 class="mui-title" onclick="goTop()"><span v-text="search.startCity"></span>  <img src="/static/carPooling/images/tran_a.png" alt=""> <span v-text="search.endCity"></span></h1>
     </header>
     <div class="mui-bar mui-bar-tab">
         <template>
@@ -365,7 +365,7 @@
                         <p class="mui-text-left mui-h5">
                             微信“扫一扫”下方二维码。
                         </p>
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
             </div>
         </div>
@@ -379,7 +379,7 @@
     
     <script type="text/javascript">
         if (!hh.getQueryString("startCity") || !hh.getQueryString("endCity")) {
-            hh.go("/carPooling/Home");
+            hh.go("/WebApp/Home");
         }
         else {
             localStorage.setItem("startCitys", hh.getQueryString("startCity"));
@@ -391,7 +391,7 @@
         mui.ready(function () {
             app.getData(1);
             //当前预约信息、预定信息
-            mui.post("/carPooling/GetCurTripTip", function (curTrip) {
+            mui.post("/WebApp/Home/GetCurTripTip", function (curTrip) {
                 if (!!curTrip) {
                     if (curTrip.Type == 1) {
                         app.curRecSubscribe = curTrip;

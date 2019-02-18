@@ -10,4 +10,6 @@ def Home(request):
 
 
 def AssList(request):
-    return HttpResponseRedirect("/static/carPooling/src/AssList.html")
+    with open("static/carPooling/src/Asslist.html",'rb') as f:
+        html = f.read()
+    return HttpResponse(html)

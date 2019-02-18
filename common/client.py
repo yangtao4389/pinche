@@ -84,3 +84,13 @@ def decode_url_query(url):
     ret = pure_url + "?" + urllib.parse.quote_plus(parse_query)
     return ret
 
+def get_post_body(request):
+    '''
+    无论是get 还是 post请求，最开始都是request.body数据，只是django将其封装为request.GET.get() 而已
+    :param request:
+    :return:
+    '''
+    try:
+        return request.body
+    except:
+        pass

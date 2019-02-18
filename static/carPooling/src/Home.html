@@ -40,7 +40,7 @@
 
 <div id="app">
     <nav class="mui-bar mui-bar-tab ">
-        <a class="mui-tab-item" v-on:tap="hh.go('/Home')">
+        <a class="mui-tab-item" v-on:tap="hh.go('/WebApp/Home')">
             <span class="mui-icon mui-icon-home"></span>
             <span class="mui-tab-label">首页</span>
         </a>
@@ -126,7 +126,7 @@
                         <template>
                             <ul class="rowmar10">
                                 <li class="coltwo" v-for="nearCar in nearCars">
-                                    <div class="car-items" v-on:click="hh.go('/Home/AssList?startCity='+nearCar.StartCity+'&endCity='+nearCar.EndCity+'&_p=hot')">
+                                    <div class="car-items" v-on:click="hh.go('/WebApp/Home/AssList?startCity='+nearCar.StartCity+'&endCity='+nearCar.EndCity+'&_p=hot')">
                                         <div class="fl car-name">{{nearCar.StartCity}} → {{nearCar.EndCity}} </div>
                                     </div>
                                 </li>
@@ -424,7 +424,7 @@
                         return false;
                     }
 
-                    hh.go('/Home/AssList?startCity=' + app.line.startCity + '&endCity=' + app.line.endCity + '&_p=btn')
+                    hh.go('/WebApp/Home/AssList?startCity=' + app.line.startCity + '&endCity=' + app.line.endCity + '&_p=btn')
                 }
             }
         });

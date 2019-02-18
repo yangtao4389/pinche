@@ -31,6 +31,7 @@ urlpatterns += [
     url(r"^Home/GetCityList$", api.GetCityList),
     url(r"^Home/GetHotLine$", api.GetHotLine),
     url(r"^Home/GetCurTripTip$", api.GetCurTripTip),
+    url(r"^Home/GetAssList$", api.GetAssList),
 
 ]
 
