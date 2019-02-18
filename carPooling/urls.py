@@ -1,4 +1,4 @@
-"""sichuan_yd_children URL Configuration
+"""sichuan_yd_video URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -14,13 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include,re_path
 from django.conf.urls import url
-from django_app.settings import MEDIA_ROOT
-from django.conf.urls.static import static
+from carPooling import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r"^carPooling/", include('carPooling.urls')),
+    url(r"^Home/$", views.Home),
+
+
 ]
-urlpatterns += static('/media/', document_root=MEDIA_ROOT)

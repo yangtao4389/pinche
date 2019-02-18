@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORK_PATH = os.path.abspath(os.path.dirname(__file__))  # 跟settings.py同层路径  sichuan_dx_game/sichuan_dx_game/
 PRODUCT_KEY = "pinche"
 
-config_file_path = os.path.join(WORK_PATH, "settings_test.ini")  # todo
+config_file_path = os.path.join(WORK_PATH, "settings.ini")  # todo
 cf = IniPhaser()
 cf.read(config_file_path, encoding='utf8')
 cf_dict = cf.as_dict()
