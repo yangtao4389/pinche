@@ -1,0 +1,389 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>来往拼车</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
+   <style>
+       .mui-modal{display:none;}
+   </style>
+    
+    <link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/webuploader.css" rel="stylesheet" />
+<link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.previewimage.css" rel="stylesheet" />
+
+</head>
+<body>
+    
+
+<div id="app">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
+
+        <h1 class="mui-title">实名认证</h1>
+    </header>
+    <div class="mui-content">
+        <div class="car-real-box">
+            <template>
+                <template v-if="authRealName.IsRealName!=0">
+                    <div class="mui-text-center padt10">
+                        <p v-if="authRealName.IsRealName==2" class="desc_green mui-h3"> <i class="fa fa-check-circle"></i> 认证已通过</p>
+                        <p v-if="authRealName.IsRealName==1" class="desc_blue mui-h3"> <i class="fa fa-check-circle"></i> 认证审核中</p>
+                        <p v-if="authRealName.IsRealName==-1" class="desc_danger mui-h3"> <i class="fa fa-check-circle"></i> 认证未通过</p>
+                    </div>
+                    <div class="f14px pad10">
+                        <p v-if="authRealName.IsRealName==1"> 您的认证信息已提交，我们将在3个工作日内审核完毕...</p>
+                        <p v-if="authRealName.IsRealName==-1" class="desc_danger"> {{authRealName.IsRealNameAuthNote}}</p>
+                        <p v-if="authRealName.IsRealName==-1" class="desc_danger"> 请根据审核意见重新上传照片后，再次提交认证申请！</p>
+                    </div>
+                </template>
+                <div class="mui-input-group">
+                    <div class="mui-input-row">
+                        <label>真实姓名</label>
+                        <div class="mui-input-static" v-text="authRealName.RealName" v-if="authRealName.IsRealName>0"></div>
+                        <input id="RealName" type="text" v-else class="mui-input-clear" placeholder="请填写身份证上的姓名" v-model="authRealName.RealName" v-bind:disabled="authRealName.IsRealName>0" maxlength="10">
+                    </div>
+                    <div class="mui-input-row">
+                        <label>身份证号</label>
+                        <div class="mui-input-static" v-text="authRealName.IdCard" v-if="authRealName.IsRealName>0"></div>
+                        <input id="IdCard" type="text" v-else class="mui-input-clear" placeholder="请填写身份号码" v-model="authRealName.IdCard" v-bind:disabled="authRealName.IsRealName>0" maxlength="20">
+                    </div>
+
+                    <div class="car-real-card" v-if="authRealName.IsRealName<=0">
+                        <ul class="rowmar10">
+                            <li class="coltwo prel" v-on:click="selectImg(1)" >
+                                
+                                    <h3 class="f15px">身份证正面<span class="f12px">（头像面）</span></h3>
+                                    <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_z.jpg" v-bind:src="authRealName.IdCardPhotoFImg" alt="" v-bind:data-preview-src="authRealName.IdCardPhotoFImg" v-bind:data-preview-group="1" />
+                                <div id="picker1"></div>
+                            </li>
+                            <li class="coltwo prel" v-on:click="selectImg(2)" >
+                                <h3 class="f15px">身份证反面<span class="f12px">（国徽面）</span></h3>
+                                    <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_f.jpg" v-bind:src="authRealName.IdCardPhotoBImg" alt="" v-bind:data-preview-src="authRealName.IdCardPhotoBImg" v-bind:data-preview-group="1" />
+                                <div id="picker2"></div>
+                             </li>
+                        </ul>
+                        <div class="desc_yellow mart10 f12px" v-if="authRealName.IsRealName<=0">
+                            请按照示例提交身份证照片，确保文字清晰、无遮挡、无反光，且证件占据整个图片大部分。
+                        </div>
+                    </div>
+
+                    <div class="mui-input-row" v-if="authRealName.IsRealName<=0">
+                        <div class="mui-checkbox">
+                            <label class="f15px" for="agree">我已阅读并同意来往拼车<a v-on:tap="hh.go('/WebApp/About?code=UserPrivacyPolicy')" class="desc_red">《隐私条款》</a></label>
+                            <input name="agree" id="agree" value="true" type="checkbox" v-model="agreeStatus">
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="pad10 desc_999" v-if="authRealName.IsRealName>0">
+                        <i class="fa fa-info-circle desc_yellow"></i>为了保护您的隐私，证件照片已隐藏。
+                </div>
+
+                <button class="mbtn car-mbtn-search mui-btn" v-if="authRealName.IsRealName<=0" v-on:click="submitAuth()" v-bind:disabled="saving || !agreeStatus">提交认证</button>
+                <button class="mbtn car-mbtn-search mui-btn" v-if="authRealName.IsRealName==1" v-on:click="cancelAuth()" v-bind:disabled="saving">撤回提交</button>
+            </template>
+        </div>
+
+    </div>
+
+</div>
+
+    
+   
+    <!--subscription-->
+    <div id="subscription" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+            <h1 class="mui-title">请先关注公众号</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+            <div class="pad10 mui-text-center ">
+
+                        <p class="mui-text-left mui-h5">
+                            微信“扫一扫”下方二维码。
+                        </p>
+                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+            </div>
+        </div>
+    </div>
+   
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
+    
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.min.js"></script>
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/webuploader.html5only.min.js"></script>
+<script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.zoom.js"></script>
+<script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.previewimage.js"></script>
+    <script type="text/javascript">
+        mui.init();
+
+        mui.ready(function () {
+            app.getData();
+        });
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                authRealName: {
+                    IsRealName: 99,
+                    IdCardPhotoFImg: "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_z.jpg",
+                    IdCardPhotoBImg: "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_f.jpg"
+                },
+                saving: false,
+                jsApiConfig: null,
+                agreeStatus: true
+            },
+            methods: {
+                getData: function () {
+                    mui.post("/WebApp/UserAuth/GetRealNameData", {}, function (json) {
+                        if (json.data)
+                        {
+                            if (!json.data.IdCardPhotoFImg) {
+                                json.data.IdCardPhotoFImg = "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_z.jpg";
+                            }
+                            
+                            if (!json.data.IdCardPhotoBImg) {
+                                json.data.IdCardPhotoBImg = "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/carda_f.jpg";
+                            } 
+                        }
+                        app.authRealName = json.data;
+
+                        if (app.authRealName.IsRealName > 0)
+                            mui.previewImage();
+                    });
+                    if (hh.isWeixin()) {
+                        mui.post("/WebApp/Home/GetWenxinJsapiConfig", function (json) {
+                            json.jsApiList = ["chooseImage", "previewImage", "uploadImage", "downloadImage"];
+                            app.jsApiConfig = json;
+                        });
+                    } else if (hh.isQianfan()) {
+                        setTimeout(function () {
+                            initWebUpload(1);
+                            initWebUpload(2);
+                        }, 500);
+
+                    }
+                },
+                selectImg: function (type) {
+                    if (app.authRealName.IsRealName > 0)
+                        return;
+                    setTimeout(function () {
+                        window.isopenselect = false;
+                    }, 1000);
+                    if (window.isopenselect)
+                        return;
+                    window.isopenselect = true;
+
+                    if (hh.isWeixin()) {
+                        wx.config(app.jsApiConfig);
+                        wx.ready(function () {
+                            wx.chooseImage({
+                                count: 1,
+                                //sourceType: ['camera'], // 可以指定来源是相册还是相机，默认二者都有 ['album', 'camera']
+                                success: function (res) {
+
+                                    if (type == 1) {//正面
+                                        app.authRealName.IdCardPhotoFImg = res.localIds[0];
+                                    }
+                                    else {
+                                        app.authRealName.IdCardPhotoBImg = res.localIds[0];
+                                    }
+                                    wx.uploadImage({
+                                        localId: res.localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                                        isShowProgressTips: 1,
+                                        success: function (upRes) {
+                                            if (type == 1) {//正面
+                                                app.authRealName.IdCardPhotoF = upRes.serverId;
+                                            }
+                                            else {
+                                                app.authRealName.IdCardPhotoB = upRes.serverId;
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                        wx.error(function (res) {
+                            mui.alert("微信js接口出错了，详细信息：" + res.errMsg);
+                        });
+                    }
+                    else if (hh.isQianfan())
+                    {
+
+                    }
+                    else {
+                        mui.alert("上传照片失败，请在微信中打开");
+                    }
+                },
+                submitAuth: function () {
+                    if (!app.authRealName.RealName || app.authRealName.RealName.length < 2 || app.authRealName.RealName.length >= 10 || /[0-9a-zA-Z]/.test(app.authRealName.RealName)) {
+                        mui.alert("真实姓名不正确", function () {
+                            mui("#RealName")[0].focus();
+                        });
+                        return;
+                    }
+                    if (app.authRealName.IdCard)
+                        app.authRealName.IdCard = app.authRealName.IdCard.trim();
+                    if (!app.authRealName.IdCard || app.authRealName.IdCard.length != 18) {
+                        mui.alert("身份证号不正确", function () {
+                            mui("#IdCard")[0].focus();
+                        });
+                        return;
+                    }
+                    if (!app.authRealName.IdCardPhotoF) {
+                        mui.alert("请上传身份证正面照片");
+                        return;
+                    }
+                    if (!app.authRealName.IdCardPhotoB) {
+                        mui.alert("请上传身份证反面照片");
+                        return;
+                    }
+                    if (!app.agreeStatus) {
+                        mui.alert("请勾选同意隐私协议");
+                        return;
+                    }
+
+                    mui.confirm("实名信息认证通过后将无法修改，冒用他人信息会导致账号被封禁。确认提交？", function (e) {
+                        if (e.index == 1)
+                        {
+                            app.saving = true;
+                            mui.post("/WebApp/UserAuth/SaveRealName", app.authRealName, function (json) {
+                                app.saving = false;
+                                if (json.statusCode == "200") {
+                                    mui.alert("您的认证信息已提交成功\n正在审核中…", function () {
+                                        hh.reload();
+                                    });
+                                }
+                                else {
+                                    mui.alert(json.message);
+                                }
+                            });
+                        }
+                    });
+                    
+                },
+                cancelAuth: function () {
+                    mui.confirm("认证信息未审核前可撤回提交，修改认证信息。确认撤回？", function (e) {
+                        if (e.index == 1) {
+                            app.saving = true;
+                            mui.post("/WebApp/UserAuth/CancelRealName", {}, function (json) {
+                                app.saving = false;
+                                if (json.statusCode == "200") {
+                                    mui.alert("撤回成功！", function () {
+                                        hh.reload();
+                                    });
+                                }
+                                else {
+                                    mui.alert(json.message);
+                                }
+                            });
+                        }
+                    });
+                }
+
+
+            }
+        });
+
+        function initWebUpload(index) {
+            var uploader = WebUploader.create({
+                // 选完文件后，是否自动上传。
+                auto: true,
+                // 文件接收服务端。
+                server: '/Tools/Upload/SingleFile?isImage=1',
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: '#picker' + index,
+                // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                resize: false,
+                // 只允许选择图片文件。
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/jpeg,image/jpg,image/png,image/gif,image/bmp'
+                },
+                fileVal: "filedata",
+                fileNumLimit: 1
+            });
+            uploader.on('fileQueued', function (file) {
+                app.saving = true;
+
+                // 创建缩略图
+                uploader.makeThumb(file, function (error, src) {
+                    if (error) {
+                        return;
+                    }
+                    if (index == 1) {//正面
+                        app.authRealName.IdCardPhotoFImg = src;
+                    }
+                    else {
+                        app.authRealName.IdCardPhotoBImg = src;
+                    }
+                }, 1, 1);
+
+            });
+            uploader.on('uploadSuccess', function (file, response) {
+                if (response.status == 1) {
+                    if (index == 1) {//正面
+                        app.authRealName.IdCardPhotoFImg = app.authRealName.IdCardPhotoF = response.data.newFileName;
+                    }
+                    else {
+                        app.authRealName.IdCardPhotoBImg = app.authRealName.IdCardPhotoB = response.data.newFileName;
+                    }
+                }
+                else {
+                    mui.alert("上传失败！" + response.msg);
+                }
+
+            });
+            uploader.on('uploadComplete', function (file) {
+                if (uploader.getStats().progressNum == 0)
+                    app.saving = false;
+
+            });
+
+        }
+    </script>
+
+    <script>
+        mui.ready(function () {
+            mui(".mui-modal").each(function () {
+                this.style.display = "block";
+            });
+        });
+    </script>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+</body>
+</html>

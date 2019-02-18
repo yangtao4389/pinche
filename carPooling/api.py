@@ -5,13 +5,6 @@ from django.shortcuts import render,HttpResponse
 from common import client
 
 
-'''
-
-
-
-'''
-
-
 
 # Create your views here.
 def GetCityList(request):
@@ -58,7 +51,7 @@ def GetCurTripTip(request):
 def GetAssList(request):
     if request.method == "POST":
         try:
-            data = request.body   #b'pageNum=1&numPerPage=20&startCity=%E6%88%90%E9%83%BD&endCity=%E5%B7%B4%E4%B8%AD&seatNum=1&goTime=null&lastId=null'
+            data = client.get_post_body(request)   #b'pageNum=1&numPerPage=20&startCity=%E6%88%90%E9%83%BD&endCity=%E5%B7%B4%E4%B8%AD&seatNum=1&goTime=null&lastId=null'
             response = requests.post("http://lw.51bc.cc/WebApp/Home/GetAssList",data=data, timeout=5,headers={"Content-Type":"application/x-www-form-urlencoded"})
             assList = response.content
             return HttpResponse(json.dumps(json.loads(assList)), content_type="application/json")
