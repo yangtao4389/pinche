@@ -44,11 +44,11 @@
             <span class="mui-icon mui-icon-home"></span>
             <span class="mui-tab-label">首页</span>
         </a>
-            <a class="mui-tab-item" href="#subscription">
+            <a class="mui-tab-item" v-on:tap="hh.go('/WebApp/UserAss/Publish')">
                 <span class="mui-icon hh-icon hh-icon-edit"></span>
                 <span class="mui-tab-label">车主发布</span>
             </a>
-            <a class="mui-tab-item" href="#subscription">
+            <a class="mui-tab-item"  v-on:tap="hh.go('/WebApp/UserCenter')">
                 <span class="mui-icon hh-icon hh-icon-user-circle"></span>
                 <span class="mui-tab-label">个人中心</span>
             </a>

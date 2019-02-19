@@ -1,538 +1,62 @@
-
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
-    <link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/webuploader.css" rel="stylesheet" />
-<link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.indexedlist.css" rel="stylesheet" />
-<link href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.previewimage.css" rel="stylesheet" />
-<style>
-     #carModelList .mui-indexed-list-group,#carModelList .mui-indexed-list-item {
-        margin-right:0;
-    }
-</style>
-
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
+    <link type="text/css" rel="stylesheet" href="/Content/css/mobile-angular-ui-base.min.css" />
+    <link type="text/css" rel="stylesheet" href="/Content/css/my-app.css?v=20190219085926" />
 </head>
-<body>
-    
-
-<div id="app">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
-
-        <h1 class="mui-title">车主认证</h1>
-    </header>
-    <div class="mui-content">
-        <div class="car-real-box">
-            <template>
-                <template v-if="authRealDriver.IsRealDriver!=0">
-                    <div class="mui-text-center padt10">
-                        <p v-if="authRealDriver.IsRealDriver==2" class="desc_green mui-h3"> <i class="fa fa-check-circle"></i> 认证已通过</p>
-                        <p v-if="authRealDriver.IsRealDriver==1" class="desc_blue mui-h3"> <i class="fa fa-check-circle"></i> 认证审核中</p>
-                        <p v-if="authRealDriver.IsRealDriver==-1" class="desc_danger mui-h3"> <i class="fa fa-check-circle"></i> 认证未通过</p>
+<body class="has-navbar-top">
+    <div class="app  orange-app">
+        <!-- 顶部导航栏 -->
+        <div class="navbar navbar-app navbar-absolute-top">
+            <div class="btn-group pull-left">
+                    <a title="关注" class="btn fz-x" onclick="recordon()">
+                        <span class="fa-stack" style="height:2.2em;">
+                            <span class="text-white fz-xxx z-linhg9">关注</span>
+                            <i class="fa fa-heart fa-stack-2x fa-lg z-linhg1"></i>
+                        </span>
+                    </a>
+            </div>
+            <div class="navbar-brand navbar-brand-center">
+                <div class="row">
+                    <div class="col-xs-12 form-bor fz-m linehg50 ">
+                        错误提示
                     </div>
-                    <div class="pad10">
-                        <p v-if="authRealDriver.IsRealDriver==1"> 您的认证信息已提交，我们将在3个工作日内审核完毕...</p>
-                        <p v-if="authRealDriver.IsRealDriver==-1" class="desc_danger"> {{authRealDriver.IsRealDriverAuthNote}}</p>
-                        <p v-if="authRealDriver.IsRealDriver==-1" class="desc_danger"> 请根据审核意见重新上传照片后，再次提交认证申请！</p>
-                    </div>
-                </template>
-                <div class="mui-input-group">
-                    <div class="mui-input-row" v-on:click="openCarBrandListModal()" id="CarBrandModel">
-                        <label>品牌车型</label>
-                        <div class="mui-input-static" v-text="authRealDriver.CarModel" v-bind:class="{'desc_999':authRealDriver.CarModel=='请选择品牌车型'}">请选择品牌车型</div>
-                    </div><div class="mui-input-row">
-                        <label>车牌号</label>
-                        <div v-if="authRealDriver.IsRealDriver>0" class="mui-input-static" v-text="authRealDriver.VehicleNumber"></div>
-                        <input v-else id="VehicleNumber" type="text" class="mui-input-clear" placeholder="例如：豫A88888" v-model="authRealDriver.VehicleNumber" onblur="this.value=this.value.toUpperCase()" v-bind:disabled="authRealDriver.IsRealDriver>0" maxlength="10">
-                    </div>
+                </div>
+                
+            </div>
+            <div class="btn-group pull-right">
+                <a title="首页" class="btn" href="/List">
+                    <i class="fa fa-lg fa-home font-linhg">
+                    </i>
+                </a>
+            </div>
+        </div>
+        <!-- App 主体 -->
+        <div class="app-body">
+            <div class="app-content">
+                <div class="list-group text-center">
 
-                    <div class="car-real-card" v-if="authRealDriver.IsRealDriver<=0">
-                        <ul class="rowmar10">
-                            <li class="coltwo prel" v-on:click="selectImg('d1')">
-                                <h3 class="f15px">本人驾照<span class="f12px">（黑本）</span></h3>
-                                <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_carda.jpg" v-bind:src="authRealDriver.DriverCardPhotoFImg" alt="" v-bind:data-preview-src="authRealDriver.DriverCardPhotoFImg" v-bind:data-preview-group="1">
-                                <div id="pickerd1"></div>
-                            </li>
-                            <li class="coltwo prel" v-on:click="selectImg('v1')">
-                                <h3 class="f15px">车辆行驶证<span class="f12px">（蓝本）</span></h3>
-                                <img src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_cardb.jpg" v-bind:src="authRealDriver.VehicleCardPhotoFImg" alt="" v-bind:data-preview-src="authRealDriver.VehicleCardPhotoFImg" v-bind:data-preview-group="1">
-                                <div id="pickerv1"></div>
-                            </li>
-                        </ul>
-                        <div class="desc_yellow mart10 f12px" v-if="authRealDriver.IsRealDriver<=0">
-                            请按照示例提交驾驶证、行驶证正面照片，且证件占据整个照片大部分。<span class="fb">文字清晰、无遮挡、无反光</span>，将大大<span class="fb">提高审核速度</span>。
+                    <div class="list-group-item-home media">
+                        <div>
+                            <i class="fa fa-remove fa-5x text-muted"></i>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="media-heading">
+                                槽糕，出现了错误！
+                            </h3>
+                            抱歉，您请求的处理出错，我们已将错误信息记录，并尽快处理！
                         </div>
                     </div>
-
-                    <div class="mui-input-row" v-if="authRealDriver.IsRealDriver<=0">
-                        <div class="mui-checkbox">
-                            <label class="f15px" for="agree">我已阅读并同意来往拼车<a v-on:tap="hh.go('/WebApp/About?code=UserPrivacyPolicy')" class="desc_red">《隐私条款》</a></label>
-                            <input name="agree" id="agree" value="true" type="checkbox" v-model="agreeStatus">
-                        </div>
-                    </div>
-
-                </div>
-                <div class="pad10 desc_999" v-if="authRealDriver.IsRealDriver>0">
-                    <i class="fa fa-info-circle desc_yellow"></i>为了保护您的隐私，证件照片已隐藏。
-                </div>
-                <button class="mbtn car-mbtn-search mui-btn" v-if="authRealDriver.IsRealDriver<=0" v-on:click="submitAuth()" v-bind:disabled="saving || !agreeStatus">提交认证</button>
-                <button class="mbtn car-mbtn-search mui-btn" v-if="authRealDriver.IsRealDriver==1" v-on:click="cancelAuth()" v-bind:disabled="saving">撤回提交</button>
-            </template>
-</div>
-
-    </div>
-
-    
-    <div id="carBrand" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-close mui-pull-right" onclick="mui('#carBrand')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请选择品牌</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;">
-            <div id='carBrandList' class="mui-indexed-list bgcolor-white">
-                <div class="mui-indexed-list-search mui-input-row mui-search">
-                    <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索">
-                </div>
-                <div class="mui-indexed-list-bar">
-                    <a v-for="group in carBrandGroup">{{group.FirstName}}</a>
-                </div>
-                <div class="mui-indexed-list-alert"></div>
-                <div class="mui-indexed-list-inner">
-                    <div class="mui-indexed-list-empty-alert">没有数据</div>
-                    <ul class="mui-table-view">
-                        <template v-for="group in carBrandGroup">
-                                <li v-bind:data-group="group.FirstName" class="mui-table-view-divider mui-indexed-list-group clear">{{group.FullName}}</li>
-                                <template v-for="brand in filterBrands(group.FirstName)">
-                                    <li v-on:click="setBrand(brand)" class="mui-table-view-cell mui-indexed-list-item hotbrand" v-if="brand.Group=='热'"><img v-bind:src="brand.ImgPath" style="width:100%;max-width:80px;" /><p>{{brand.Name}}</p></li>
-                                    <li v-on:click="setBrand(brand)" class="mui-table-view-cell mui-indexed-list-item" v-else>{{brand.Name}}</li>
-                                </template>
-                            </template>
-                    </ul>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div id="carModel" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-close mui-pull-right" onclick="mui('#carModel')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请选择车型</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;">
-            <div id='carModelList' class="mui-indexed-list bgcolor-white">
-                <div class="mui-indexed-list-search mui-input-row mui-search">
-                    <input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索">
-                </div>
-                <div class="mui-indexed-list-bar mui-hidden">
-                    <a v-for="group in carModelGroup">{{group.FirstName}}</a>
-                </div>
-                <div class="mui-indexed-list-alert"></div>
-                <div class="mui-indexed-list-inner">
-                    <div class="mui-indexed-list-empty-alert">没有数据</div>
-                    <ul class="mui-table-view">
-                        <li  class="mui-table-view-divider mui-indexed-list-group clear">{{authRealDriver.VehicleBrand}}</li>
-                        <template v-for="group in carModelGroup">
-                            
-                            <template v-for="model in filterModels(group.FirstName)">
-                                <li v-on:click="setModel(model)" class="mui-table-view-cell mui-indexed-list-item" v-bind:class="{'hot':model.Group=='热'}">{{model.Name}}</li>
-                            </template>
-                        </template>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
-    
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.min.js"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/webuploader.html5only.min.js"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.zoom.js"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.previewimage.js"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.indexedlist.js"></script>
-    <script type="text/javascript">
-        mui.init();
-
-        mui.ready(function () {
-            app.getData();
-        });
-
-        var app = new Vue({
-            el: '#app',
-            data: {
-                authRealDriver: {
-                    IsRealDriver: 99,
-                    CarModel: "请选择品牌车型",
-                    DriverCardPhotoFImg: "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_carda.jpg",
-                    VehicleCardPhotoFImg: "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_cardb.jpg"
-                },
-                saving: false,
-                jsApiConfig: null,
-                agreeStatus: true,
-                carBrandGroup: [],
-                carBrandDetails: [],
-                carModelGroup: [],
-                carModelDetails:[]
-            },
-            methods: {
-                getData: function () {
-                    mui.post("/WebApp/UserAuth/GetRealDriverData", {}, function (json) {
-                        if (json.data)
-                        {
-                            if (json.data.IsRealName != 2)
-                            {
-                                mui.alert("请先进行实名认证！", function () {
-                                    hh.go("/WebApp/UserAuth/RealName")
-                                });
-                                return;
-                            }
-
-                            if (!json.data.DriverCardPhotoFImg) {
-                                json.data.DriverCardPhotoFImg = "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_carda.jpg";
-                            }
-                            
-                            if (!json.data.VehicleCardPhotoFImg) {
-                                json.data.VehicleCardPhotoFImg = "https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/realauth/car_cardb.jpg";
-                            } 
-                            if (!json.data.CarModel)
-                                json.data.CarModel = "请选择品牌车型";
-                        }
-                        app.authRealDriver = json.data;
-
-                        if(app.authRealDriver.IsRealDriver>0)
-                            mui.previewImage();
-                    });
-                    if (hh.isWeixin()) {
-                        mui.post("/WebApp/Home/GetWenxinJsapiConfig", function (json) {
-                            json.jsApiList = ["chooseImage", "previewImage", "uploadImage", "downloadImage"];
-                            app.jsApiConfig = json;
-                        });
-                    } else if (hh.isQianfan()) {
-                        setTimeout(function () {
-                            initWebUpload("v1");
-                            initWebUpload("d1");
-                        }, 500);
-
-                    }
-                },
-                openCarBrandListModal: function () {
-                    if (app.authRealDriver.IsRealDriver > 0)
-                        return;
-                    if (this.carBrandGroup.length == 0) {
-                        mui.post("/WebApp/UserAuth/GetCarBrandList", function (json) {
-                            app.carBrandGroup = json.Group;
-                            app.carBrandDetails = json.Details;
-
-                            if (!window.brandIndexedList) {
-                                //list
-                                var list = mui('#carBrandList')[0];
-                                list.style.height = (mui('#carBrand')[0].offsetHeight - mui('#carBrand header.mui-bar')[0].offsetHeight) + 'px';
-
-                                setTimeout(function () {
-                                    //create
-                                    window.brandIndexedList = new mui.IndexedList(list);
-                                }, 100);
-                            } else {
-                                window.brandIndexedList.el.inner.scrollTop = 0;
-                            }
-
-                        });
-                    }
-
-                    mui('#carBrand')[0].classList.add('mui-active');
-                },
-                filterBrands: function (firstName) {
-                    return app.carBrandDetails.filter(function (brand) {
-                        return brand.Group == firstName;
-                    });
-                },
-                setBrand: function (brand) {
-                    app.authRealDriver.VehicleBrand = brand.Name;
-                    //app.carModelGroup = [];
-                    //app.carModelDetails = [];
-
-                    mui.post("/WebApp/UserAuth/GetCarModelList", { ParentId: brand.Id }, function (json) {
-                        app.carModelGroup = json.Group;
-                        app.carModelDetails = json.Details;
-
-                        if (!window.modelIndexedList) {
-                            //list
-                            var list = mui('#carModelList')[0];
-                            list.style.height = (mui('#carModel')[0].offsetHeight - mui('#carModel header.mui-bar')[0].offsetHeight) + 'px';
-
-                            setTimeout(function () {
-                                //create
-                                window.modelIndexedList = new mui.IndexedList(list);
-                            }, 100);
-                        }
-                        else {
-                            window.modelIndexedList.el.inner.scrollTop = 0;
-                        }
-
-                    });
-
-                    mui('#carModel')[0].classList.add('mui-active');
-                    
-                },
-                filterModels: function (firstName) {
-                    return app.carModelDetails.filter(function (model) {
-                        return model.Group == firstName;
-                    });
-                },
-                setModel:function(model)
-                {
-                    app.authRealDriver.VehicleModel = model.Name;
-                    app.authRealDriver.CarModel = app.authRealDriver.VehicleBrand + " " + app.authRealDriver.VehicleModel;
-
-                    mui('#carModel')[0].classList.remove('mui-active');
-                    window.modelIndexedList.el.searchInput.value = '';
-                    window.modelIndexedList.search('');
-
-                    mui('#carBrand')[0].classList.remove('mui-active');
-                    window.brandIndexedList.el.searchInput.value = '';
-                    window.brandIndexedList.search('');
-                },
-                selectImg: function (type) {
-                    if (app.authRealDriver.IsRealDriver > 0)
-                        return;
-                    setTimeout(function () {
-                        window.isopenselect = false;
-                    }, 1000);
-
-                    if (window.isopenselect)
-                        return;
-                    window.isopenselect = true;
-
-                    if (hh.isWeixin()) {
-                       
-                        wx.config(app.jsApiConfig);
-                        wx.ready(function () {
-                            wx.chooseImage({
-                                count: 1,
-                                //sourceType: ['camera'], // 可以指定来源是相册还是相机，默认二者都有 ['album', 'camera']
-                                success: function (res) {
-
-                                    if (type == 'd1') {//驾驶证正面
-                                        app.authRealDriver.DriverCardPhotoFImg = res.localIds[0];
-                                    }
-                                    else if (type == 'v1') {//行驶证正面
-                                        app.authRealDriver.VehicleCardPhotoFImg = res.localIds[0];
-                                    }
-                                    wx.uploadImage({
-                                        localId: res.localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-                                        isShowProgressTips: 1,
-                                        success: function (upRes) {
-                                            if (type == 'd1') {//驾驶证正面
-                                                app.authRealDriver.DriverCardPhotoF = upRes.serverId;
-                                            }
-                                            else if (type == 'v1') {//行驶证正面
-                                                app.authRealDriver.VehicleCardPhotoF = upRes.serverId;
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                        wx.error(function (res) {
-                            mui.alert("微信js接口出错了，详细信息：" + res.errMsg);
-                        });
-                    } else if (hh.isQianfan()) {
-
-                    }
-                    else {
-                        mui.alert("上传照片失败，请在微信中打开");
-                    }
-                },
-                submitAuth: function () {
-                    if (!app.authRealDriver.VehicleBrand || !app.authRealDriver.VehicleModel) {
-                        mui.alert("请选择车型", function () {
-                            mui("#CarBrandModel")[0].click();
-                        });
-                        return;
-                    }
-                    if (!app.authRealDriver.VehicleNumber) {
-                        mui.alert("请输入车牌号", function () {
-                            mui("#VehicleNumber")[0].focus();
-                        });
-                        return;
-                    }
-                    app.authRealDriver.VehicleNumber = app.authRealDriver.VehicleNumber.toUpperCase().trim();
-                    if (!/^([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF])|([DF]([A-HJ-NP-Z0-9])[0-9]{4})))|([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1})$/.test(app.authRealDriver.VehicleNumber)) {
-                        mui.alert("车牌号格式不正确，请不要输入空格或特殊符号，与行驶证中车牌号保持一致！", function () {
-                            mui("#VehicleNumber")[0].focus();
-                        });
-                        return;
-                    }
-
-                    if (!app.authRealDriver.DriverCardPhotoF) {
-                        mui.alert("请上传驾驶证正面照片");
-                        return;
-                    }
-                    if (!app.authRealDriver.VehicleCardPhotoF) {
-                        mui.alert("请上传行驶证正面照片");
-                        return;
-                    }
-                    if (!app.agreeStatus) {
-                        mui.alert("请勾选同意隐私协议");
-                        return;
-                    }
-
-                    mui.confirm("车主信息认证通过后将无法修改，冒用他人驾驶证会导致账号被封禁。确认提交？", function (e) {
-                        if (e.index == 1)
-                        {
-                            app.saving = true;
-                            mui.post("/WebApp/UserAuth/SaveRealDriver", app.authRealDriver, function (json) {
-                                if (json.statusCode == "200") {
-                                    mui.alert("您的认证信息已提交成功\n正在审核中…", function () {
-                                        hh.reload();
-                                    });
-                                }
-                                else {
-                                    mui.alert(json.message, function () {
-                                        app.saving = false;
-                                    });
-                                }
-                            });
-                        }
-                    });
-                    
-                },
-                cancelAuth: function () {
-                    mui.confirm("认证信息未审核前可撤回提交，修改认证信息。确认撤回？", function (e) {
-                        if (e.index == 1) {
-                            app.saving = true;
-                            mui.post("/WebApp/UserAuth/CancelRealDriver", {}, function (json) {
-                                app.saving = false;
-                                if (json.statusCode == "200") {
-                                    mui.alert("撤回成功！", function () {
-                                        hh.reload();
-                                    });
-                                }
-                                else {
-                                    mui.alert(json.message);
-                                }
-                            });
-                        }
-                    });
-                }
-
-
-            }
-        });
-
-        function initWebUpload(index) {
-            var uploader = WebUploader.create({
-                // 选完文件后，是否自动上传。
-                auto: true,
-                // 文件接收服务端。
-                server: '/Tools/Upload/SingleFile?isImage=1',
-                // 选择文件的按钮。可选。
-                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-                pick: '#picker' + index,
-                // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-                resize: false,
-                // 只允许选择图片文件。
-                accept: {
-                    title: 'Images',
-                    extensions: 'gif,jpg,jpeg,bmp,png',
-                    mimeTypes: 'image/jpeg,image/jpg,image/png,image/gif,image/bmp'
-                },
-                fileVal: "filedata",
-                fileNumLimit: 1
-            });
-            uploader.on('fileQueued', function (file) {
-                app.saving = true;
-
-                // 创建缩略图
-                uploader.makeThumb(file, function (error, src) {
-                    if (error) {
-                        return;
-                    }
-                    if (index == 'd1') {//驾驶证正面
-                        app.authRealDriver.DriverCardPhotoFImg = src;
-                    }
-                    else if (index == 'v1') {//行驶证正面
-                        app.authRealDriver.VehicleCardPhotoFImg = src;
-                    }
-
-                }, 1, 1);
-
-            });
-            uploader.on('uploadSuccess', function (file, response) {
-                if (response.status == 1) {
-                    if (index == 'd1') {//驾驶证正面
-                        app.authRealDriver.DriverCardPhotoF = app.authRealDriver.DriverCardPhotoFImg = response.data.newFileName;
-                    }
-                    else if (index == 'v1') {//行驶证正面
-                        app.authRealDriver.VehicleCardPhotoF = app.authRealDriver.VehicleCardPhotoFImg = response.data.newFileName;
-                    }
-                }
-                else {
-                    mui.alert("上传失败！" + response.msg);
-                }
-
-            });
-            uploader.on('uploadComplete', function (file) {
-                if (uploader.getStats().progressNum == 0)
-                    app.saving = false;
-
-            });
-
-        }
-    </script>
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
     <script>
 var _hmt = _hmt || [];
 (function() {

@@ -18,6 +18,8 @@ if __name__ == '__main__':
     url = "http://lw.51bc.cc/WebApp/UserCenter/ChangePhone"  # 修改手机号
     url = "http://lw.51bc.cc/WebApp/UserAuth/RealName"  # 实名认证
     url = "http://lw.51bc.cc/WebApp/UserAuth/RealDriver"  # 车主认证
+    url = "http://lw.51bc.cc/WebApp/Home"
+    url = "http://lw.51bc.cc/WebApp/UserAss/GetDetailData"
     headers = {
         "Cookie":"Hm_lpvt_a0694c9c6c17b1bfb616beb7d946aecb=1550479570; Hm_lvt_a0694c9c6c17b1bfb616beb7d946aecb=1549698174,1549778423,1550138143,1550479419; xmq_UserCookie=openid=026DAD83B73A6137D0E5B1BD3EAE1CED6CA04AD6C3D9115FCB7FE96E2EEB071E; ASP.NET_SessionId=aapdovmtcaxjvbbxuw50las1"
     }

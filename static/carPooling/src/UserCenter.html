@@ -1,0 +1,449 @@
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>来往拼车</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/static/carPooling/images/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.showLoading.css">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mystyle.css">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+
+
+
+
+</head>
+
+<body>
+
+    
+
+
+
+<div id="app">
+
+    <header class="mui-bar mui-bar-nav">
+
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-left-nav"></span>首页</a>
+
+
+
+        <h1 class="mui-title">个人中心</h1>
+
+    </header>
+
+    <div class="mui-content">
+
+        <div class="car-member-top">
+
+            <div class="car-member-top-pic">
+
+                <template>
+
+                    <img v-bind:src="userinfo.Photo" onerror="this.src = '/static/carPooling/images/defaultUser.jpg'" />
+
+                </template>
+
+            </div>
+
+            <div class="car-member-top-con">
+
+               
+
+                    <h2><span v-text="userinfo.Name">&nbsp;</span> 
+
+                        <template>
+
+                            <i v-if="userinfo.IsRealName==2" onclick="hh.go('/WebApp/UserAuth/RealName')" class="hh-icon hh-icon-realname ver_btm padl5 desc_green"></i>
+
+                            <i v-if="userinfo.IsRealDriver==2" class="hh-icon hh-icon-drivercard ver_btm padl5 desc_blue"></i>
+
+                        </template>
+
+                    </h2>
+
+                    <p v-text="userinfo.Phone">&nbsp;</p>
+
+                    <p>诚信值：
+
+                    <span v-bind:class="{ 'desc_green': userinfo.CreditValue>3, 'desc_blue': userinfo.CreditValue>=1, 'desc_red': userinfo.CreditValue<1 }" v-text="userinfo.CreditValue">1.0</span> 分 
+
+                    <a href="/WebApp/About/CreditValueNote"><i class="hh-icon hh-icon-wenhao ver_btm desc_yellow"></i></a>
+
+                    </p>
+
+            </div>
+
+        </div>
+
+
+
+
+
+        <!--section1 begin-->
+
+        <div class="section">
+
+            <div class="car-member-list car-member-money">
+
+                <ul>
+
+                    <li><a href="/WebApp/UserCenter/DalanceLogList"><h3><i class="hh-icon hh-icon-money colore"></i>余额：<b class="desc_red" v-text="userinfo.Dalance">0.0</b>元</h3>
+
+                        <span>
+
+                           
+
+                        <i class="hh-icon hh-icon-right"></i></span>
+
+                        </a>
+
+                    </li>
+
+                    <li><a href="/WebApp/UserAuth/RealName"><h3><i class="hh-icon hh-icon-realname2 colora"></i>实名认证</h3>
+
+                        <span>
+
+                            <template>
+
+                                <i v-if="userinfo.IsRealName==-1" class="f14px desc_red">未通过</i>
+
+                                <i v-if="userinfo.IsRealName==0" class="f14px desc_yellow">去认证</i>
+
+                                <i v-if="userinfo.IsRealName==1" class="f14px desc_blue">审核中</i>
+
+                                <i v-if="userinfo.IsRealName==2" class="f14px desc_green">已认证</i>
+
+                            </template>
+
+                        <i class="hh-icon hh-icon-right"></i>
+
+                        </span>
+
+                           
+
+                        </a></li>
+
+                    <li><a href="/WebApp/UserAuth/RealDriver"><h3><i class="hh-icon hh-icon-driver colorb"></i>车主认证</h3>
+
+                        <span>
+
+                            <template>
+
+                                <i v-if="userinfo.IsRealDriver==-1" class="f14px desc_red">未通过</i>
+
+                                <i v-if="userinfo.IsRealDriver==0" class="f14px desc_yellow">去认证</i>
+
+                                <i v-if="userinfo.IsRealDriver==1" class="f14px desc_blue">审核中</i>
+
+                                <i v-if="userinfo.IsRealDriver==2" class="f14px desc_green">已认证</i>
+
+                            </template>
+
+                                <i class="hh-icon hh-icon-right"></i>
+
+</span></a></li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!--section1 end-->
+
+        <!--section2 begin-->
+
+        <div class="section">
+
+            <div class="car-member-list">
+
+                <ul>
+
+                    <li><a href="/WebApp/UserRec/List"><h3><i class="hh-icon hh-icon-hangcheng colora"></i>我的行程</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+
+                    <li><a href="/WebApp/UserComment/SendList"><h3><i class="hh-icon hh-icon-pingjia colorb"></i>我的评价</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+
+                    <li><a href="/WebApp/UserRec/SubscribeList"><h3><i class="hh-icon hh-icon-yuyue colorc"></i>我的预约</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!--section2 end-->
+
+        <!--section3 begin-->
+
+        <div class="section">
+
+            <div class="car-member-list">
+
+                <ul>
+
+                    <li><a v-on:click="changePhone()"><h3><i class="hh-icon hh-icon-tel colord"></i>修改手机号</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!--section3 end-->
+
+
+
+    </div>
+
+
+
+</div>
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+               <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+   <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/carPooling/js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/carPooling/js/app.js" type="text/javascript" charset="utf-8"></script>
+    
+
+    <script type="text/javascript">
+
+
+
+        mui.init();
+
+
+
+        mui.ready(function () {
+
+            app.getUserInfo();
+
+        });
+
+
+
+        var app = new Vue({
+
+            el: '#app',
+
+            data: {
+
+                userinfo: {}
+
+            },
+
+            methods: {
+
+                getUserInfo: function () {
+
+                    mui.post("/WebApp/UserCenter/GetUserInfo", function (json) {
+
+                        app.userinfo = json;
+
+                    });
+
+                },
+
+                payDalance:function(){
+
+                    //支付欠款
+
+                    hh.go("/WebApp/Payment/DriverPayInfoFee?type=0");
+
+                },
+
+                changePhone: function () {
+
+                    if (!app.userinfo) {
+
+                        mui.alert("您账号异常，无法修改手机号！请稍候再试！");
+
+                    }
+
+                    else if (app.userinfo.IsEnabled == 0) {
+
+                        mui.alert("您尚未解黑，无法修改手机号！");
+
+                    }
+
+                    else if (app.userinfo.Dalance < 0) {
+
+                        mui.alert("您有尚未支付欠款，无法修改手机号！");
+
+                    }
+
+                    else if (app.userinfo.UnedAssCount > 0) {
+
+                        mui.alert("您有尚未完成行程，无法修改手机号！");
+
+                    }
+
+                    else if (!app.userinfo.LastChangePhone && (new Date() - new Date(app.userinfo.LastChangePhone)) / (1000 * 60 * 60 * 24) < 30) {
+
+                        mui.alert("您最近1个月修改过手机号，暂时无法修改手机号！");
+
+                    }
+
+                    else {
+
+                        hh.go("/WebApp/UserCenter/ChangePhone");
+
+                    }
+
+                },
+
+                changeUserInfo: function () {
+
+                    if (!app.userinfo) {
+
+                        mui.alert("您账号异常，无法修改姓名！请稍候再试！");
+
+                    }
+
+                    else if (app.userinfo.IsEnabled == 0) {
+
+                        mui.alert("您尚未解黑，无法修改姓名！");
+
+                    }
+
+                    else if (app.userinfo.Dalance < 0) {
+
+                        mui.alert("您有尚未支付欠款，无法修改姓名！");
+
+                    }
+
+                    else if (app.userinfo.UnedAssCount > 0) {
+
+                        mui.alert("您有尚未完成行程，无法修改姓名！");
+
+                    }
+
+                    else if (app.userinfo.IsRealName != 2) {
+
+                        mui.alert("您尚未通过实名认证，无法修改姓名！");
+
+                    }
+
+                    else {
+
+                        hh.go("/WebApp/UserCenter/ChangeUserInfo");
+
+                    }
+
+                }
+
+
+
+            }
+
+        });
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
+
+
+
+
+    
+
+</body>
+
+</html>
+
