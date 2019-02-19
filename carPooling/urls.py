@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include,re_path
 from django.conf.urls import url
-from carPooling import views,api,error,api_userass
+from carPooling import views,api_home,error,api_userass
 
 # 静态页面
 urlpatterns = [
@@ -33,10 +33,10 @@ urlpatterns = [
 
 # ajax请求
 urlpatterns += [
-    url(r"^Home/GetCityList$", api.GetCityList),
-    url(r"^Home/GetHotLine$", api.GetHotLine),
-    url(r"^Home/GetCurTripTip$", api.GetCurTripTip),
-    url(r"^Home/GetAssList$", api.GetAssList),
+    url(r"^Home/GetCityList$", api_home.GetCityList),
+    url(r"^Home/GetHotLine$", api_home.GetHotLine),
+    url(r"^Home/GetCurTripTip$", api_home.GetCurTripTip),
+    url(r"^Home/GetAssList$", api_home.GetAssList),
 ]
 
 urlpatterns += [

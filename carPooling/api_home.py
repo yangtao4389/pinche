@@ -3,6 +3,7 @@ import requests
 import traceback
 from django.shortcuts import render,HttpResponse
 from common import client
+from carPooling.models import CarPoolingCity
 
 
 
@@ -14,16 +15,36 @@ def GetCityList(request):
     :return:  {Details:[{Name,"",Group:""}],Group:[FirstName,FullName]}
     '''
     if request.method == "POST":
-        try:
-            response = requests.post("http://lw.51bc.cc/WebApp/Home/GetCityList",timeout=5)
-            cityList = response.content
-            return HttpResponse(json.dumps(json.loads(cityList)), content_type="application/json")
-        except:
-            pass
-
-
-        GroupList = [{"FirstName":"L","FullName":"L"},{"FirstName":"C","FullName":"C"}]
-        DetailList = [{"Name":"泸定县","Group":"L"},{"Name":"成都","Group":"C"}]
+        # try:
+        #     response = requests.post("http://lw.51bc.cc/WebApp/Home/GetCityList",timeout=5)
+        #     cityList = response.content
+        #     return HttpResponse(json.dumps(json.loads(cityList)), content_type="application/json")
+        # except:
+        #     pass
+        # grouplist = CarPoolingCity.get_all_groups()
+        # print(grouplist,"grouplist")
+        # for i in grouplist:
+        #     print(i.c_firstname)
+        cityobjects = CarPoolingCity.get_all_city()
+        GroupList = []
+        DetailList = []
+        templist = []
+        for i in cityobjects:
+            group = i.c_firstname
+            if group not in templist:
+                groupitem = dict(
+                    FirstName = i.c_firstname,
+                    FullName =  i.c_firstname,
+                )
+                GroupList.append(groupitem)
+                templist.append(i.c_firstname)
+            detailitem = dict(
+                Name=i.c_fullname,
+                Group=i.c_firstname,
+            )
+            DetailList.append(detailitem)
+        # GroupList = [{"FirstName":"L","FullName":"L"},{"FirstName":"C","FullName":"C"}]
+        # DetailList = [{"Name":"泸定县","Group":"L"},{"Name":"成都","Group":"C"}]
         dictItem = dict(
             Details=DetailList,
             Group=GroupList
@@ -59,7 +80,8 @@ def GetAssList(request):
             # print(traceback.print_exc())
             pass
 
-        assList = {"DataSource":[{"Id":"930302a5-565e-462b-84c4-abcd10922796","GoTime":"2019/2/20 9:00:00","CardOwner":"周正","UserId":"758038ca-84dc-4073-ace7-2616952db52b","BusType":"福特福睿斯。","Line":"温江出发，到达达州南外。","Cash":120.00,"Remark":"顺路上下，支持群价，预订后请电话确认一下。--点击“预订”即可，李。","Seat":2,"GoodNum":0,"BadNum":0,"IsRealName":0,"IsRealDriver":0}],
+        assList = {"DataSource":[
+            {"Id":"930302a5-565e-462b-84c4-abcd10922796","GoTime":"2019/2/20 9:00:00","CardOwner":"周正","UserId":"758038ca-84dc-4073-ace7-2616952db52b","BusType":"福特福睿斯。","Line":"温江出发，到达达州南外。","Cash":120.00,"Remark":"顺路上下，支持群价，预订后请电话确认一下。--点击“预订”即可，李。","Seat":2,"GoodNum":0,"BadNum":0,"IsRealName":0,"IsRealDriver":0}],
                 "CurrentPageIndex":1,
                 "PageSize":20,
                 "RowCount":1,
