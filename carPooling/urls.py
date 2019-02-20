@@ -23,10 +23,15 @@ urlpatterns = [
     url(r"^Home$", views.Home),
     url(r"^Home/Index$", views.Home),  #首页
     url(r"^Home/AssList$", views.AssList),  # 行程列表
+    url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
+
     url(r"^UserAss/Publish$", views.UserAssPublish),  # 发布行程
     url(r"^UseAss/List$", views.UserAssList),   #  我的行程列表  我是车主
+    url(r"^UserAss/Edit$", views.UserAssEdit),  #  车主行程编辑
+
     url(r"^UserRec/List$", views.UserRecList),  #  我的行程列表  我是乘客
     url(r"^UserCenter$", views.UserCenter),  #  个人中心
+
 
 ]
 
@@ -40,7 +45,10 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    url(r"^UserAss/GetDetailData$", api_userass.GetDetailData),
+    url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取当前发布的数据
+    url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
+    url(r"^UserAss/Cancel", api_userass.Cancel),  # 取消
+    url(r"^UserAss/SaveEdit", api_userass.SaveEdit),  # 取消
 ]
 
 

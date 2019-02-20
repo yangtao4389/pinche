@@ -14,6 +14,12 @@ def AssList(request):
         html = f.read()
     return HttpResponse(html)
 
+def AssShareTip(request):
+    with open("static/carPooling/src/AssShareTip.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
+
+
 
 def UserAssPublish(request):
     with open("static/carPooling/src/UserAssPublish.html", 'rb') as f:
@@ -25,6 +31,15 @@ def UserAssList(request):
     with open("static/carPooling/src/UserAssList.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)
+
+
+def UserAssEdit(request):
+    with open("static/carPooling/src/UserAssEdit.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
+
+
+
 
 def UserRecList(request):
     with open("static/carPooling/src/UserRecList.html", 'rb') as f:
