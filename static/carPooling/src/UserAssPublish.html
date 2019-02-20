@@ -544,7 +544,7 @@
 
                     if (json.statusCode == "200") {
 
-                        json.data.GoTimeShow = hh.formatGoTime(json.data.GoTime);
+                        // json.data.GoTimeShow = hh.formatGoTime(json.data.GoTime);
 
                         if (json.data.Status == 0) {
 
@@ -1137,35 +1137,45 @@
 
 
         mui.post("/WebApp/UserAss/SaveEdit", app.ass, function (json) {
+            if (json.statusCode == "200") {
 
-            mui.alert(json.message, function () {
 
-                if (json.data.Code == "100") {
+                mui.alert(json.message, function () {
 
-                    hh.go("/WebApp/Home/AssShareTip?id=" + json.data.Id);
+                    if (json.data.Code == "100") {
 
-                }
+                        hh.go("/WebApp/Home/AssShareTip?id=" + json.data.Id);
 
-                else if (json.data.Code == "200") {
+                    }
 
-                    hh.go("/WebApp/UserCenter");
+                    else if (json.data.Code == "200") {
 
-                }
+                        hh.go("/WebApp/UserCenter");
 
-                else if (json.data.Code == "300") {
+                    }
 
-                    hh.go("/WebApp/UserAss/Edit?id=" + json.data.OldAssId);
+                    else if (json.data.Code == "300") {
 
-                }
+                        hh.go("/WebApp/UserAss/Edit?id=" + json.data.OldAssId);
 
-                else {
+                    }
+
+                    else {
+
+                        app.saving = false;
+
+                    }
+
+
+                });
+            } else {
+                mui.alert(json.message, function () {
 
                     app.saving = false;
 
-                }
 
-
-            });
+                });
+            }
 
         });
 

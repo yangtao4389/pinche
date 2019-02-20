@@ -93,3 +93,10 @@ def GetAssList(request):
                 "CurrentEndIndex":1,
         }
         return HttpResponse(json.dumps(assList), content_type="application/json")
+
+
+def GetWenxinJsapiConfig():
+    '''
+    :return: {"debug":false,"appId":"wx56b24a9f02010e10","timestamp":"1550636346","nonceStr":"A7A1ECABE61CFF230F11EC241A825AD6","signature":"1b07f146fc7e34132db3fa0658c1f9ecb33f53fe","jsApiList":null}
+    '''
+    return HttpResponse()

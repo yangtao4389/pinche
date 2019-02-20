@@ -16,20 +16,20 @@ class CarPoolingAssDetail(models.Model):
     行程表
     '''
     c_id = models.CharField("行程唯一id", max_length=128, null=False, blank=False, unique=True,db_index=True)
-    c_userid = models.CharField("用户id", max_length=128, null=False, blank=False, db_index=True,unique=True )
-    c_card_owner = models.CharField("车主姓名", max_length=128, null=False, blank=False,)
-    c_user_phone = models.CharField("车主电话" ,max_length=11, null=False, blank=False, )
-    c_start_city = models.CharField("出发城市", max_length=128, null=False, blank=False,db_index=True)
-    c_end_city =  models.CharField("到达城市", max_length=128, null=False, blank=False,db_index=True)
-    t_line = models.TextField("路线",null=False, blank=False, default='')
-    d_go_time = models.DateTimeField("出发时间",null=False, blank=False, db_index=True)
-    c_bus_type = models.CharField("车型", max_length=128, null=False, blank=False)
-    i_vehicle_number = models.SmallIntegerField("该车型荷载", null=True, blank=True, default=0)
-    i_seat = models.SmallIntegerField("总共座位",null=False, blank=False, default=0)
-    i_booked_seat = models.SmallIntegerField("已预订的座位", null=False, blank=False, default=0)
-    i_no_booked_seat = models.SmallIntegerField("剩余座位", null=False, blank=False, default=0,db_index=True)
-    i_cash = models.IntegerField("费用", null=False, blank=False, default=0)
-    t_remark = models.TextField("备注",  null=False, blank=False, default='')
+    c_userid = models.CharField("用户id", max_length=128, null=True, blank=False, db_index=True)
+    c_card_owner = models.CharField("车主姓名", max_length=128, null=True, blank=False,)
+    c_user_phone = models.CharField("车主电话" ,max_length=11, null=True, blank=False, )
+    c_start_city = models.CharField("出发城市", max_length=128, null=True, blank=False,db_index=True)
+    c_end_city =  models.CharField("到达城市", max_length=128, null=True, blank=False,db_index=True)
+    t_line = models.TextField("路线",null=True, blank=False, default='')
+    d_go_time = models.DateTimeField("出发时间",null=True, blank=False, db_index=True)
+    c_bus_type = models.CharField("车型", max_length=128, null=True, blank=False)
+    i_vehicle_number = models.SmallIntegerField("该车型荷载", null=True, blank=True)
+    i_seat = models.SmallIntegerField("总共座位",null=False, blank=True, default=0)
+    i_booked_seat = models.SmallIntegerField("已预订的座位", null=True, blank=False, default=0)
+    i_no_booked_seat = models.SmallIntegerField("剩余座位", null=True, blank=False,db_index=True)
+    i_cash = models.IntegerField("费用", null=True, blank=False, default=0)
+    t_remark = models.TextField("备注",  null=True, blank=False, default='')
     status = models.BooleanField("是否有效", null=False, blank=False, default=True, help_text="true,false")
 
     class Meta:
@@ -48,7 +48,7 @@ class CarPoolingUserConf(models.Model):
     '''
     用户表
     '''
-    c_userid = models.CharField("用户id", max_length=128, null=False, blank=False, db_index=True,unique=True )
+    # c_userid = models.CharField("用户id", max_length=128, null=False, blank=False, db_index=True,unique=True )
     c_weixin_id = models.CharField("微信id", max_length=128, null=False, blank=False,db_index=True,unique=True,)
     c_name = models.CharField("姓名", max_length=128, null=False, blank=False,)
     c_phone = models.CharField("电话号码" ,max_length=11, null=False, blank=False, )
@@ -62,11 +62,11 @@ class CarPoolingUserConf(models.Model):
 
 
     def __str__(self):
-        return self.c_name
+        return self.c_weixin_id
 
     @property
     def list_field(self):
-        return ['c_userid', 'c_name', 'status']
+        return ['c_weixin_id', 'c_name', 'status']
 
 
 

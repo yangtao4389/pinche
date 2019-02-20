@@ -1,4 +1,4 @@
-import time,datetime,os
+import time,datetime,os,uuid
 class UIDMaker:
     """
     uid生成器
@@ -86,3 +86,14 @@ class UIDMaker_TimeOnly:
         return str(time.time() * 1000)
 
 UIDMaker_DateTime_obj = UIDMaker_DateTime()
+
+def get_uuid_random():
+    '''
+    :return:随机的uuid值  保证唯一  36位  c40376b4-ea9e-47b7-9de0-b2cb282460df
+    '''
+    return str(uuid.uuid4())
+
+if __name__ == '__main__':
+    a = get_uuid_random()
+    print(a)
+    print(len(a))

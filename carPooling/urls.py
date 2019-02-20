@@ -22,6 +22,8 @@ from carPooling import views,api_home,error,api_userass
 urlpatterns = [
     url(r"^Home$", views.Home),
     url(r"^Home/Index$", views.Home),  #首页
+    url(r"^Home/Login$", views.Login),  # 微信登录
+
     url(r"^Home/AssList$", views.AssList),  # 行程列表
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
 
@@ -42,13 +44,14 @@ urlpatterns += [
     url(r"^Home/GetHotLine$", api_home.GetHotLine),
     url(r"^Home/GetCurTripTip$", api_home.GetCurTripTip),
     url(r"^Home/GetAssList$", api_home.GetAssList),
+    url(r"^Home/GetWenxinJsapiConfig$", api_home.GetWenxinJsapiConfig),
 ]
 
 urlpatterns += [
     url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取当前发布的数据
     url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
     url(r"^UserAss/Cancel", api_userass.Cancel),  # 取消
-    url(r"^UserAss/SaveEdit", api_userass.SaveEdit),  # 取消
+    url(r"^UserAss/SaveEdit", api_userass.SaveEdit),  # 保存
 ]
 
 

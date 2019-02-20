@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authority.UserAuthMiddleware.UserAuthMiddleware',
 
 ]
 
@@ -220,13 +221,15 @@ CACHES = {
 
 
 # 不用验证信息的url
-SERVICE_FILTER_URLS = [
+LOGIN_EXEMPT_URLS = [
     (r'^/admin/*'),
     (r'^/xadmin/*'),
     (r'%s*' % STATIC_URL),
     (r'%s*' % MEDIA_URL),
     (r'/favicon.ico'),
+    (r'/WebApp/Home/Login'),
 ]
+LOGIN_URL = "/WebApp/Home/Login"
 
 
 
