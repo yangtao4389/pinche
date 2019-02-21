@@ -157,23 +157,6 @@ def GetAssList(request):
         resultDict.update(DataSource=DataSource)
 
 
-        # try:
-        #     pass
-            # paginator = Paginator(allAss, PageSize)
-            # product_data["number_of_page"] = paginator.num_pages
-            # product_data["current_page"] = int(page_number)
-            # try:
-            #     page = paginator.page(page_number)
-            # except:
-            #     logger.exception("视频三级页面非法输入page")
-            #     return HttpResponseRedirect(client.get_client_previous_url(request))
-            # product_data["has_previous"] = page.has_previous()
-            # product_data["has_next"] = page.has_next()
-            # product_data['obj_list'] = list(page.object_list)
-
-
-        # except:
-        #     pass
 
 
         # assList = {"DataSource":[

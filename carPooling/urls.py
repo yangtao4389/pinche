@@ -28,11 +28,17 @@ urlpatterns = [
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
 
     url(r"^UserAss/Publish$", views.UserAssPublish),  # 发布行程
-    url(r"^UseAss/List$", views.UserAssList),   #  我的行程列表  我是车主
-    url(r"^UserAss/Edit$", views.UserAssEdit),  #  车主行程编辑
+    url(r"^UserAss/Detail", views.UserAssDetail),  # 发布行程
+    url(r"^UserAss/Edit$", views.UserAssEdit),  # 车主行程编辑
 
+    url(r"^UserAss/List$", views.UserAssList),   #  我的行程列表  我是车主
     url(r"^UserRec/List$", views.UserRecList),  #  我的行程列表  我是乘客
+
+
+
     url(r"^UserCenter$", views.UserCenter),  #  个人中心
+
+    url(r"^About$", views.About),  #  乘车协议
 
 
 ]
@@ -48,10 +54,13 @@ urlpatterns += [
 ]
 
 urlpatterns += [
-    url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取当前发布的数据
+    url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取通用数据 不进行任何判断
     url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
     url(r"^UserAss/Cancel", api_userass.Cancel),  # 取消
     url(r"^UserAss/SaveEdit", api_userass.SaveEdit),  # 保存
+    url(r"^UserAss/SavePublish", api_userass.SavePublish),  # 保存
+    url(r"^UserAss/GetList", api_userass.GetList),  # 保存
+    url(r"^UserAss/Del", api_userass.Del),  # 保存
 ]
 
 

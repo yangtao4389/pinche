@@ -72,23 +72,23 @@
 
                 <div class="mui-card-content">
 
-                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】成都 -> 巴中
+                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】{{ass.StartCity}} -&gt; {{ass.EndCity}}
 
-【时间】02月20日 00:00
+【时间】{{hh.formatGoTime(ass.GoTime)}}
 
-【路线】武侯大道 出发，途径武侯大道地铁站（推荐上车点），巴中西 站下高速，目的地：巴中，仅限巴中市区可送。
+【路线】{{ass.Line}}
 
-【车型】丰田致炫
+【车型】{{ass.BusType}}
 
-【座位】3
+【座位】{{ass.Seat}}
 
-【有车】小杨
+【车主】{{ass.CardOwner}}
 
-【预订】t.cn/EVNdzYP
+<!--【预订】{{ass.BusType}}-->
 
-【A费】 100元/人
+【A费】 {{ass.Cash}}元/人
 
-【备注】来呀，一起回家呀</textarea>
+【备注】{{ass.Remark}}</textarea>
 
                 </div>
 
@@ -193,7 +193,7 @@
         mui.init();
 
         mui.ready(function () {
-
+            app.initData();
             app.initCopy();
 
 
@@ -214,11 +214,30 @@
 
             data: {
 
-                isSupported: true
+                isSupported: true,
+                ass: {}
 
             },
 
             methods: {
+                initData:function () {
+                     mui.post("/WebApp/UserAss/GetDetailData", {"id":hh.getQueryString("id")}, function (json) {
+
+                        if (json.statusCode == "200") {
+
+                            app.ass = json.data;
+
+                        }
+
+                        else {
+
+                            hh.go("/WebApp/UserAss/List");
+
+                        }
+
+                    });
+
+                },
 
                 initCopy: function () {
 

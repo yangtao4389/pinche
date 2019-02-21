@@ -30,7 +30,10 @@ class CarPoolingAssDetail(models.Model):
     i_no_booked_seat = models.SmallIntegerField("剩余座位", null=False, blank=False,db_index=True)
     i_cash = models.IntegerField("费用", null=True, blank=False, default=0)
     t_remark = models.TextField("备注",  null=True, blank=False, default='')
-    status = models.BooleanField("是否有效", null=False, blank=False, default=True, help_text="true,false")
+    i_status = models.SmallIntegerField("行程状态",null=True,help_text=("0:取消行程，1:进行中，2：已出发，3：已完成"))
+    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
+    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
+    status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
 
     class Meta:
         db_table = "carpooling_ass_detail"
