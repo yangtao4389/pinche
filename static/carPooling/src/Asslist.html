@@ -642,52 +642,61 @@
                         }
                     });
                 },
+//                显示预订座位页面
                 showbook: function (ass) {
+                    app.book.assId = ass.Id;
+                    app.book.bookSeat = 1;
+                    app.book.startPlace = '';
+                    app.book.phone = json.data.Phone;
 
+                    //mui("#bookseat").numbox().setOption('max', ass.Seat);
+                    app.book.maxSeat = ass.Seat;
+                    mui('#book')[0].classList.add('mui-active');
+                    mui('#book')[0].classList.add('mui-active');
                     //检测微信关注状态
-                    mui.post("/WebApp/Home/CheckWeiXinSubscribe",{startCity:ass.StartCity,endCity:ass.EndCity}, function (json) {
-                        if (json.statusCode == "300") {
-                            if(json.data && json.data=="app")
-                                mui('#downapp')[0].classList.add('mui-active');
-                            else
-                                mui('#subscription')[0].classList.add('mui-active');
-                        }
-                        else {
-                            if (json.data == null || !json.data.Phone) {
-                                mui.alert("您的手机号尚未<br>与【来往拼车】平台绑定<br>请绑定后再预定!", function () {
-                                    if (hh.isQianfan())
-                                    {
-                                        hh.go("/WebApp/Account/QianFanRegister?userRegReturnUrl=" + location.href);
-                                    }
-                                    else {
-                                        hh.go("/WebApp/Account/WeiXinRegister?userRegReturnUrl=" + location.href);
-                                    }
-                                });
-                            }
-                            else {
-                                //检测 受限路线
-                                mui.post("/WebApp/Home/CheckLimitLine", { startCity: app.search.startCity, goTime: ass.GoTime }, function (limitLine) {
-                                    if (limitLine.statusCode == "300") {
-                                        //受限线路
-                                        mui.alert(limitLine.data);
-                                    }
-                                    else {
-                                        app.book.assId = ass.Id;
-                                        app.book.bookSeat = 1;
-                                        app.book.startPlace = '';
-                                        app.book.phone = json.data.Phone;
-
-                                        //mui("#bookseat").numbox().setOption('max', ass.Seat);
-                                        app.book.maxSeat = ass.Seat;
-                                        mui('#book')[0].classList.add('mui-active');
-                                    }
-
-                                });
-
-                            }
-                        }
-
-                    });
+//                    mui.post("/WebApp/Home/CheckWeiXinSubscribe",{startCity:ass.StartCity,endCity:ass.EndCity}, function (json) {
+//                        if (json.statusCode == "300") {
+//                            if(json.data && json.data=="app")
+//                                mui('#downapp')[0].classList.add('mui-active');
+//                            else
+//                                mui('#subscription')[0].classList.add('mui-active');
+//                        }
+//                        else {
+//                            if (json.data == null || !json.data.Phone) {
+//                                mui.alert("您的手机号尚未<br>与【来往拼车】平台绑定<br>请绑定后再预定!", function () {
+//                                    if (hh.isQianfan())
+//                                    {
+//                                        hh.go("/WebApp/Account/QianFanRegister?userRegReturnUrl=" + location.href);
+//                                    }
+//                                    else {
+//                                        hh.go("/WebApp/Account/WeiXinRegister?userRegReturnUrl=" + location.href);
+//                                    }
+//                                });
+//                            }
+//                            else {
+//                                //检测 受限路线
+//                                mui.post("/WebApp/Home/CheckLimitLine", { startCity: app.search.startCity, goTime: ass.GoTime }, function (limitLine) {
+//                                    if (limitLine.statusCode == "300") {
+//                                        //受限线路
+//                                        mui.alert(limitLine.data);
+//                                    }
+//                                    else {
+//                                        app.book.assId = ass.Id;
+//                                        app.book.bookSeat = 1;
+//                                        app.book.startPlace = '';
+//                                        app.book.phone = json.data.Phone;
+//
+//                                        //mui("#bookseat").numbox().setOption('max', ass.Seat);
+//                                        app.book.maxSeat = ass.Seat;
+//                                        mui('#book')[0].classList.add('mui-active');
+//                                    }
+//
+//                                });
+//
+//                            }
+//                        }
+//
+//                    });
                 },
                 savebook: function () {
                     //app.book.bookSeat = mui("#bookseat").numbox().getValue();
@@ -834,15 +843,7 @@
             });
         });
     </script>
-    <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
+
 
 
 
