@@ -26,8 +26,8 @@ class CarPoolingAssDetail(models.Model):
     c_bus_type = models.CharField("车型", max_length=128, null=True, blank=False)
     i_vehicle_number = models.SmallIntegerField("该车型荷载", null=True, blank=True)
     i_seat = models.SmallIntegerField("总共座位",null=False, blank=True, default=0)
-    i_booked_seat = models.SmallIntegerField("已预订的座位", null=True, blank=False, default=0)
-    i_no_booked_seat = models.SmallIntegerField("剩余座位", null=True, blank=False,db_index=True)
+    i_booked_seat = models.SmallIntegerField("已预订的座位", null=False, blank=False, default=0)
+    i_no_booked_seat = models.SmallIntegerField("剩余座位", null=False, blank=False,db_index=True)
     i_cash = models.IntegerField("费用", null=True, blank=False, default=0)
     t_remark = models.TextField("备注",  null=True, blank=False, default='')
     status = models.BooleanField("是否有效", null=False, blank=False, default=True, help_text="true,false")
@@ -40,6 +40,12 @@ class CarPoolingAssDetail(models.Model):
     # def __str__(self):
     #     return self.c_name
 
+    def save(self, *args, **kwargs):
+        self.i_no_booked_seat = self.i_seat - self.i_booked_seat
+        if self.i_no_booked_seat<0:
+            raise Exception("i_no_booked_seat is not fushu")
+        super(CarPoolingAssDetail, self).save()
+
     @property
     def list_field(self):
         return ['c_id', 'c_userid', 'c_card_owner', 'c_user_phone', 'status']
@@ -50,10 +56,10 @@ class CarPoolingUserConf(models.Model):
     '''
     # c_userid = models.CharField("用户id", max_length=128, null=False, blank=False, db_index=True,unique=True )
     c_weixin_id = models.CharField("微信id", max_length=128, null=False, blank=False,db_index=True,unique=True,)
-    c_name = models.CharField("姓名", max_length=128, null=False, blank=False,)
-    c_phone = models.CharField("电话号码" ,max_length=11, null=False, blank=False, )
+    c_name = models.CharField("姓名", max_length=128, null=True, blank=False,)
+    c_phone = models.CharField("电话号码" ,max_length=11, null=True, blank=False, )
     b_phone_status = models.BooleanField("电话号码状态" , null=False, blank=False, default=False,help_text="true,false")
-    i_cumulative_sum = models.SmallIntegerField("累积积分" , null=False, blank=False, default=10)
+    i_cumulative_sum = models.SmallIntegerField("累积积分" , null=True, blank=False, default=10)
     status = models.BooleanField("是否有效" , null=False, blank=False, default=True,help_text="true,false")
 
     class Meta:

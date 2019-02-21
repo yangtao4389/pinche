@@ -155,7 +155,7 @@ def SaveEdit(request):
             assDeatilObj.i_seat = Seat
             assDeatilObj.i_booked_seat = 0
             assDeatilObj.i_cash = Cash
-            assDeatilObj.t_remark = request.POST.get("t_remark")
+            assDeatilObj.t_remark = request.POST.get("Remark")
             assDeatilObj.status = True
             assDeatilObj.save()
         except:
