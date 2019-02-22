@@ -1,62 +1,91 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>来往拼车</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
-    <link type="text/css" rel="stylesheet" href="/Content/css/mobile-angular-ui-base.min.css" />
-    <link type="text/css" rel="stylesheet" href="/Content/css/my-app.css?v=20190219085926" />
-</head>
-<body class="has-navbar-top">
-    <div class="app  orange-app">
-        <!-- 顶部导航栏 -->
-        <div class="navbar navbar-app navbar-absolute-top">
-            <div class="btn-group pull-left">
-                    <a title="关注" class="btn fz-x" onclick="recordon()">
-                        <span class="fa-stack" style="height:2.2em;">
-                            <span class="text-white fz-xxx z-linhg9">关注</span>
-                            <i class="fa fa-heart fa-stack-2x fa-lg z-linhg1"></i>
-                        </span>
-                    </a>
-            </div>
-            <div class="navbar-brand navbar-brand-center">
-                <div class="row">
-                    <div class="col-xs-12 form-bor fz-m linehg50 ">
-                        错误提示
-                    </div>
-                </div>
-                
-            </div>
-            <div class="btn-group pull-right">
-                <a title="首页" class="btn" href="/List">
-                    <i class="fa fa-lg fa-home font-linhg">
-                    </i>
-                </a>
-            </div>
-        </div>
-        <!-- App 主体 -->
-        <div class="app-body">
-            <div class="app-content">
-                <div class="list-group text-center">
 
-                    <div class="list-group-item-home media">
-                        <div>
-                            <i class="fa fa-remove fa-5x text-muted"></i>
-                        </div>
-                        <div class="media-body">
-                            <h3 class="media-heading">
-                                槽糕，出现了错误！
-                            </h3>
-                            抱歉，您请求的处理出错，我们已将错误信息记录，并尽快处理！
-                        </div>
-                    </div>
-                </div>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>来往拼车</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+   <style>
+       .mui-modal{display:none;}
+   </style>
+    
+</head>
+<body>
+    
+
+<header class="mui-bar mui-bar-nav">
+        <a class="mui-pull-left" href="#subscription"><i class="mui-icon hh-icon hh-icon-user-circle"></i></a>
+    <a class="mui-pull-right" onclick="hh.go('/WebApp/Home')"><i class="mui-icon mui-icon-home"></i></a>
+    <h1 class="mui-title">404提示</h1>
+</header>
+<div class="mui-content ">
+    <div class="mui-content-padded mui-text-center">
+        <div style='margin-top: 40%;'>
+            <i class="fa fa-warning fa-5x desc_red"></i>
+            <h1 class="mui-h3 mart10">槽糕，页面找不到了！</h1>
+            <p class="mui-h5 mart10">抱歉，您请求的页面不存在！</p>
+            <p class="mui-h5 mart10">3秒后将回到<a onclick="hh.go('/WebApp/Home')">首页</a>！</p>
+        </div>
+    </div>
+
+</div>
+
+    
+   
+    <!--subscription-->
+    <div id="subscription" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+            <h1 class="mui-title">请先关注公众号</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+            <div class="pad10 mui-text-center ">
+
+                        <p class="mui-text-left mui-h5">
+                            微信“扫一扫”下方二维码。
+                        </p>
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
             </div>
         </div>
     </div>
+   
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+    
+    <script type="text/javascript">
+            mui.init();
+
+            mui.ready(function () {
+                setTimeout(function () {
+                    hh.go("/WebApp/Home");
+                }, 3000);
+            });
+    </script>
+
+    <script>
+        mui.ready(function () {
+            mui(".mui-modal").each(function () {
+                this.style.display = "block";
+            });
+        });
+    </script>
     <script>
 var _hmt = _hmt || [];
 (function() {

@@ -1,0 +1,248 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>来往拼车</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+   <style>
+       .mui-modal{display:none;}
+   </style>
+    
+    <style>
+        .mui-control-content {
+            height: 100%;
+        }
+
+        .mui-bar ~ .mui-content .mui-fullscreen {
+            top: 115px;
+        }
+    </style>
+
+</head>
+<body>
+    
+
+
+<div id="app">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
+        <a class="mui-btn  mui-btn-link mui-pull-right" v-on:click="toggleShowDel()" v-text="showDelTxt">管理</a>
+        <h1 class="mui-title">我的行程</h1>
+    </header>
+    <div class="mui-content">
+        <div class="car-myall-tab">
+            <div class="mui-segmented-control">
+                <a class="mui-control-item mui-active" href="#item1">我是乘客</a>
+                <a class="mui-control-item " v-on:tap="hh.go('/WebApp/UserAss/List')">我是车主</a>
+            </div>
+        </div>
+        <!--section1 begin-->
+        <div class="mui-fullscreen">
+            <div id="item1" class="mui-control-content  mui-active">
+                <div id="scroll" class="mui-scroll-wrapper">
+                    <div class="mui-scroll">
+                        <div class="car-record-list">
+                            <ul>
+                                <template>
+                                    <li v-for="(rec,index) in recList" v-bind:class="{'dis-gray': recStatusTxt(rec.GoTime)!='进行中'}">
+                                        <div class="car-record-text">
+                                            <p><strong>{{rec.StartCity}} -&gt {{rec.EndCity}}</strong></p>
+                                            <p>时间：{{formatGoTime(rec.GoTime)}}</p>
+                                            <p>车主：{{rec.CarOwner}} <a class="desc_red fb border-bottom-dashed" v-bind:href="rec.PhoneUrl">{{rec.Phone}}</a></p>
+                                            <p>人数：{{rec.BookSeat}}人 <span class="padl10">上车点：{{rec.StartPlace}}</span></p>
+                                        </div>
+                                        <div class="car-record-desc">
+                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+rec.Id)">查看</a>
+                                            <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(rec)">删除</a>
+                                            <p v-bind:class="{ 'desc_blue': recStatusTxt(rec.GoTime)=='进行中' }">{{recStatusTxt(rec.GoTime)}}</p>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+                        <div class="car-nodata" style="display:none;" v-show="recList.length==0 && isLastPage">
+                            <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
+                            <h3 class="mart10">暂无预定信息！</h3>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    
+   
+    <!--subscription-->
+    <div id="subscription" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+            <h1 class="mui-title">请先关注公众号</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+            <div class="pad10 mui-text-center ">
+
+                        <p class="mui-text-left mui-h5">
+                            微信“扫一扫”下方二维码。
+                        </p>
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+            </div>
+        </div>
+    </div>
+   
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+    
+    <script type="text/javascript">
+        mui.init({
+            pullRefresh: {
+                container: '#scroll',
+                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
+                up: {
+                    auto: true,
+                    //contentnomore: '没有更多数据了',
+                    callback: function () {
+                        app.getData();
+                    }
+                }
+            }
+        });
+        mui.ready(function () {
+
+        });
+
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                search: {
+                    pageNum: 0,
+                    numPerPage: 20
+                },
+                isLastPage: false,
+                recList: [],
+                isShowDel: false
+            },
+            computed: {
+                showDelTxt: function () {
+                    if (this.isShowDel)
+                        return "取消";
+                    else
+                        return "管理";
+
+                }
+            },
+            methods: {
+                getData: function () {
+
+                    app.search.pageNum++;
+                    mui.post("/WebApp/UserRec/GetList", app.search, function (json) {
+                        app.search.pageNum = json.CurrentPageIndex;
+                        app.isLastPage = json.IsLastPage;
+                        
+
+                        //上拉加载更多
+                        app.recList = app.recList.concat(json.DataSource);
+                        mui('#scroll').pullRefresh().endPullupToRefresh(app.recList.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
+                    });
+                },
+                formatGoTime: function (goTimeStr) {
+                    var gotime = new Date(goTimeStr);
+                    return gotime.Format("MM月dd日 hh:mm");
+                },
+                recStatusTxt: function (goTimeStr)
+                {
+                    var gotime = new Date(goTimeStr);
+                    var timespan = gotime - new Date();
+                    if (timespan > 0) {
+                        return "进行中";
+                    }
+                    else if (timespan > -7200000)//2 * 60 * 60 * 1000
+                    {
+                        return "已出发";
+                    }
+                    else if (timespan <= -7200000) {
+                        return "已完成";
+                    }
+                },
+                toggleShowDel: function () {
+                    this.isShowDel = !this.isShowDel;
+                },
+                del: function (rec) {
+                    var gotime = new Date(rec.GoTime);
+                    var timespan = gotime - new Date();
+                    if (timespan > -7200000) {
+                        mui.alert("只有已完成的行程可以删除！");
+                        return;
+                    }
+
+                    mui.confirm("确定删除？", function (e) {
+                        if (e.index == 1) {
+                            mui.post("/WebApp/UserRec/Del", { id: rec.Id }, function (json) {
+                                if (json.statusCode == "200") {
+                                    mui.toast(json.message);
+                                    for (var i = 0; i < app.recList.length; i++) {
+                                        if (rec.Id == app.recList[i].Id) {
+                                            app.recList.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+
+                                }
+                                else {
+                                    mui.alert(json.message);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+
+    <script>
+        mui.ready(function () {
+            mui(".mui-modal").each(function () {
+                this.style.display = "block";
+            });
+        });
+    </script>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+</body>
+</html>

@@ -7,7 +7,7 @@ from django.shortcuts import render,HttpResponse
 from common import client,checkparam
 from carPooling.models import CarPoolingCity,CarPoolingAssDetail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-
+from common.json_result import RtnDefault,RtnCode
 
 # Create your views here.
 def GetCityList(request):
@@ -69,7 +69,11 @@ def GetHotLine(request):
 
 
 def GetCurTripTip(request):
-    return HttpResponse()
+    dataDict = dict(
+        Type = 2 # 1,预约，2 当前行程（乘客） ，3 当前行程（车主）
+    )
+    return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "预定成功", dataDict), content_type="application/json")
+
 
 def GetAssList(request):
     if request.method == "POST":
@@ -179,4 +183,7 @@ def GetWenxinJsapiConfig():
     '''
     :return: {"debug":false,"appId":"wx56b24a9f02010e10","timestamp":"1550636346","nonceStr":"A7A1ECABE61CFF230F11EC241A825AD6","signature":"1b07f146fc7e34132db3fa0658c1f9ecb33f53fe","jsApiList":null}
     '''
+    return HttpResponse()
+
+def CheckWeiXinSubscribe():
     return HttpResponse()

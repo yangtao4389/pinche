@@ -1,0 +1,3 @@
+### 如果想弹出关注的方法：
+ mui('#subscription')[0].classList.add('mui-active');
+

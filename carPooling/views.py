@@ -91,6 +91,8 @@ def UserRecList(request):
         html = f.read()
     return HttpResponse(html)
 
+
+
 def UserAssEdit(request):
     with open("static/carPooling/src/UserAssEdit.html", 'rb') as f:
         html = f.read()
@@ -106,6 +108,11 @@ def UserCenter(request):
         html = f.read()
     return HttpResponse(html)
 
+
+def UserCenterPhone(request):
+    with open("static/carPooling/src/Phone.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
 
 
 def About(request):

@@ -1,0 +1,404 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>来往拼车</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+   <style>
+       .mui-modal{display:none;}
+   </style>
+    
+    <style>
+        img {
+            pointer-events: none;
+        }
+    </style>
+
+</head>
+<body>
+    
+<div id="app">
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserRec/List')"><span class="mui-icon mui-icon-left-nav"></span>我的行程</a>
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-home"></span></a>
+        <h1 class="mui-title">预订详情</h1>
+    </header>
+    <div class="mui-content">
+        <div class="mui-card">
+            <div class="mui-card-content">
+                <div class="mui-card-content-inner">
+                    <template>
+                        <div class="car-travel-box">
+                            <a href="/WebApp/Home/AssShareTip" v-bind:href="'/WebApp/Home/AssShareTip?id='+rec.AssId" class="mbtn btn-line-red btn-size-b car-travel-btn">出行详情</a>
+                            <div class="car-travel-con">
+                                <p>【车主】 {{rec.CardOwner}}</p>
+                                <p>【车型】 {{rec.BusType}}</p>
+                                <p>【出发时间】 {{hh.formatGoTime(rec.GoTime)}}</p>
+                                <p>【电话】<span class="desc_red f16px fb"><a class="border-bottom-dashed padr10 cRed" v-bind:href="rec.PhoneUrl">{{rec.Phone}}</a></span></p>
+                            </div>
+
+                            <div class="mart20 marb5 text-center mui-row">
+                                    <template v-if="btnShowState==0">
+                                        <div class="mui-col-xs-12 pad5">
+                                            <button disabled="disabled" class="mui-btn mui-btn-block">已退订</button>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="btnShowState==1">
+                                        <div class="mui-col-xs-12 pad5">
+                                            <a v-if="rec.IsComment==1" v-bind:href="'/WebApp/UserComment/ViewComment?recId='+rec.Id" class="mui-btn mui-btn-orange mui-btn-block">查看评价</a>
+                                            <a v-else v-bind:href="'/WebApp/UserComment/Comment?recId='+rec.Id" class="mui-btn mui-btn-orange mui-btn-block">评价车主</a>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="btnShowState==2">
+                                        <div class="mui-col-xs-12 pad5">
+                                            <a href="#unbookModal" class="mui-btn mui-btn-orange mui-btn-block">退订座位</a>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="btnShowState==3">
+                                        <div class="mui-col-xs-6 padr5">
+                                            <button v-on:click="locationSharing()" class="mui-btn mui-btn-block">查看车主位置</button>
+                                        </div>
+                                        <div class="mui-col-xs-6 padl5">
+                                            <a href="#unbookModal" class="mui-btn mui-btn-orange mui-btn-block">退订座位</a>
+                                        </div>
+                                    </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="mui-card-footer">
+                <div class="cGray lh180">
+                    <p>温馨提示：</p>
+                    <p>
+                        1、为营造诚信的拼车氛围，来往拼车实行<a class="desc_red border-bottom-dashed" href="/WebApp/About/UnsubscribeNote">有责退订</a>。
+                    </p>
+                    <p>  2、如您行程改变，尽可能提前退订。临出发前退订会影响诚信值。</p>
+</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--退订-->
+    <div id="unbookModal" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-close mui-pull-right" href="#unbookModal"></a>
+            <h1 class="mui-title">请选择退订原因（车主不可见）</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll">
+            <div class="mui-card">
+                <div class="mui-card-header">退订原因</div>
+                <div class="mui-card-content">
+                    <div class="mui-card-content-inner">
+                        <template v-for="tagTxt in unbookTags">
+                            <span v-on:click="toggleTag(tagTxt)" class="tag" v-bind:class="{'check':unbook.unsubscribeTags.indexOf(tagTxt) > -1}">{{tagTxt}}</span>
+                        </template>
+                    </div>
+                </div>
+             </div>
+
+            <div class="mui-card" v-show="unbook.unsubscribeTags.indexOf('车') > -1">
+                <div class="mui-card-header">
+                    <label>我要投诉</label>
+                    <div class="mui-switch mui-switch-mini" id="mySwitch">
+                        <div class="mui-switch-handle"></div>
+                    </div>
+
+                </div>
+                <div class="mui-card-content" v-show="unbook.hasTouSu">
+                        <div class="mui-input-row">
+                            <textarea placeholder="请说明要投诉的内容，投诉内容仅管理员可见。" id="unsubscribeComplain" v-model="unbook.unsubscribeComplain" maxlength="200" rows="4"></textarea>
+                        </div>
+                </div>
+            </div>
+            
+            <div class="mui-content-padded">
+                <button type="button" class="mui-btn mui-btn-orange mui-btn-block" v-on:click="unbookSubmit()" v-bind:disabled="unbook.saving">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+   
+    <!--subscription-->
+    <div id="subscription" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+            <h1 class="mui-title">请先关注公众号</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+            <div class="pad10 mui-text-center ">
+
+                        <p class="mui-text-left mui-h5">
+                            微信“扫一扫”下方二维码。
+                        </p>
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+            </div>
+        </div>
+    </div>
+   
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+    
+    <script type="text/javascript">
+        mui.init();
+
+        mui.ready(function () {
+            app.getData();
+
+            document.getElementById("mySwitch").addEventListener("toggle", function (event) {
+                app.unbook.hasTouSu = event.detail.isActive;
+                if (!app.unbook.hasTouSu)
+                    app.unbook.unsubscribeComplain = "";
+            });
+
+            if (!mui.os.ios) {
+                document.getElementById("unsubscribeComplain").addEventListener("tap", function (event) {
+                    setTimeout(function () {
+                        mui("#unbookModal .mui-content")[0].scrollTop = 300;
+                    }, 500);
+                });
+            }
+        });
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                rec: {},
+                btnShowState: -1,
+                unbook: {
+                    unsubscribeTags:"",
+                    unsubscribeComplain:"",
+                    hasTouSu: false,
+                    saving:false
+                },
+                unbookTags:"我的行程有变,与车主路线不合适,车主没有座位,联系不上车主,车型不符,车主要求议价,车主不守时,车主让退订座位但依旧坐他的车,其他".split(',')
+            },
+            methods: {
+                getData: function () {
+                    mui.post("/WebApp/UserRec/GetDetailData?id=" + hh.getQueryString("id"), {}, function (json) {
+                        if (json.statusCode == "200") {
+                            app.rec = json.data;
+                           app.setBtnShowState();
+                        }
+                        else {
+                            hh.go("/WebApp/UseRec/List");
+                        }
+                    });
+
+                },
+                setBtnShowState: function () {
+                    if (app.rec) {
+                        if (app.rec.State == 1) {
+                            app.btnShowState= 0;//已退订
+                        }
+                        else if (app.rec.State == 0) {
+                            var gotime = new Date(this.rec.GoTime);
+                            if (new Date() - gotime >= 7200000) {//出发后2小时，显示评价
+                                app.btnShowState = 1;//查看评价
+                            }
+                            else {
+                                if ("1" == "0") {
+                                    app.btnShowState = 2;//只显示退订按钮
+                                }
+                                else {
+                                    app.btnShowState = 3;//显示 位置、退订 按钮
+                                }
+                            }
+                        }
+                    }
+                    else
+                        app.btnShowState = -1;
+
+                },
+                locationSharing: function () {
+                    var gotime = new Date(this.rec.GoTime);
+                    var now = new Date();
+                    var SendTravelStartTime= parseInt("90");
+                    if (now - gotime <= -60000*SendTravelStartTime) {//出去前x分钟，不能查看
+                        mui.alert('您可在出发前' + SendTravelStartTime + '分钟（' + new Date(gotime.getTime() - SendTravelStartTime * 60000).Format("HH:mm") + '之后）查看车主位置', "行程尚未开始")
+                    }
+                    else if (now - gotime >= 3600000) {//出发后1小时，关闭位置
+                        mui.alert('位置共享已关闭！');
+                    }
+                    else {
+                        hh.go("/WebApp/UserAss/Location?assId=" + this.rec.AssId);
+                    }
+                },
+                toggleTag:function(tagTxt){
+                    if (app.unbook.unsubscribeTags.indexOf(tagTxt) > -1) {
+                        app.unbook.unsubscribeTags=app.unbook.unsubscribeTags.replace(',' + tagTxt, '').replace(tagTxt, '');
+                    }
+                    else {
+                        if(app.unbook.unsubscribeTags.length>0)
+                            app.unbook.unsubscribeTags += "," + tagTxt;
+                        else
+                            app.unbook.unsubscribeTags = tagTxt;
+                    }
+                },
+                unbookSubmit: function () {
+
+                    if (app.unbook.unsubscribeTags.length < 1)
+                    {
+                        mui.alert("请选择退订原因");
+                        return;
+                    }
+                    if (app.unbook.hasTouSu && app.unbook.unsubscribeComplain.length < 1)
+                    {
+                        mui.alert("请填写投诉内容", function () {
+                            mui("#unsubscribeComplain")[0].focus();
+                        });
+                        return;
+                    }
+
+
+                    app.unbook.saving = true;
+                    app.unbook.RecId = app.rec.Id;
+                    mui.post("/WebApp/UserRec/UnbookSave", app.unbook, function (json) {
+                        if (json.statusCode == "200") {
+                            mui.alert(json.message, function () {
+                                hh.reload();
+                            });
+                        }
+                        else {
+                            mui.alert(json.message, function () {
+                                app.unbook.saving = false;
+                            });
+                        }
+
+                    });
+                }
+            }
+        });
+
+    </script>
+
+    <script src="/Areas/WebApp/Content/js/jquery.min.js"></script>
+    <script src="/Areas/WebApp/Content/js/jquery.signalR-2.2.3.min.js"></script>
+    <!--动态生成的-->
+            <script>
+        try {
+            $(function () {
+                $.getScript("http://signalr.51bc.cc:8082/signalr/hubs", function () {
+                    var GROUP_NAME = "235dd7c3-342a-4739-a9b9-b82643f3f7e7";
+                    var MY_USER_ID = "4177159e-898c-4cc5-91ac-cc38c62e3c10 ";
+                    var MY_USER_NAME = "小杨";
+                    var MY_PHONE = "18649715651";
+                    var IS_CAR_OWNER = "0";
+                    var pushTimespan = parseInt("10") * 1000;
+                    var signalRHost = "http://signalr.51bc.cc:8082";
+
+                    //日记记录
+                    $.connection.hub.logging = true;
+                    //设置hubs的url
+                    $.connection.hub.url = signalRHost + "/signalr";
+
+                    // 声明一个代理来引用该集线器。
+                    CHAT_HUB = $.connection.chatHub;
+
+                    CHAT_HUB.client.addMessageToPage = function (chatModel) { };
+                    CHAT_HUB.client.updateMarkToPage = function (locationModel) { };
+                    // 启动 connection
+                    $.connection.hub.start().done(function () {
+                        //alert($.connection.hub.transport.name);
+                        //加入组
+                        CHAT_HUB.server.joinGroup({
+                            GroupName: GROUP_NAME,
+                            UserId: MY_USER_ID,
+                            IsCarOwner: IS_CAR_OWNER
+                        });
+
+                        $.post("/WebApp/Home/GetWenxinJsapiConfig").success(function (json) {
+                            json.jsApiList = ["getLocation"];
+                            wx.config(json);
+                            wx.ready(function () {
+                                pushMyLocation();
+                                //美间x秒上传我的位置
+                                setInterval(function () {
+                                    pushMyLocation();
+                                }, pushTimespan);
+
+                            });
+                        });
+
+
+                    });
+                    $.connection.hub.reconnected(function () {
+                        console.log("reconnected");
+                        //加入组
+                        CHAT_HUB.server.joinGroup({
+                            GroupName: GROUP_NAME,
+                            UserId: MY_USER_ID,
+                            IsCarOwner: IS_CAR_OWNER
+                        });
+                    });
+
+                    function pushMyLocation() {
+                        wx.getLocation({
+                            type: 'gcj02',//wgs84 gps坐标，gcj02火星坐标(腾讯)
+                            success: function (res) {
+                                var myLocationModel = {
+                                    UserId: MY_USER_ID,
+                                    IsCarOwner: IS_CAR_OWNER,
+                                    Sender: MY_USER_NAME,
+                                    Msg: "{\"lat\":" + res.latitude + ",\"lng\":" + res.longitude + "}",
+                                    GroupName: GROUP_NAME,
+                                    SendTime: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+                                    Phone: MY_PHONE
+                                };
+                                //发送我的位置到服务器
+                                CHAT_HUB.server.shareToOther(myLocationModel);
+                            }
+                        });
+                    }
+                });
+
+            });
+        } catch (e) {
+            console.log(e);
+        }
+
+            </script>
+
+    <script>
+        mui.ready(function () {
+            mui(".mui-modal").each(function () {
+                this.style.display = "block";
+            });
+        });
+    </script>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+</body>
+</html>

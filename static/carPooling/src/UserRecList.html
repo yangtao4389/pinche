@@ -8,7 +8,7 @@
 
     <meta charset="UTF-8" />
 
-    <title>UserAssList</title>
+    <title>UserRecList</title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 
@@ -85,9 +85,9 @@
 
             <div class="mui-segmented-control">
 
-                <a class="mui-control-item" v-on:tap="hh.go('/WebApp/UserRec/List')">我是乘客</a>
+                <a class="mui-control-item  mui-active" >我是乘客</a>
 
-                <a class="mui-control-item mui-active" href="#item2">我是车主</a>
+                <a class="mui-control-item" v-on:tap="hh.go('/WebApp/UserRec/List')">我是车主</a>
 
             </div>
 
@@ -117,13 +117,13 @@
 
                                             <p>时间：{{formatGoTime(ass.GoTime)}}</p>
 
-                                            <p v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">订座/余座：<span class="border-bottom-dashed">{{ass.BookedSeat}}人/{{ass.Seat}}人</span><i class="hh-icon hh-icon-wenhao ver_btm"></i></p>
+                                            <p v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+ass.Id)">订座/余座：<span class="border-bottom-dashed">{{ass.BookedSeat}}人/{{ass.Seat}}人</span><i class="hh-icon hh-icon-wenhao ver_btm"></i></p>
 
                                         </div>
 
                                         <div class="car-record-desc">
 
-                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">{{assStatusTxt(ass.GoTime,ass.Status)=='进行中'?"编辑":"查看"}}</a>
+                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+ass.Id)">{{assStatusTxt(ass.GoTime,ass.Status)=='进行中'?"编辑":"查看"}}</a>
 
                                             <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(ass)">删除</a>
 
@@ -201,7 +201,7 @@
 
                         </p>
 
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
 
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
 
@@ -307,7 +307,7 @@
 
                     app.search.pageNum++;
 
-                    mui.post("/WebApp/UserAss/GetList", app.search, function (json) {
+                    mui.post("/WebApp/UserRec/GetList", app.search, function (json) {
 
                         app.search.pageNum = json.CurrentPageIndex;
 
@@ -399,7 +399,7 @@
 
                         if (e.index == 1) {
 
-                            mui.post("/WebApp/UserAss/Del", { id: ass.Id }, function (json) {
+                            mui.post("/WebApp/UserRec/Del", { id: ass.Id }, function (json) {
 
                                 if (json.statusCode == "200") {
 

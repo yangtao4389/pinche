@@ -123,3 +123,25 @@ class CarPoolingCity(models.Model):
     @property
     def list_field(self):
         return ['c_fullname', 'c_firstname', 'status']
+
+
+
+class CarPoolingRecDetail(models.Model):
+    '''
+    乘客与行程关联表，暂时用非关联表，直接存放必要字段即可。
+    '''
+    c_id = models.CharField("行程唯一id", max_length=128, null=False, blank=False, unique=True, db_index=True)
+    c_userid = models.CharField("乘客id", max_length=128, null=False, blank=False, db_index=True)
+    c_assid = models.CharField("行程id", max_length=128, null=False, blank=False, db_index=True)
+    t_remark = models.TextField("备注", null=True, blank=False, default='')
+    i_booked_seat = models.SmallIntegerField("预定座位数", null=False, blank=True)
+    c_phone = models.CharField("电话号码", max_length=11, null=True, blank=False, )
+    i_status = models.SmallIntegerField("行程状态",null=False,help_text=("0:取消行程，1:进行中，2：已出发，3：已完成"))
+    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
+    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
+    status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
+
+    class Meta:
+        db_table = "carpooling_rec_detail"
+        verbose_name_plural = "乘客行程关联表"
+        unique_together = ["c_assid","c_userid"]  # 一个用户最多关联一次该行程

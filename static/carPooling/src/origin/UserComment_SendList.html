@@ -1,0 +1,190 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>来往拼车</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+   <style>
+       .mui-modal{display:none;}
+   </style>
+    
+    <style>
+        .mui-control-content {
+            height: 100%;
+        }
+
+        .mui-bar ~ .mui-content .mui-fullscreen {
+            top: 115px;
+        }
+    </style>
+
+</head>
+<body>
+    
+
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
+    <h1 class="mui-title">我的评价</h1>
+</header>
+<div class="mui-content" id="app">
+    <div class="car-myall-tab">
+        <div class="mui-segmented-control">
+            <a class="mui-control-item mui-active" href="#item1">我发出的</a>
+            <a class="mui-control-item " v-on:tap="hh.go('/WebApp/UserComment/RecvList')">我收到的</a>
+        </div>
+    </div>
+    <!--section1 begin-->
+    <div class="mui-fullscreen">
+        <div id="item1" class="mui-control-content  mui-active">
+            <div id="scroll" class="mui-scroll-wrapper">
+                <div class="mui-scroll">
+                    <div class="car-evaluate-list">
+                        <ul>
+                            <template>
+                                <li v-for="item in list" >
+                                    <div class="car-evaluate-con">
+                                        <div class="car-evaluate-pic">
+                                            <img src="http://thirdwx.qlogo.cn/mmopen/7mqA5zvhhKa7mLMF5WEWeORyKG0GEfhq2hRrgib3aKGGn2GPAm2Xunial4rTLnTibEgmtvcudibC0T5dru92k8aBmBZSKwpp5LE9/132">
+                                        </div>
+                                        <div class="car-evaluate-tit">
+                                            <h3>小杨<span class="cGray pad10">{{hh.formatTime(item.AddTime,'yyyy-MM-dd')}}</span></h3>
+                                            <p><span class="marr10 desc_red" v-bind:class="{'hidden':item.Score==0}"><i class="hh-icon hh-icon-good"></i> 满意</span><span v-bind:class="{'hidden':item.Score==1}" class="desc_999"><i class="hh-icon hh-icon-bad"></i> 吐槽</span></p>
+                                        </div>
+                                        <a class="mbtn btn-size-b" v-on:tap="hh.go('/WebApp/UserComment/ViewComment?id='+item.Id)">查看</a>
+                                    </div>
+                                    <div class="car-evaluate-text">
+                                        {{item.Context}}
+                                    </div>
+                                    <div class="car-evaluate-reply" v-if="item.ReplyTime">
+                                        <span class="desc_red padr10">车主回复({{hh.formatTime(item.ReplyTime,'yyyy-MM-dd')}})：</span>{{item.Reply}}
+                                    </div>
+
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                    <div class="car-nodata" style="display:none;" v-show="list.length==0 && isLastPage">
+                        <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
+                        <h3 class="mart10">暂无发出评价！</h3>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+    
+   
+    <!--subscription-->
+    <div id="subscription" class="mui-modal">
+        <header class="mui-bar mui-bar-nav">
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+            <h1 class="mui-title">请先关注公众号</h1>
+        </header>
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+            <div class="pad10 mui-text-center ">
+
+                        <p class="mui-text-left mui-h5">
+                            微信“扫一扫”下方二维码。
+                        </p>
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+            </div>
+        </div>
+    </div>
+   
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+    
+    <script type="text/javascript">
+        mui.init({
+            pullRefresh: {
+                container: '#scroll',
+                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
+                up: {
+                    auto: true,
+                    callback: function () {
+                        app.getData();
+                    }
+                }
+            }
+        });
+        mui.ready(function () {
+
+        });
+
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                search: {
+                    pageNum: 0,
+                    numPerPage: 20
+                },
+                isLastPage: false,
+                list: []
+            },
+            methods: {
+                getData: function () {
+
+                    app.search.pageNum++;
+                    mui.post("/WebApp/UserComment/GetSendList", app.search, function (json) {
+                        app.search.pageNum = json.CurrentPageIndex;
+                        app.isLastPage = json.IsLastPage;
+
+                        //上拉加载更多
+                        app.list = app.list.concat(json.DataSource);
+                        mui('#scroll').pullRefresh().endPullupToRefresh(app.list.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
+                    });
+                }
+                
+            }
+        });
+    </script>
+
+    <script>
+        mui.ready(function () {
+            mui(".mui-modal").each(function () {
+                this.style.display = "block";
+            });
+        });
+    </script>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+    
+</body>
+</html>

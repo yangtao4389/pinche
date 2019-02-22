@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include,re_path
 from django.conf.urls import url
-from carPooling import views,api_home,error,api_userass
+from carPooling import views,api_home,error,api_userass,api_account,api_userrec
 
 # 静态页面
 urlpatterns = [
@@ -28,15 +28,17 @@ urlpatterns = [
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
 
     url(r"^UserAss/Publish$", views.UserAssPublish),  # 发布行程
-    url(r"^UserAss/Detail", views.UserAssDetail),  # 发布行程
+    url(r"^UserAss/Detail", views.UserAssDetail),  #
     url(r"^UserAss/Edit$", views.UserAssEdit),  # 车主行程编辑
 
     url(r"^UserAss/List$", views.UserAssList),   #  我的行程列表  我是车主
     url(r"^UserRec/List$", views.UserRecList),  #  我的行程列表  我是乘客
+    url(r"^UserRec/Detail$", views.UserRecDetail),  #  我的行程  我是乘客 行程详情
 
 
 
     url(r"^UserCenter$", views.UserCenter),  #  个人中心
+    url(r"^UserCenter/Phone$", views.UserCenterPhone),  #  关于电话的绑定与修改地址
 
     url(r"^About$", views.About),  #  乘车协议
 
@@ -51,6 +53,7 @@ urlpatterns += [
     url(r"^Home/GetCurTripTip$", api_home.GetCurTripTip),
     url(r"^Home/GetAssList$", api_home.GetAssList),
     url(r"^Home/GetWenxinJsapiConfig$", api_home.GetWenxinJsapiConfig),
+    url(r"^Home/CheckWeiXinSubscribe$", api_home.CheckWeiXinSubscribe),
 ]
 
 urlpatterns += [
@@ -61,6 +64,20 @@ urlpatterns += [
     url(r"^UserAss/SavePublish", api_userass.SavePublish),  # 保存
     url(r"^UserAss/GetList", api_userass.GetList),  # 保存
     url(r"^UserAss/Del", api_userass.Del),  # 保存
+]
+urlpatterns += [
+    url(r"^UserRec/SaveBook", api_userrec.SaveBook),  # 乘客订座接口
+    url(r"^UserRec/GetList", api_userrec.GetList),  # 乘客订座接口
+]
+
+
+
+urlpatterns += [
+    url(r"^UserCenter/GetPhoneStatus", api_account.PhoneStatus),  # 保存
+    # url(r"^UserCenter/GetVerifyCodeImg", api_account.GetVerifyCodeImg),  # 获取手机验证图片
+    url(r"^UserCenter/GetUserInfo", api_account.GetUserInfo),  # 获取用户信息，全局用
+    url(r"^UserCenter/GetCodeLogin", api_account.GetCodeLogin),  # 获取用户信息，全局用
+    url(r"^UserCenter/SavePhone", api_account.SavePhone),  # 保存号码跟用户真实姓名
 ]
 
 
