@@ -68,6 +68,7 @@ urlpatterns += [
 urlpatterns += [
     url(r"^UserRec/SaveBook", api_userrec.SaveBook),  # 乘客订座接口
     url(r"^UserRec/GetList", api_userrec.GetList),  # 乘客订座接口
+    url(r"^UserRec/GetDetailData", api_userrec.GetDetailData),  # 获取通用数据
 ]
 
 

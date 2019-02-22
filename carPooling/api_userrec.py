@@ -76,3 +76,6 @@ def SaveBook(request):
 def GetList(request):
     pass
 
+def GetDetailData(request):
+    pass
+

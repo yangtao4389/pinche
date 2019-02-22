@@ -1,8 +1,9 @@
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
-from common import uuid_maker,client
-from carPooling.models import CarPoolingUserConf,CarPoolingAssDetail
+from common import uuid_maker, client
+from carPooling.models import CarPoolingUserConf, CarPoolingAssDetail
 from logging import getLogger
+
 logger = getLogger("default")
 
 
@@ -23,7 +24,7 @@ def Login(request):
     try:
         c_weixin_id = "xxxxx"
         CarPoolingUserConf.objects.get_or_create(c_weixin_id=c_weixin_id)
-        request.session["c_weixin_id"] =c_weixin_id
+        request.session["c_weixin_id"] = c_weixin_id
         # print(client.get_client_previous_url(request))
         # return HttpResponseRedirect(client.get_client_previous_url(request))
         return HttpResponseRedirect("/WebApp/Home")
@@ -34,12 +35,11 @@ def Login(request):
         return HttpResponse(html)
 
 
-
-
 def AssList(request):
     with open("static/carPooling/src/Asslist.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)
+
 
 def AssShareTip(request):
     with open("static/carPooling/src/AssShareTip.html", 'rb') as f:
@@ -47,21 +47,22 @@ def AssShareTip(request):
     return HttpResponse(html)
 
 
-
 def UserAssPublish(request):
     id = request.GET.get("id")
     if not id:
-        #todo 去数据库查询当前的状态，如果有发布信息，则返回当前车程状态，未发布，则创建新的id.
+        # todo 去数据库查询当前的状态，如果有发布信息，则返回当前车程状态，未发布，则创建新的id.
         userid = request.session["c_weixin_id"]
-        currentAss = CarPoolingAssDetail.objects.filter(c_userid=userid).filter(status=True).filter(d_go_time__gte=datetime.now()-timedelta(hours=2))
-        if len(currentAss)>0:
-            if len(currentAss)>1:
-                logger.exception("当前用户：%s当前时间段:%s存在多个行程"%(userid,datetime.now()))
+        currentAss = CarPoolingAssDetail.objects.filter(c_userid=userid).filter(status=True).filter(
+            d_go_time__gte=datetime.now() - timedelta(hours=2))
+        if len(currentAss) > 0:
+            if len(currentAss) > 1:
+                logger.exception("当前用户：%s当前时间段:%s存在多个行程" % (userid, datetime.now()))
                 return HttpResponse("请联系管理员")
-            return HttpResponseRedirect("/WebApp/UserAss/Detail?id=%s"% currentAss[0].c_id)
+            return HttpResponseRedirect("/WebApp/UserAss/Detail?id=%s" % currentAss[0].c_id)
 
         id = uuid_maker.get_uuid_random()
-        return HttpResponseRedirect(client.get_client_current_path(request)+"?" + client.get_client_query_str(request) + "id="+id)
+        return HttpResponseRedirect(
+            client.get_client_current_path(request) + "?" + client.get_client_query_str(request) + "id=" + id)
     else:
         # 有id，验证来源,如果是存在的，那么就代表是分享过后的返回
         try:
@@ -71,6 +72,7 @@ def UserAssPublish(request):
             with open("static/carPooling/src/UserAssPublish.html", 'rb') as f:
                 html = f.read()
             return HttpResponse(html)
+
 
 def UserAssDetail(request):
     id = request.GET.get("id")
@@ -86,12 +88,6 @@ def UserAssList(request):
         html = f.read()
     return HttpResponse(html)
 
-def UserRecList(request):
-    with open("static/carPooling/src/UserRecList.html", 'rb') as f:
-        html = f.read()
-    return HttpResponse(html)
-
-
 
 def UserAssEdit(request):
     with open("static/carPooling/src/UserAssEdit.html", 'rb') as f:
@@ -99,8 +95,16 @@ def UserAssEdit(request):
     return HttpResponse(html)
 
 
+def UserRecList(request):
+    with open("static/carPooling/src/UserRecList.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
 
 
+def UserRecDetail(request):
+    with open("static/carPooling/src/UserRecDetail.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
 
 
 def UserCenter(request):
