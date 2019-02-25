@@ -2,12 +2,14 @@ import json
 import requests
 import traceback
 import time
+from enum import Enum
 from datetime import datetime
 from django.shortcuts import render,HttpResponse
 from common import client,checkparam
-from carPooling.models import CarPoolingCity,CarPoolingAssDetail
+from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from common.json_result import RtnDefault,RtnCode
+from carPooling.globalApi import commonGetCurTripTip
 
 # Create your views here.
 def GetCityList(request):
@@ -68,11 +70,25 @@ def GetHotLine(request):
         return HttpResponse(json.dumps(hotlineList), content_type="application/json")
 
 
+
+
+
+
 def GetCurTripTip(request):
-    dataDict = dict(
-        Type = 2 # 1,预约，2 当前行程（乘客） ，3 当前行程（车主）
-    )
-    return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "预定成功", dataDict), content_type="application/json")
+    '''
+     Type = 2 # 1,预约，2 当前行程（乘客） ，3 当前行程（车主）
+    :param request:
+    :return:
+    '''
+    userid = request.session["c_weixin_id"]
+    dataresult = commonGetCurTripTip(userid)
+    print(dataresult)
+    if dataresult.get("result") == 0:
+        return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok", dataresult), content_type="application/json")
+    else:
+        return HttpResponse()
+
+
 
 
 def GetAssList(request):

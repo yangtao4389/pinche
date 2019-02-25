@@ -141,11 +141,11 @@
                     <div class="car-banner"><h2><i class="hh-icon hh-icon-dizhi"></i>当前行程</h2></div>
                     <div class="car-home-trip">
                         <div class="car-home-trip-box">
-                            <h3 v-on:click="hh.go('/UserRec/Detail?id='+curRec.Id)">{{curRec.StartCity}} -&gt;
+                            <h3 v-on:click="hh.go('/WebApp/UserRec/Detail?id='+curRec.Id)">{{curRec.StartCity}} -&gt;
                                 {{curRec.EndCity}}<span>{{formatGoTime(curRec.GoTime)}}</span></h3>
                             <p>行程进行中<i class="fa fa-spinner fa-spin"></i></p>
                             <span class="mbtn car-home-trip-btn"
-                                  v-on:click="hh.go('/UserRec/Detail?id='+curRec.Id)">查看</span>
+                                  v-on:click="hh.go('/WebApp/UserRec/Detail?id='+curRec.Id)">查看</span>
                         </div>
                     </div>
                 </div>
@@ -153,12 +153,12 @@
                     <div class="car-banner"><h2><i class="hh-icon hh-icon-dizhi"></i>当前行程</h2></div>
                     <div class="car-home-trip">
                         <div class="car-home-trip-box">
-                            <h3 v-on:click="hh.go('/UserAss/Detail?id='+curAss.Id)">{{curAss.StartCity}} -&gt;
+                            <h3 v-on:click="hh.go('/WebApp/UserAss/Detail?id='+curAss.Id)">{{curAss.StartCity}} -&gt;
                                 {{curAss.EndCity}}<span>{{formatGoTime(curAss.GoTime)}}</span></h3>
                             <p>订/余座：{{curAss.BookedSeat}}/{{curAss.Seat}}人 &nbsp;&nbsp;&nbsp;&nbsp;行程进行中<i
                                     class="fa fa-spinner fa-spin"></i></p>
                             <span class="mbtn car-home-trip-btn"
-                                  v-on:click="hh.go('/UserAss/Detail?id='+curAss.Id)">查看</span>
+                                  v-on:click="hh.go('/WebApp/UserAss/Detail?id='+curAss.Id)">查看</span>
                         </div>
                     </div>
                 </div>

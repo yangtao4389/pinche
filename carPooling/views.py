@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from common import uuid_maker, client
 from carPooling.models import CarPoolingUserConf, CarPoolingAssDetail
+from carPooling.globalApi import commonGetCurTripTip
 from logging import getLogger
-
 logger = getLogger("default")
 
 
@@ -22,7 +22,8 @@ def Login(request):
     :return:
     '''
     try:
-        c_weixin_id = "xxxxx"
+        # c_weixin_id = "xxxxx"
+        c_weixin_id = uuid_maker.get_uuid_random()
         CarPoolingUserConf.objects.get_or_create(c_weixin_id=c_weixin_id)
         request.session["c_weixin_id"] = c_weixin_id
         # print(client.get_client_previous_url(request))
@@ -52,13 +53,9 @@ def UserAssPublish(request):
     if not id:
         # todo 去数据库查询当前的状态，如果有发布信息，则返回当前车程状态，未发布，则创建新的id.
         userid = request.session["c_weixin_id"]
-        currentAss = CarPoolingAssDetail.objects.filter(c_userid=userid).filter(status=True).filter(
-            d_go_time__gte=datetime.now() - timedelta(hours=2))
-        if len(currentAss) > 0:
-            if len(currentAss) > 1:
-                logger.exception("当前用户：%s当前时间段:%s存在多个行程" % (userid, datetime.now()))
-                return HttpResponse("请联系管理员")
-            return HttpResponseRedirect("/WebApp/UserAss/Detail?id=%s" % currentAss[0].c_id)
+        dataresult = commonGetCurTripTip(userid)
+        if dataresult.get("result") == 0:
+            return HttpResponseRedirect(dataresult.get("redirectUrl"))
 
         id = uuid_maker.get_uuid_random()
         return HttpResponseRedirect(

@@ -61,10 +61,10 @@ urlpatterns += [
 
 urlpatterns += [
     url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取通用数据 不进行任何判断
+    url(r"^UserAss/SavePublish$", api_userass.SavePublish),  # 保存
     url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
     url(r"^UserAss/Cancel$", api_userass.Cancel),  # 取消
     url(r"^UserAss/SaveEdit$", api_userass.SaveEdit),  # 保存
-    url(r"^UserAss/SavePublish$", api_userass.SavePublish),  # 保存
     url(r"^UserAss/GetList$", api_userass.GetList),  # 保存
     url(r"^UserAss/Del$", api_userass.Del),  # 保存
 ]

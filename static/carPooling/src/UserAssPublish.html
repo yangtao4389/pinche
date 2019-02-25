@@ -431,31 +431,7 @@
             app.getDefault();
 
 
-            setTimeout(function () {
 
-                if ("0"=="1") {
-
-                    mui.alert("您的信用额度已用完，请支付信息费。如有疑问，请联系【来往拼车】微信客服。", function () {
-
-                        hh.go("/WebApp/UserCenter");
-
-                    });
-
-                }
-
-                else if ("1" == "0") {
-
-                    mui.alert("你已被管理员列入黑名单，请联系【来往拼车】微信客服。", function () {
-
-                        hh.go("/WebApp/UserCenter");
-
-                    });
-
-                }
-
-                
-
-            },200);
 
         });
 
@@ -955,53 +931,53 @@
 
                     //======= 拼车最高价=========
 
-                    var startCity = app.ass.StartCity;
-
-                    var endCity = app.ass.EndCity;
-
-                    var lineFeeMax = "0";
-
-                    var lineFeeList = eval('([{"Item1":"重庆","Item2":"巴中","Item3":"100","Item4":"120"},{"Item1":"重庆","Item2":"忠县","Item3":"60","Item4":"60"},{"Item1":"成都","Item2":"巴中","Item3":"100","Item4":"100"},{"Item1":"成都","Item2":"南江","Item3":"120","Item4":"130"},{"Item1":"南江","Item2":"巴中","Item3":"20","Item4":"30"},{"Item1":"重庆","Item2":"垫江","Item3":"40","Item4":"50"},{"Item1":"重庆","Item2":"万州","Item3":"80","Item4":"80"}])');
-
-                    for (var i = 0; i < lineFeeList.length; i++) {
-
-                        if ((lineFeeList[i].Item1 == startCity && lineFeeList[i].Item2 == endCity) || (lineFeeList[i].Item2 == startCity && lineFeeList[i].Item1 == endCity)) {
-
-                            lineFeeMax = lineFeeList[i].Item4;
-
-                            break;
-
-                        }
-
-                    }
-
-                    if (lineFeeMax > 0 && parseFloat(app.ass.Cash) > parseFloat(lineFeeMax)) {//提示一口价
-
-                        var tipHtml = "<p>【" + startCity + "-" + endCity + "】顺风车，最高价格是【" + lineFeeMax + "】元。您是否同意，发布【" + lineFeeMax + "】元的顺风车信息？</p>";
-
-                        mui.confirm(tipHtml, "", ["不同意", "我同意"], function (e) {
-
-                            if (e.index == 1) {//ok
-
-                                app.ass.Cash = lineFeeMax;
-
-                                assPost();
-
-                            }
-
-                            else {//cancel
-
-                                app.saving = false;
-
-                                return;
-
-                            }
-
-                        });
-
-                        return;
-
-                    }
+//                    var startCity = app.ass.StartCity;
+//
+//                    var endCity = app.ass.EndCity;
+//
+//                    var lineFeeMax = "0";
+//
+//                    var lineFeeList = eval('([{"Item1":"重庆","Item2":"巴中","Item3":"100","Item4":"120"},{"Item1":"重庆","Item2":"忠县","Item3":"60","Item4":"60"},{"Item1":"成都","Item2":"巴中","Item3":"100","Item4":"100"},{"Item1":"成都","Item2":"南江","Item3":"120","Item4":"130"},{"Item1":"南江","Item2":"巴中","Item3":"20","Item4":"30"},{"Item1":"重庆","Item2":"垫江","Item3":"40","Item4":"50"},{"Item1":"重庆","Item2":"万州","Item3":"80","Item4":"80"}])');
+//
+//                    for (var i = 0; i < lineFeeList.length; i++) {
+//
+//                        if ((lineFeeList[i].Item1 == startCity && lineFeeList[i].Item2 == endCity) || (lineFeeList[i].Item2 == startCity && lineFeeList[i].Item1 == endCity)) {
+//
+//                            lineFeeMax = lineFeeList[i].Item4;
+//
+//                            break;
+//
+//                        }
+//
+//                    }
+//
+//                    if (lineFeeMax > 0 && parseFloat(app.ass.Cash) > parseFloat(lineFeeMax)) {//提示一口价
+//
+//                        var tipHtml = "<p>【" + startCity + "-" + endCity + "】顺风车，最高价格是【" + lineFeeMax + "】元。您是否同意，发布【" + lineFeeMax + "】元的顺风车信息？</p>";
+//
+//                        mui.confirm(tipHtml, "", ["不同意", "我同意"], function (e) {
+//
+//                            if (e.index == 1) {//ok
+//
+//                                app.ass.Cash = lineFeeMax;
+//
+//                                assPost();
+//
+//                            }
+//
+//                            else {//cancel
+//
+//                                app.saving = false;
+//
+//                                return;
+//
+//                            }
+//
+//                        });
+//
+//                        return;
+//
+//                    }
 
 
 

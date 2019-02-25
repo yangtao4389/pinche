@@ -1,7 +1,14 @@
 from django.db import models
 from xpinyin import Pinyin
 # Create your models here.
-
+class CurTripStatus():
+    '''
+    当前行程状态
+    '''
+    Cancel = 0  # 取消
+    Ing = 1 # 行程进行中
+    Gone = 2 # 行程已出发
+    Done = 3 # 完成
 
 class StatusTrueManager(models.Manager):
     '''
@@ -30,7 +37,7 @@ class CarPoolingAssDetail(models.Model):
     i_no_booked_seat = models.SmallIntegerField("剩余座位", null=False, blank=False,db_index=True)
     i_cash = models.IntegerField("费用", null=True, blank=False, default=0)
     t_remark = models.TextField("备注",  null=True, blank=False, default='')
-    i_status = models.SmallIntegerField("行程状态",null=True,help_text=("0:取消行程，1:进行中，2：已出发，3：已完成"))
+    i_status = models.SmallIntegerField("行程状态",null=True,help_text=("参考CurTripStatus"))
     update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
     status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
@@ -141,7 +148,7 @@ class CarPoolingRecDetail(models.Model):
     t_remark = models.TextField("备注", null=True, blank=False, default='')
     i_booked_seat = models.SmallIntegerField("预定座位数", null=False, blank=True)
     c_phone = models.CharField("电话号码", max_length=11, null=True, blank=False, )
-    i_status = models.SmallIntegerField("行程状态",null=False,help_text=("0:取消行程，1:进行中，2：已出发，3：已完成"))
+    i_status = models.SmallIntegerField("行程状态",null=False,help_text=("参考CurTripStatus"))
     update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
     status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
