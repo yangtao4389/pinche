@@ -8,7 +8,7 @@
 
     <meta charset="UTF-8" />
 
-    <title>UserRecList</title>
+    <title>来往拼车</title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 
@@ -18,11 +18,9 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    <link href="/static/carPooling/images/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+     <link href="/static/carPooling/images/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
 
-
-
-     <!--标准mui.css-->
+    <!--标准mui.css-->
     <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.min.css">
     <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.showLoading.css">
     <!--字体的css-->
@@ -39,21 +37,21 @@
 
     
 
- <style>
+    <style>
 
-     .mui-control-content {
+        .mui-control-content {
 
-         height:100%;
+            height: 100%;
 
-     }
+        }
 
-     .mui-bar~.mui-content .mui-fullscreen {
 
-				top: 115px;
 
-			}
+        .mui-bar ~ .mui-content .mui-fullscreen {
 
-    
+            top: 115px;
+
+        }
 
     </style>
 
@@ -64,6 +62,8 @@
 <body>
 
     
+
+
 
 
 
@@ -85,9 +85,9 @@
 
             <div class="mui-segmented-control">
 
-                <a class="mui-control-item  mui-active" >我是乘客</a>
+                <a class="mui-control-item mui-active" href="#item1">我是乘客</a>
 
-                <a class="mui-control-item" v-on:tap="hh.go('/WebApp/UserRec/List')">我是车主</a>
+                <a class="mui-control-item " v-on:tap="hh.go('/WebApp/UserAss/List')">我是车主</a>
 
             </div>
 
@@ -97,7 +97,7 @@
 
         <div class="mui-fullscreen">
 
-            <div id="item2" class="mui-control-content  mui-active">
+            <div id="item1" class="mui-control-content  mui-active">
 
                 <div id="scroll" class="mui-scroll-wrapper">
 
@@ -109,25 +109,27 @@
 
                                 <template>
 
-                                    <li v-for="(ass,index) in assList" v-bind:class="{'dis-gray': assStatusTxt(ass.GoTime,ass.Status)!='进行中'}">
+                                    <li v-for="(rec,index) in recList" v-bind:class="{'dis-gray': recStatusTxt(rec.GoTime)!='进行中'}">
 
                                         <div class="car-record-text">
 
-                                            <p><strong>{{ass.StartCity}} -&gt {{ass.EndCity}}</strong></p>
+                                            <p><strong>{{rec.StartCity}} -&gt {{rec.EndCity}}</strong></p>
 
-                                            <p>时间：{{formatGoTime(ass.GoTime)}}</p>
+                                            <p>时间：{{formatGoTime(rec.GoTime)}}</p>
 
-                                            <p v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+ass.Id)">订座/余座：<span class="border-bottom-dashed">{{ass.BookedSeat}}人/{{ass.Seat}}人</span><i class="hh-icon hh-icon-wenhao ver_btm"></i></p>
+                                            <p>车主：{{rec.CarOwner}} <a class="desc_red fb border-bottom-dashed" v-bind:href="rec.PhoneUrl">{{rec.Phone}}</a></p>
+
+                                            <p>人数：{{rec.BookSeat}}人 <span class="padl10">上车点：{{rec.StartPlace}}</span></p>
 
                                         </div>
 
                                         <div class="car-record-desc">
 
-                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+ass.Id)">{{assStatusTxt(ass.GoTime,ass.Status)=='进行中'?"编辑":"查看"}}</a>
+                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Detail?id='+rec.Id)">查看</a>
 
-                                            <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(ass)">删除</a>
+                                            <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(rec)">删除</a>
 
-                                            <p v-bind:class="{ 'desc_blue': assStatusTxt(ass.GoTime,ass.Status)=='进行中' }">{{assStatusTxt(ass.GoTime,ass.Status)}}</p>
+                                            <p v-bind:class="{ 'desc_blue': recStatusTxt(rec.GoTime)=='进行中' }">{{recStatusTxt(rec.GoTime)}}</p>
 
                                         </div>
 
@@ -139,17 +141,17 @@
 
                         </div>
 
-                        <div class="car-nodata" style="display:none;" v-show="assList.length==0 && isLastPage">
+                        <div class="car-nodata" style="display:none;" v-show="recList.length==0 && isLastPage">
 
                             <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
 
-                            <h3 class="mart10">暂无发布信息！</h3>
+                            <h3 class="mart10">暂无预定信息！</h3>
 
                         </div>
 
                     </div>
 
-                    
+                   
 
                 </div>
 
@@ -201,7 +203,7 @@
 
                         </p>
 
-                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
+                 <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
 
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
 
@@ -215,7 +217,7 @@
 
 
 
-    <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+       <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/vue.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/app.js" type="text/javascript" charset="utf-8"></script>
@@ -251,13 +253,13 @@
 
         mui.ready(function () {
 
-            
+
 
         });
 
-      
 
-       
+
+
 
         var app = new Vue({
 
@@ -275,7 +277,7 @@
 
                 isLastPage: false,
 
-                assList: [],
+                recList: [],
 
                 isShowDel: false
 
@@ -309,17 +311,24 @@
 
                     mui.post("/WebApp/UserRec/GetList", app.search, function (json) {
 
-                        app.search.pageNum = json.CurrentPageIndex;
+                        if(json.statusCode == "200"){
+                             app.search.pageNum = json.data.CurrentPageIndex;
 
-                        app.isLastPage = json.IsLastPage;
+                            app.isLastPage = json.data.IsLastPage;
 
 
+                            //上拉加载更多
 
-                        //上拉加载更多
+                            app.recList = app.recList.concat(json.data.DataSource);
 
-                        app.assList = app.assList.concat(json.DataSource);
+                        }else {
+                            app.isLastPage = true;
+                            app.recList = [];
 
-                        mui('#scroll').pullRefresh().endPullupToRefresh(app.assList.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
+                        }
+
+
+                        mui('#scroll').pullRefresh().endPullupToRefresh(app.recList.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
 
                     });
 
@@ -333,43 +342,33 @@
 
                 },
 
-                assStatusTxt: function (goTimeStr,status)
+                recStatusTxt: function (goTimeStr)
 
                 {
 
-                    if (status == 0) {
+                    var gotime = new Date(goTimeStr);
 
-                        return "已撤下";
+                    var timespan = gotime - new Date();
 
-                    } else {
+                    if (timespan > 0) {
 
-                        var gotime = new Date(goTimeStr);
-
-                        var timespan = gotime - new Date();
-
-                        if (timespan > 0) {
-
-                            return "进行中";
-
-                        }
-
-                        else if (timespan > -7200000)//2 * 60 * 60 * 1000
-
-                        {
-
-                            return "已出发";
-
-                        }
-
-                        else if (timespan <= -7200000) {
-
-                            return "已完成";
-
-                        }
+                        return "进行中";
 
                     }
 
-                    
+                    else if (timespan > -7200000)//2 * 60 * 60 * 1000
+
+                    {
+
+                        return "已出发";
+
+                    }
+
+                    else if (timespan <= -7200000) {
+
+                        return "已完成";
+
+                    }
 
                 },
 
@@ -379,9 +378,9 @@
 
                 },
 
-                del: function ( ass) {
+                del: function (rec) {
 
-                    var gotime = new Date(ass.GoTime);
+                    var gotime = new Date(rec.GoTime);
 
                     var timespan = gotime - new Date();
 
@@ -393,29 +392,31 @@
 
                     }
 
-                    
+
 
                     mui.confirm("确定删除？", function (e) {
 
                         if (e.index == 1) {
 
-                            mui.post("/WebApp/UserRec/Del", { id: ass.Id }, function (json) {
+                            mui.post("/WebApp/UserRec/Del", { id: rec.Id }, function (json) {
 
                                 if (json.statusCode == "200") {
 
                                     mui.toast(json.message);
 
-                                    for (var i = 0; i < app.assList.length; i++) {
+                                    for (var i = 0; i < app.recList.length; i++) {
 
-                                        if (ass.Id == app.assList[i].Id) {
+                                        if (rec.Id == app.recList[i].Id) {
 
-                                            app.assList.splice(i, 1);
+                                            app.recList.splice(i, 1);
 
                                             break;
 
                                         }
 
                                     }
+
+
 
                                 }
 
@@ -455,15 +456,7 @@
 
     </script>
 
-    <!--<script>-->
-<!--var _hmt = _hmt || [];-->
-<!--(function() {-->
-  <!--var hm = document.createElement("script");-->
-  <!--hm.src = "https://hm.baidu.com/hm.js?a0694c9c6c17b1bfb616beb7d946aecb";-->
-  <!--var s = document.getElementsByTagName("script")[0]; -->
-  <!--s.parentNode.insertBefore(hm, s);-->
-<!--})();-->
-<!--</script>-->
+
 
 
 

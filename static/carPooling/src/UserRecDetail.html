@@ -133,7 +133,7 @@
 
                                         <div class="mui-col-xs-6 padr5">
 
-                                            <button v-on:click="locationSharing()" class="mui-btn mui-btn-block">查看车主位置</button>
+                                            <!--<button v-on:click="locationSharing()" class="mui-btn mui-btn-block">查看车主位置</button>-->
 
                                         </div>
 
@@ -289,7 +289,7 @@
 
                         </p>
 
-                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
 
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
 
@@ -381,7 +381,7 @@
 
                 getData: function () {
 
-                    mui.post("/WebApp/UserRec/GetDetailData?id=" + hh.getQueryString("id"), {}, function (json) {
+                    mui.post("/WebApp/UserRec/GetDetailData", {id:hh.getQueryString("id")}, function (json) {
 
                         if (json.statusCode == "200") {
 
@@ -389,13 +389,12 @@
 
                            app.setBtnShowState();
 
-                        }
-
-                        else {
-
-                            hh.go("/WebApp/UseRec/List");
+                        } else {
+                             hh.go("/WebApp/UserRec/List");
 
                         }
+
+
 
                     });
 
@@ -583,165 +582,165 @@
 
             <script>
 
-        try {
-
-            $(function () {
-
-                $.getScript("http://signalr.51bc.cc:8082/signalr/hubs", function () {
-
-                    var GROUP_NAME = "235dd7c3-342a-4739-a9b9-b82643f3f7e7";
-
-                    var MY_USER_ID = "4177159e-898c-4cc5-91ac-cc38c62e3c10 ";
-
-                    var MY_USER_NAME = "小杨";
-
-                    var MY_PHONE = "18649715651";
-
-                    var IS_CAR_OWNER = "0";
-
-                    var pushTimespan = parseInt("10") * 1000;
-
-                    var signalRHost = "http://signalr.51bc.cc:8082";
-
-
-
-                    //日记记录
-
-                    $.connection.hub.logging = true;
-
-                    //设置hubs的url
-
-                    $.connection.hub.url = signalRHost + "/signalr";
-
-
-
-                    // 声明一个代理来引用该集线器。
-
-                    CHAT_HUB = $.connection.chatHub;
-
-
-
-                    CHAT_HUB.client.addMessageToPage = function (chatModel) { };
-
-                    CHAT_HUB.client.updateMarkToPage = function (locationModel) { };
-
-                    // 启动 connection
-
-                    $.connection.hub.start().done(function () {
-
-                        //alert($.connection.hub.transport.name);
-
-                        //加入组
-
-                        CHAT_HUB.server.joinGroup({
-
-                            GroupName: GROUP_NAME,
-
-                            UserId: MY_USER_ID,
-
-                            IsCarOwner: IS_CAR_OWNER
-
-                        });
-
-
-
-                        $.post("/WebApp/Home/GetWenxinJsapiConfig").success(function (json) {
-
-                            json.jsApiList = ["getLocation"];
-
-                            wx.config(json);
-
-                            wx.ready(function () {
-
-                                pushMyLocation();
-
-                                //美间x秒上传我的位置
-
-                                setInterval(function () {
-
-                                    pushMyLocation();
-
-                                }, pushTimespan);
-
-
-
-                            });
-
-                        });
-
-
-
-
-
-                    });
-
-                    $.connection.hub.reconnected(function () {
-
-                        console.log("reconnected");
-
-                        //加入组
-
-                        CHAT_HUB.server.joinGroup({
-
-                            GroupName: GROUP_NAME,
-
-                            UserId: MY_USER_ID,
-
-                            IsCarOwner: IS_CAR_OWNER
-
-                        });
-
-                    });
-
-
-
-                    function pushMyLocation() {
-
-                        wx.getLocation({
-
-                            type: 'gcj02',//wgs84 gps坐标，gcj02火星坐标(腾讯)
-
-                            success: function (res) {
-
-                                var myLocationModel = {
-
-                                    UserId: MY_USER_ID,
-
-                                    IsCarOwner: IS_CAR_OWNER,
-
-                                    Sender: MY_USER_NAME,
-
-                                    Msg: "{\"lat\":" + res.latitude + ",\"lng\":" + res.longitude + "}",
-
-                                    GroupName: GROUP_NAME,
-
-                                    SendTime: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
-
-                                    Phone: MY_PHONE
-
-                                };
-
-                                //发送我的位置到服务器
-
-                                CHAT_HUB.server.shareToOther(myLocationModel);
-
-                            }
-
-                        });
-
-                    }
-
-                });
-
-
-
-            });
-
-        } catch (e) {
-
-            console.log(e);
-
-        }
+//        try {
+//
+//            $(function () {
+//
+//                $.getScript("http://signalr.51bc.cc:8082/signalr/hubs", function () {
+//
+//                    var GROUP_NAME = "235dd7c3-342a-4739-a9b9-b82643f3f7e7";
+//
+//                    var MY_USER_ID = "4177159e-898c-4cc5-91ac-cc38c62e3c10 ";
+//
+//                    var MY_USER_NAME = "小杨";
+//
+//                    var MY_PHONE = "18649715651";
+//
+//                    var IS_CAR_OWNER = "0";
+//
+//                    var pushTimespan = parseInt("10") * 1000;
+//
+//                    var signalRHost = "http://signalr.51bc.cc:8082";
+//
+//
+//
+//                    //日记记录
+//
+//                    $.connection.hub.logging = true;
+//
+//                    //设置hubs的url
+//
+//                    $.connection.hub.url = signalRHost + "/signalr";
+//
+//
+//
+//                    // 声明一个代理来引用该集线器。
+//
+//                    CHAT_HUB = $.connection.chatHub;
+//
+//
+//
+//                    CHAT_HUB.client.addMessageToPage = function (chatModel) { };
+//
+//                    CHAT_HUB.client.updateMarkToPage = function (locationModel) { };
+//
+//                    // 启动 connection
+//
+//                    $.connection.hub.start().done(function () {
+//
+//                        //alert($.connection.hub.transport.name);
+//
+//                        //加入组
+//
+//                        CHAT_HUB.server.joinGroup({
+//
+//                            GroupName: GROUP_NAME,
+//
+//                            UserId: MY_USER_ID,
+//
+//                            IsCarOwner: IS_CAR_OWNER
+//
+//                        });
+//
+//
+//
+//                        $.post("/WebApp/Home/GetWenxinJsapiConfig").success(function (json) {
+//
+//                            json.jsApiList = ["getLocation"];
+//
+//                            wx.config(json);
+//
+//                            wx.ready(function () {
+//
+//                                pushMyLocation();
+//
+//                                //美间x秒上传我的位置
+//
+//                                setInterval(function () {
+//
+//                                    pushMyLocation();
+//
+//                                }, pushTimespan);
+//
+//
+//
+//                            });
+//
+//                        });
+//
+//
+//
+//
+//
+//                    });
+//
+//                    $.connection.hub.reconnected(function () {
+//
+//                        console.log("reconnected");
+//
+//                        //加入组
+//
+//                        CHAT_HUB.server.joinGroup({
+//
+//                            GroupName: GROUP_NAME,
+//
+//                            UserId: MY_USER_ID,
+//
+//                            IsCarOwner: IS_CAR_OWNER
+//
+//                        });
+//
+//                    });
+//
+//
+//
+//                    function pushMyLocation() {
+//
+//                        wx.getLocation({
+//
+//                            type: 'gcj02',//wgs84 gps坐标，gcj02火星坐标(腾讯)
+//
+//                            success: function (res) {
+//
+//                                var myLocationModel = {
+//
+//                                    UserId: MY_USER_ID,
+//
+//                                    IsCarOwner: IS_CAR_OWNER,
+//
+//                                    Sender: MY_USER_NAME,
+//
+//                                    Msg: "{\"lat\":" + res.latitude + ",\"lng\":" + res.longitude + "}",
+//
+//                                    GroupName: GROUP_NAME,
+//
+//                                    SendTime: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+//
+//                                    Phone: MY_PHONE
+//
+//                                };
+//
+//                                //发送我的位置到服务器
+//
+//                                CHAT_HUB.server.shareToOther(myLocationModel);
+//
+//                            }
+//
+//                        });
+//
+//                    }
+//
+//                });
+//
+//
+//
+//            });
+//
+//        } catch (e) {
+//
+//            console.log(e);
+//
+//        }
 
 
 

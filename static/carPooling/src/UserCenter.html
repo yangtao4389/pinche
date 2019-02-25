@@ -129,49 +129,49 @@
 
                     </li>
 
-                    <li><a href="/WebApp/UserAuth/RealName"><h3><i class="hh-icon hh-icon-realname2 colora"></i>实名认证</h3>
+                    <!--<li><a href="/WebApp/UserAuth/RealName"><h3><i class="hh-icon hh-icon-realname2 colora"></i>实名认证</h3>-->
 
-                        <span>
+                        <!--<span>-->
 
-                            <template>
+                            <!--<template>-->
 
-                                <i v-if="userinfo.IsRealName==-1" class="f14px desc_red">未通过</i>
+                                <!--<i v-if="userinfo.IsRealName==-1" class="f14px desc_red">未通过</i>-->
 
-                                <i v-if="userinfo.IsRealName==0" class="f14px desc_yellow">去认证</i>
+                                <!--<i v-if="userinfo.IsRealName==0" class="f14px desc_yellow">去认证</i>-->
 
-                                <i v-if="userinfo.IsRealName==1" class="f14px desc_blue">审核中</i>
+                                <!--<i v-if="userinfo.IsRealName==1" class="f14px desc_blue">审核中</i>-->
 
-                                <i v-if="userinfo.IsRealName==2" class="f14px desc_green">已认证</i>
+                                <!--<i v-if="userinfo.IsRealName==2" class="f14px desc_green">已认证</i>-->
 
-                            </template>
+                            <!--</template>-->
 
-                        <i class="hh-icon hh-icon-right"></i>
+                        <!--<i class="hh-icon hh-icon-right"></i>-->
 
-                        </span>
+                        <!--</span>-->
 
-                           
+                           <!---->
 
-                        </a></li>
+                        <!--</a></li>-->
 
-                    <li><a href="/WebApp/UserAuth/RealDriver"><h3><i class="hh-icon hh-icon-driver colorb"></i>车主认证</h3>
+                    <!--<li><a href="/WebApp/UserAuth/RealDriver"><h3><i class="hh-icon hh-icon-driver colorb"></i>车主认证</h3>-->
 
-                        <span>
+                        <!--<span>-->
 
-                            <template>
+                            <!--<template>-->
 
-                                <i v-if="userinfo.IsRealDriver==-1" class="f14px desc_red">未通过</i>
+                                <!--<i v-if="userinfo.IsRealDriver==-1" class="f14px desc_red">未通过</i>-->
 
-                                <i v-if="userinfo.IsRealDriver==0" class="f14px desc_yellow">去认证</i>
+                                <!--<i v-if="userinfo.IsRealDriver==0" class="f14px desc_yellow">去认证</i>-->
 
-                                <i v-if="userinfo.IsRealDriver==1" class="f14px desc_blue">审核中</i>
+                                <!--<i v-if="userinfo.IsRealDriver==1" class="f14px desc_blue">审核中</i>-->
 
-                                <i v-if="userinfo.IsRealDriver==2" class="f14px desc_green">已认证</i>
+                                <!--<i v-if="userinfo.IsRealDriver==2" class="f14px desc_green">已认证</i>-->
 
-                            </template>
+                            <!--</template>-->
 
-                                <i class="hh-icon hh-icon-right"></i>
+                                <!--<i class="hh-icon hh-icon-right"></i>-->
 
-</span></a></li>
+<!--</span></a></li>-->
 
                 </ul>
 
@@ -191,9 +191,9 @@
 
                     <li><a href="/WebApp/UserRec/List"><h3><i class="hh-icon hh-icon-hangcheng colora"></i>我的行程</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
 
-                    <li><a href="/WebApp/UserComment/SendList"><h3><i class="hh-icon hh-icon-pingjia colorb"></i>我的评价</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+                    <!--<li><a href="/WebApp/UserComment/SendList"><h3><i class="hh-icon hh-icon-pingjia colorb"></i>我的评价</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>-->
 
-                    <li><a href="/WebApp/UserRec/SubscribeList"><h3><i class="hh-icon hh-icon-yuyue colorc"></i>我的预约</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>
+                    <!--<li><a href="/WebApp/UserRec/SubscribeList"><h3><i class="hh-icon hh-icon-yuyue colorc"></i>我的预约</h3><span><i class="hh-icon hh-icon-right"></i></span></a></li>-->
 
                 </ul>
 
@@ -310,8 +310,11 @@
                 getUserInfo: function () {
 
                     mui.post("/WebApp/UserCenter/GetUserInfo", function (json) {
-
-                        app.userinfo = json;
+                        if(json.statusCode == "200"){
+                            app.userinfo = json.data;
+                        }else {
+                            hh.go("/WebApp/Home")
+                        }
 
                     });
 

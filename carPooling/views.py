@@ -119,7 +119,19 @@ def UserCenterPhone(request):
     return HttpResponse(html)
 
 
+def UserCenterDalanceLogList(request):
+    with open("static/carPooling/src/DalanceLogList.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
+
+
 def About(request):
     with open("static/carPooling/src/UserCenter.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
+
+
+def AboutCreditValueNote(request):
+    with open("static/carPooling/src/CreditValueNote.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)

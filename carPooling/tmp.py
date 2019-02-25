@@ -34,6 +34,9 @@ if __name__ == '__main__':
     url = "http://lw.51bc.cc/WebApp/UserRec/Subscribe?startCity=%E6%88%90%E9%83%BD&endCity=%E5%B7%B4%E4%B8%AD"  #预约
     url = "http://lw.51bc.cc/WebApp/UserRec/Subscribe?id=58b58f86-a06f-444e-bf14-1260cd4c78df"  #预约详情
     url = "http://lw.51bc.cc/WebApp/UserRec/GetSubscribeData "  #预约详情  #{"statusCode":200,"message":"操作成功!","data":{"Id":"58b58f86-a06f-444e-bf14-1260cd4c78df","StartCity":"成都","EndCity":"巴中","GoTime":"2019/2/22 23:00:00","WaitTime":120,"Seat":1,"Status":1}}
+    url = "http://lw.51bc.cc/WebApp/About/CreditValueNote"
+    url = "http://lw.51bc.cc/WebApp/About/UnsubscribeNote"
+    url = "http://lw.51bc.cc/WebApp/About/UserCenterDalanceLogList"
     headers = {
         "Cookie":"Hm_lpvt_a0694c9c6c17b1bfb616beb7d946aecb=1550818928; Hm_lvt_a0694c9c6c17b1bfb616beb7d946aecb=1550556715,1550627154,1550655815,1550816465; xmq_UserCookie=openid=026DAD83B73A6137D0E5B1BD3EAE1CED6CA04AD6C3D9115FCB7FE96E2EEB071E; ASP.NET_SessionId=23vwkh42funj2blv40wyhsu1"
     }

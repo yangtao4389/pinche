@@ -28,10 +28,11 @@ urlpatterns = [
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
 
     url(r"^UserAss/Publish$", views.UserAssPublish),  # 发布行程
-    url(r"^UserAss/Detail", views.UserAssDetail),  #
+    url(r"^UserAss/Detail", views.UserAssDetail),  # 车主行程详情
     url(r"^UserAss/Edit$", views.UserAssEdit),  # 车主行程编辑
 
     url(r"^UserAss/List$", views.UserAssList),   #  我的行程列表  我是车主
+
     url(r"^UserRec/List$", views.UserRecList),  #  我的行程列表  我是乘客
     url(r"^UserRec/Detail$", views.UserRecDetail),  #  我的行程  我是乘客 行程详情
 
@@ -39,8 +40,10 @@ urlpatterns = [
 
     url(r"^UserCenter$", views.UserCenter),  #  个人中心
     url(r"^UserCenter/Phone$", views.UserCenterPhone),  #  关于电话的绑定与修改地址
+    url(r"^UserCenter/DalanceLogList$", views.UserCenterDalanceLogList),  #  关于电话的绑定与修改地址
 
     url(r"^About$", views.About),  #  乘车协议
+    url(r"^About/CreditValueNote$", views.AboutCreditValueNote),  #  诚信值信息
 
 
 ]
@@ -59,26 +62,29 @@ urlpatterns += [
 urlpatterns += [
     url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取通用数据 不进行任何判断
     url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
-    url(r"^UserAss/Cancel", api_userass.Cancel),  # 取消
-    url(r"^UserAss/SaveEdit", api_userass.SaveEdit),  # 保存
-    url(r"^UserAss/SavePublish", api_userass.SavePublish),  # 保存
-    url(r"^UserAss/GetList", api_userass.GetList),  # 保存
-    url(r"^UserAss/Del", api_userass.Del),  # 保存
+    url(r"^UserAss/Cancel$", api_userass.Cancel),  # 取消
+    url(r"^UserAss/SaveEdit$", api_userass.SaveEdit),  # 保存
+    url(r"^UserAss/SavePublish$", api_userass.SavePublish),  # 保存
+    url(r"^UserAss/GetList$", api_userass.GetList),  # 保存
+    url(r"^UserAss/Del$", api_userass.Del),  # 保存
 ]
 urlpatterns += [
-    url(r"^UserRec/SaveBook", api_userrec.SaveBook),  # 乘客订座接口
-    url(r"^UserRec/GetList", api_userrec.GetList),  # 乘客订座接口
-    url(r"^UserRec/GetDetailData", api_userrec.GetDetailData),  # 获取通用数据
+    url(r"^UserRec/SaveBook$", api_userrec.SaveBook),  # 乘客订座接口
+    url(r"^UserRec/GetList$", api_userrec.GetList),  # 乘客订座接口
+    url(r"^UserRec/GetDetailData$", api_userrec.GetDetailData),  # 获取通用数据
+    url(r"^UserRec/Del$", api_userrec.Del),  # 获取通用数据
+
 ]
 
 
 
 urlpatterns += [
-    url(r"^UserCenter/GetPhoneStatus", api_account.PhoneStatus),  # 保存
+    url(r"^UserCenter/GetPhoneStatus$", api_account.PhoneStatus),  # 保存
     # url(r"^UserCenter/GetVerifyCodeImg", api_account.GetVerifyCodeImg),  # 获取手机验证图片
-    url(r"^UserCenter/GetUserInfo", api_account.GetUserInfo),  # 获取用户信息，全局用
-    url(r"^UserCenter/GetCodeLogin", api_account.GetCodeLogin),  # 获取用户信息，全局用
-    url(r"^UserCenter/SavePhone", api_account.SavePhone),  # 保存号码跟用户真实姓名
+    url(r"^UserCenter/GetUserInfo$", api_account.GetUserInfo),  # 获取用户信息，全局用
+    url(r"^UserCenter/GetCodeLogin$", api_account.GetCodeLogin),  # 获取用户信息，全局用
+    url(r"^UserCenter/SavePhone$", api_account.SavePhone),  # 保存号码跟用户真实姓名
+    url(r"^UserCenter/GetDalanceLogList$", api_account.GetDalanceLogList),  # 获取用户交易信息
 ]
 
 
