@@ -39,7 +39,7 @@ urlpatterns = [
 
 
     url(r"^UserCenter$", views.UserCenter),  #  个人中心
-    url(r"^UserCenter/Phone$", views.UserCenterPhone),  #  关于电话的绑定与修改地址
+    url(r"^UserCenter/ChangePhone$", views.UserCenterChangePhone),  #  关于电话的绑定与修改地址
     url(r"^UserCenter/DalanceLogList$", views.UserCenterDalanceLogList),  #  关于电话的绑定与修改地址
 
     url(r"^About$", views.About),  #  乘车协议
@@ -63,10 +63,13 @@ urlpatterns += [
 
 urlpatterns += [
     url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取通用数据 不进行任何判断
+    url(r"^UserAss/GetRecListByAss$", api_userass.GetRecListByAss), # 获取通用数据 不进行任何判断
+
     url(r"^UserAss/SavePublish$", api_userass.SavePublish),  # 保存
     url(r"^UserAss/GetLastAss$", api_userass.GetLastAss),  # 获取上一次的发布数据
     url(r"^UserAss/Cancel$", api_userass.Cancel),  # 取消
-    url(r"^UserAss/SaveEdit$", api_userass.SaveEdit),  # 保存
+    url(r"^UserAss/noLeftSeat$", api_userass.noLeftSeat),  # 设为无座
+    # url(r"^UserAss/SaveEdit$", api_userass.SaveEdit),  # 保存
     url(r"^UserAss/GetList$", api_userass.GetList),  # 保存
     url(r"^UserAss/Del$", api_userass.Del),  # 保存
 ]
@@ -85,7 +88,7 @@ urlpatterns += [
     # url(r"^UserCenter/GetVerifyCodeImg", api_account.GetVerifyCodeImg),  # 获取手机验证图片
     url(r"^UserCenter/GetUserInfo$", api_account.GetUserInfo),  # 获取用户信息，全局用
     url(r"^UserCenter/GetCodeLogin$", api_account.GetCodeLogin),  # 获取用户信息，全局用
-    url(r"^UserCenter/SavePhone$", api_account.SavePhone),  # 保存号码跟用户真实姓名
+    # url(r"^UserCenter/SaveChangePhone$", api_account.SaveChangePhone),  # 保存号码跟用户真实姓名
     url(r"^UserCenter/GetDalanceLogList$", api_account.GetDalanceLogList),  # 获取用户交易信息
 ]
 

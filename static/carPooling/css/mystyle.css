@@ -353,6 +353,9 @@ li.mui-table-view-cell.mui-indexed-list-item.hot:after {
 
 .car-travel-btn{position: absolute;  right: 0; }
 .car-order-btn{position: absolute; bottom:2rem; right: 0; }
+/*UserAssDetail.html里面的调整*/
+.car-noLeftSeat-btn{position: absolute; bottom:7rem; right: 0; }
+.car-cancel-btn{position: absolute; bottom:4rem; right: 0; }
 
 .car-guest-box{ margin-top: 1.0rem;}
 .car-guest-box .car-guest-tit{ position: relative; padding:1.2rem 1.0rem 1.5rem;}

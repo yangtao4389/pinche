@@ -69,23 +69,20 @@ def Login(request):
         except:
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "系统出错"), content_type="application/json")
 
-
-
-
-
-    try:
-        # c_weixin_id = "xxxxx"
-        c_weixin_id = uuid_maker.get_uuid_random()
-        CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
-        request.session["c_weixin_id"] = c_weixin_id
-        # print(client.get_client_previous_url(request))
-        # return HttpResponseRedirect(client.get_client_previous_url(request))
-        return HttpResponseRedirect("/WebApp/Home")
-    except:
-        logger.exception("login error")
-        with open("static/carPooling/src/Error.html", 'rb') as f:
-            html = f.read()
-        return HttpResponse(html)
+    #
+    # try:
+    #     # c_weixin_id = "xxxxx"
+    #     c_weixin_id = uuid_maker.get_uuid_random()
+    #     CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
+    #     request.session["c_weixin_id"] = c_weixin_id
+    #     # print(client.get_client_previous_url(request))
+    #     # return HttpResponseRedirect(client.get_client_previous_url(request))
+    #     return HttpResponseRedirect("/WebApp/Home")
+    # except:
+    #     logger.exception("login error")
+    #     with open("static/carPooling/src/Error.html", 'rb') as f:
+    #         html = f.read()
+    #     return HttpResponse(html)
 
 
 def AssList(request):
@@ -162,10 +159,26 @@ def UserCenter(request):
     return HttpResponse(html)
 
 
-def UserCenterPhone(request):
-    with open("static/carPooling/src/Phone.html", 'rb') as f:
-        html = f.read()
-    return HttpResponse(html)
+def UserCenterChangePhone(request):
+    if request.method == 'GET':
+        with open("static/carPooling/src/ChangePhone.html", 'rb') as f:
+            html = f.read()
+        return HttpResponse(html)
+    elif request.method == 'POST':
+        newPhoneNum = request.POST.get("newPhoneNum")
+        smsCode = request.POST.get("smsCode")
+        if not checkparam.checkTelPhone(newPhoneNum):
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "电话号码出错"), content_type="application/json")
+        if smsCode != request.session.get("smsCode"):
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "验证码出错"), content_type="application/json")
+        try:
+            userObj = CarPoolingUserConf.objects.get(c_weixin_id=request.session["c_weixin_id"])
+            userObj.c_phone = newPhoneNum
+            userObj.save()
+            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "修改成功"), content_type="application/json")
+        except:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "保存失败"), content_type="application/json")
+
 
 
 def UserCenterDalanceLogList(request):

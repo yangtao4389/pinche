@@ -8,6 +8,8 @@ from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CurTripStatus,CarPoolingRecDetail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from carPooling.globalApi import commonGetCurTripTip
+from django.db import DatabaseError, transaction
 from logging import getLogger
 logger = getLogger("default")
 
@@ -39,16 +41,17 @@ def GetDetailData(request):
                 BookedSeat=assObj.i_booked_seat, # 预定了的座位
                 Cash=assObj.i_cash,
                 Remark=assObj.t_remark,
-                Phone=assObj.c_user_phone,
                 CardOwner=assObj.c_card_owner,
-                Status=1,
+                Status=assObj.i_status,
                 UserId=assObj.c_userid,
+                NoBookedSeat=assObj.i_no_booked_seat,
+
 
             )
 
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "已下过单用户",dataDict), content_type="application/json")
         except:
-            # 没有数据
+            print(traceback.print_exc())
             dataDict = dict(
                 Id = id,
                 UserId = request.session["c_weixin_id"],
@@ -68,6 +71,28 @@ def GetDetailData(request):
         #     "Status": 1,  # 0代表提交成功，但未正常实现。1代表可以编辑，2代表行程结束
         # }
         # return HttpResponse(RtnDefault(RtnCode.STATUS_OK,"新用户",data), content_type="application/json")
+
+
+def GetRecListByAss(request):
+    '''
+    车主 根据assid来获取所有乘客信息
+    :return:
+    '''
+    if request.method == "POST":
+        assid = request.POST.get("assid")
+        reclist = CarPoolingRecDetail.objects.filter(c_assid=assid).exclude(i_status=CurTripStatus.Cancel).all()
+        newRecList = []
+        for obj in reclist:
+            dictItem = dict(
+                Id = obj.c_userid,
+                Name=obj.c_username,
+                Phone=CarPoolingUserConf.objects.get(c_weixin_id=obj.c_userid).c_phone,
+                BookSeat=obj.i_booked_seat,
+                StartPlace=obj.t_remark,
+            )
+            newRecList.append(dictItem)
+        return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok", newRecList), content_type="application/json")
+
 
 
 def GetLastAss(request):
@@ -109,7 +134,7 @@ def GetLastAss(request):
                     Seat=assObj.i_seat,
                     Cash=assObj.i_cash,
                     Remark=assObj.t_remark,
-                    Phone=assObj.c_user_phone,
+                    # Phone=assObj.c_user_phone,
                     CardOwner=assObj.c_card_owner,
                     BusType=assObj.c_bus_type,
                     VehicleNumber=assObj.i_vehicle_number,
@@ -148,7 +173,45 @@ def GetLastAss(request):
 def Cancel(request):
     if request.method == "POST":
         Id = request.POST.get("Id")
-        return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "取消成功"), content_type="application/json")
+        try:
+            assDetailObj = CarPoolingAssDetail.objects.get(c_id=Id)
+            if assDetailObj.status != True or assDetailObj.i_status != CurTripStatus.Ing:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已取消|出发|完成，修改无效"),
+                                    content_type="application/json")
+            assDetailObj.i_status = CurTripStatus.Cancel
+
+            # 查看所有乘客，并取消他们的行程 #todo 这里需要通知所有用户
+            recDetailObj = CarPoolingRecDetail.objects.filter(c_assid=Id).filter(i_status=CurTripStatus.Ing).filter(status=True)
+
+            with transaction.atomic():  # 事务，保证唯一 存在，则都存在。错误，则都不去改变
+                assDetailObj.save()
+                recDetailObj.update(i_status=CurTripStatus.Cancel)
+
+            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "取消行程成功"), content_type="application/json")
+        except:
+            print(traceback.print_exc())
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程不存在"), content_type="application/json")
+
+
+def noLeftSeat(request):
+    '''
+    将车主发布的行程设置为剩余座位设置为0
+    该行程必须是在进行中，未出发，未删除的行程
+    :param request:
+    :return:
+    '''
+    if request.method == "POST":
+        Id = request.POST.get("Id")
+        try:
+            assDetailObj = CarPoolingAssDetail.objects.get(c_id=Id)
+            if assDetailObj.status != True or assDetailObj.i_status != CurTripStatus.Ing:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已取消|出发|完成，修改无效"), content_type="application/json")
+            assDetailObj.i_seat = assDetailObj.i_booked_seat
+            assDetailObj.save()
+            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "余座设置为0成功"), content_type="application/json")
+        except:
+            print(traceback.print_exc())
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程不存在"), content_type="application/json")
 
 
 
@@ -273,7 +336,7 @@ def SavePublish(request):
             # 用户id不存在，直接去login页面
             # print(traceback.print_exc())
             logger.exception("save ass detail error")
-            return HttpResponseRedirect(settings.LOGIN_URL)
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "用户信息不全"), content_type="application/json")
 
 
 
@@ -292,7 +355,7 @@ def SavePublish(request):
         GoTime = request.POST.get("GoTime")
         if not checkparam.isVaildDateTime(GoTime):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "出发时间有误"), content_type="application/json")
-        if GoTime > str(datetime.now()):
+        if GoTime < str(datetime.now()):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "出发时间有误"), content_type="application/json")
 
         # VehicleNumber = request.POST.get("VehicleNumber")
@@ -312,13 +375,21 @@ def SavePublish(request):
         if Cash>200 or Cash <= 0:
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "设置费用出错"), content_type="application/json")
 
+
+
         try:
+            #todo 差是否需要验证当前用户的行程状态。
+            userid = userObj.c_weixin_id
+            dataresult = commonGetCurTripTip(userid)
+            print(dataresult)
+            if dataresult.get("result") == 0:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "已经存在"), content_type="application/json")
             # assDeatilObj,created = CarPoolingAssDetail.objects.get_or_create(c_id=id)
             assDeatilObj= CarPoolingAssDetail()
             assDeatilObj.c_id = id
             assDeatilObj.c_userid = userObj.c_weixin_id
             assDeatilObj.c_card_owner = userObj.c_name
-            assDeatilObj.c_user_phone = userObj.c_phone
+            # assDeatilObj.c_user_phone = userObj.c_phone
             assDeatilObj.c_start_city =StartCity
             assDeatilObj.c_end_city =EndCity
             assDeatilObj.t_line = request.POST.get("Line")
@@ -390,7 +461,7 @@ def GetList(request):
                 Line=i.t_line,
                 Seat=i.i_no_booked_seat,  # 余座
                 BookedSeat=i.i_booked_seat, # 定座
-                # Status = i.status,
+                Status = i.i_status,
 
             )
             DataSource.append(dictItem)

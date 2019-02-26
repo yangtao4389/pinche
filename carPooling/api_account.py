@@ -74,13 +74,9 @@ def GetCodeLogin(request):
 
 
 
-def SavePhone(request):
-    '''
-    保存电话号码
-    :param request:
-    :return:
-    '''
-    pass
+
+
+
 
 def GetDalanceLogList(request):
     '''

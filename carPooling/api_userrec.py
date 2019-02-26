@@ -6,9 +6,10 @@ from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.conf import settings
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
-from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CarPoolingRecDetail
+from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CarPoolingRecDetail,CurTripStatus
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import DatabaseError, transaction
+from carPooling.globalApi import commonGetCurTripTip
 
 from logging import getLogger
 logger = getLogger("default")
@@ -21,19 +22,23 @@ def SaveBook(request):
     :return:
     '''
     if request.method == "POST":
+        userid = request.session["c_weixin_id"]
+        dataresult = commonGetCurTripTip(userid)
+        if dataresult.get("result") == 0:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已经存在"), content_type="application/json")
+
+        try:
+            userObj = CarPoolingUserConf.objects.get(c_weixin_id=userid)
+        except:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "用户账户有问题"), content_type="application/json")
+
+
         assId = request.POST.get("assId")
         bookSeat = request.POST.get("bookSeat")
         startPlace= request.POST.get("startPlace")
         phone= request.POST.get("phone")
         saving= request.POST.get("saving")
         agreeStatus= request.POST.get("agreeStatus")
-
-        # 是否已经存在该行程，如果存在，则直接跳转到行程详情页
-        # try:
-        #     CarPoolingRecDetail.objects.get(c_userid = request.session["c_weixin_id"],c_assid = assId)
-        #     return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "已经预定过"), content_type="application/json")
-        # except:
-        #     pass
 
 
         # 车主行程表改变
@@ -49,10 +54,14 @@ def SaveBook(request):
             c_id = uuid_maker.get_uuid_random(),
             c_userid = request.session["c_weixin_id"],
             c_assid = assId,
+            c_username = userObj.c_name,
+            c_card_owner = assDetailObj.c_card_owner,
+            c_start_city = assDetailObj.c_start_city,
+            c_end_city = assDetailObj.c_end_city,
+            d_go_time = assDetailObj.d_go_time,
             t_remark = startPlace,
             i_booked_seat = bookSeat,
-            c_phone = phone,
-            i_status = 1,
+            i_status = CurTripStatus.Ing,
             status = True,
         )
 
@@ -92,7 +101,7 @@ def GetList(request):
         #     return
         pageNum = int(pageNum)
 
-        allMyAss = CarPoolingRecDetail.objects.filter(status=True).filter(c_userid=request.session["c_weixin_id"]).order_by("-create_time")
+        allMyAss = CarPoolingRecDetail.objects.filter(status=True).filter(c_userid=request.session["c_weixin_id"]).order_by("-d_go_time")
         paginator = Paginator(allMyAss, numPerPage)
         page = paginator.page(pageNum)
 
@@ -116,12 +125,12 @@ def GetList(request):
                 StartCity = i.c_start_city,
                 EndCity = i.c_end_city,
                 GoTime=str(i.d_go_time),
-                CardOwner=i.c_card_owner,
+                CarOwner=i.c_card_owner,
                 UserId=i.c_userid,
                 # BusType=i.c_bus_type,
                 # Line=i.t_line,
-                # Seat=i.i_no_booked_seat,  # 余座
-                BookedSeat=i.i_booked_seat, # 定座
+                # Seat=i.i_no_booked_seat,  # 余座BookSeat
+                BookSeat=i.i_booked_seat, # 定座
                 StartPlace=i.t_remark, # 定座
                 # Status = i.status,
 
@@ -158,16 +167,10 @@ def GetDetailData(request):
                 Id=id,
                 StartCity=assObj.c_start_city,
                 EndCity=assObj.c_end_city,
-                # Line=assObj.t_line,
                 GoTime=str(assObj.d_go_time),
-                # BusType=assObj.c_bus_type,
-                # VehicleNumber=assObj.i_vehicle_number,
-                # Seat=assObj.i_seat,  # 总共座位
                 BookedSeat=assObj.i_booked_seat,  # 预定了的座位
-                # Cash=assObj.i_cash,
-                # Remark=assObj.t_remark,
-                Phone=assObj.c_user_phone,
-                CardOwner=assObj.c_card_owner,
+                Remark=assObj.t_remark,
+                CarOwner=assObj.c_card_owner,
                 Status=assObj.i_status,
                 # UserId=assObj.c_userid,
 

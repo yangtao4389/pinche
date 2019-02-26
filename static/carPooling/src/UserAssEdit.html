@@ -66,218 +66,32 @@
     <div class="mui-content">
 
         <div class="car-publish-box">
+             <div class="mui-card">
 
-            <div class="mui-input-group">
+                <div class="mui-card-content">
 
-                <div class="mui-input-row" v-on:click="chooseCity(0)">
+                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】{{ass.StartCity}} -&gt; {{ass.EndCity}}
 
-                    <label>出发</label>
+【时间】{{hh.formatGoTime(ass.GoTime)}}
 
-                    
+【路线】{{ass.Line}}
 
-                    <input type="text" readonly="readonly" v-model="ass.StartCity" placeholder="请选择出发地" v-bind:disabled="btnStatus!=1"/>
+【车型】{{ass.BusType}}
 
-                </div>
+【座位】{{ass.Seat}}
 
-                <div class="mui-input-row" v-on:click="chooseCity(1)">
+【车主】{{ass.CardOwner}}
 
-                    <label>到达</label>
+【预订】{{ass.BusType}}
 
-                    
+【A费】 {{ass.Cash}}元/人
 
-                    <input type="text" readonly="readonly" v-model="ass.EndCity" placeholder="请选择目的地" v-bind:disabled="btnStatus!=1"/>
-
-                </div>
-
-
-
-                <div class="car-change" v-on:click="exchange()"><i class="hh-icon hh-icon-qiehuan desc_red" v-bind:class="{'desc_999':btnStatus!=1}"></i></div>
-
-
-
-                <div class="mui-input-row">
-
-                    <label>路线</label>
-
-                    <textarea id="Line" v-model="ass.Line" maxlength="200" placeholder="例：XX 出发，途径X 地铁站（推荐上车点），X 站上高速，X 站下高速，目的地：XX" v-bind:disabled="btnStatus!=1"></textarea>
+【备注】{{ass.Remark}}</textarea>
 
                 </div>
-
-
-
-                <div class="mui-input-row">
-
-                    <label>时间</label>
-
-                    <input type="text" readonly="readonly" id="GoTimeShow"  v-model="ass.GoTimeShow" v-on:click="chooseGoTime()" placeholder="请选择出发时间" v-bind:disabled="btnStatus!=1"/>
-
-                    <input type="hidden" class="car-time" id="GoTime" v-model="ass.GoTime" >
-
-
-
-                </div>
-
-                <div class="mui-input-row">
-
-                    <label>车型</label>
-
-                    <template v-if="!carList||carList.length==0">
-
-                        <input id="BusType" v-model="ass.BusType" type="text" maxlength="10" placeholder="例：别克英朗" class="mui-input-clear" v-bind:disabled="btnStatus!=1"/>
-
-                    </template>
-
-                    <template v-else>
-
-                        <select v-model="ass.VehicleNumber" id="VehicleNumber" v-on:change="changeBusType()" v-bind:disabled="btnStatus!=1">
-
-                            <option v-for="car in carList" v-bind:value="car.VehicleNumber">{{car.Barnd}}{{car.Model}} [{{car.VehicleNumber}}]</option>
-
-                        </select>
-
-                        <div class="mui-input-row-btn" style="width:40px">
-
-                            <a class="desc_red padl5 mui-icon mui-icon-plus" href="/WebApp/UserAuth/RealVehiclesList"></a>
-
-                        </div>
-
-                    </template>
-
-                </div>
-
-                <div class="mui-input-row">
-
-                    <label>余座</label>
-
-                    <select v-model="ass.Seat"  id="Seat" v-bind:disabled="btnStatus!=1">
-
-                            <option value="0" > 0 座</option>
-
-                            <option value="1" > 1 座</option>
-
-                            <option value="2" > 2 座</option>
-
-                            <option value="3" selected> 3 座</option>
-
-                            <option value="4" > 4 座</option>
-
-                            <option value="5" > 5 座</option>
-
-                            <option value="6" > 6 座</option>
-
-                    </select>
-
-                </div>
-
-                <div class="mui-input-row">
-
-                    <label>A费</label>
-
-                    <select v-model="ass.Cash" id="Cash" v-bind:disabled="btnStatus!=1">
-
-
-
-                            <option value="0" > 0 元</option>
-
-                            <option value="5" > 5 元</option>
-
-                            <option value="10" > 10 元</option>
-
-                            <option value="15" > 15 元</option>
-
-                            <option value="20" > 20 元</option>
-
-                            <option value="25" > 25 元</option>
-
-                            <option value="30" > 30 元</option>
-
-                            <option value="35" > 35 元</option>
-
-                            <option value="40" > 40 元</option>
-
-                            <option value="45" > 45 元</option>
-
-                            <option value="50" selected=&quot;selected&quot;> 50 元</option>
-
-                            <option value="55" > 55 元</option>
-
-                            <option value="60" > 60 元</option>
-
-                            <option value="65" > 65 元</option>
-
-                            <option value="70" > 70 元</option>
-
-                            <option value="75" > 75 元</option>
-
-                            <option value="80" > 80 元</option>
-
-                            <option value="85" > 85 元</option>
-
-                            <option value="90" > 90 元</option>
-
-                            <option value="95" > 95 元</option>
-
-                            <option value="100" > 100 元</option>
-
-                            <option value="105" > 105 元</option>
-
-                            <option value="110" > 110 元</option>
-
-                            <option value="115" > 115 元</option>
-
-                            <option value="120" > 120 元</option>
-
-                            <option value="125" > 125 元</option>
-
-                            <option value="130" > 130 元</option>
-
-                            <option value="135" > 135 元</option>
-
-                            <option value="140" > 140 元</option>
-
-                            <option value="145" > 145 元</option>
-
-                            <option value="150" > 150 元</option>
-
-                            <option value="155" > 155 元</option>
-
-                            <option value="160" > 160 元</option>
-
-                            <option value="165" > 165 元</option>
-
-                            <option value="170" > 170 元</option>
-
-                            <option value="175" > 175 元</option>
-
-                            <option value="180" > 180 元</option>
-
-                            <option value="185" > 185 元</option>
-
-                            <option value="190" > 190 元</option>
-
-                            <option value="195" > 195 元</option>
-
-                            <option value="200" > 200 元</option>
-
-                    </select>
-
-                </div>
-
-
-
-                <div class="mui-input-row car-publish-texth">
-
-                    <label>备注</label>
-
-                    <textarea id="Remark" maxlength="50" v-model="ass.Remark" placeholder="例：顺路上下，预订后请电话确认一下。" v-bind:disabled="btnStatus!=1"></textarea>
-
-                </div>
-
-
-
-
 
             </div>
+
 
 
 
@@ -294,20 +108,21 @@
             </template>
 
                 <template v-else-if="btnStatus==1">
-
+                    <div>设为无座：不影响已预订的乘客，只将剩余座位调整为0.不影响车主诚信值</div>
+                    <div>取消行程：将会通知所有预定乘客车主已取消行程。车主诚信值会降低</div>
                     <div class="mui-input-group pad5" >
 
                         <div class="mui-row">
 
                             <div class="mui-col-xs-6 padr5">
 
-                                <button v-on:click="cancel()" class="mui-btn mui-btn-block" v-bind:disabled="saving">设为无座</button>
+                                <button v-on:click="set_no_left_seat()" class="mui-btn mui-btn-block" v-bind:disabled="saving">设为无座</button>
 
                             </div>
 
                             <div class="mui-col-xs-6 padl5">
 
-                                <button v-on:click="save()" class="mui-btn mui-btn-orange mui-btn-block" v-bind:disabled="saving">保存行程</button>
+                                <button v-on:click="cancel()" class="mui-btn mui-btn-orange mui-btn-block" v-bind:disabled="saving">取消行程</button>
 
                             </div>
 

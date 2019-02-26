@@ -23,23 +23,23 @@ class CarPoolingAssDetail(models.Model):
     行程表
     '''
     c_id = models.CharField("行程唯一id", max_length=128, null=False, blank=False, unique=True,db_index=True)
-    c_userid = models.CharField("用户id", max_length=128, null=True, blank=False, db_index=True)
+    c_userid = models.CharField("车主id", max_length=128, null=False, blank=False, db_index=True)
     c_card_owner = models.CharField("车主姓名", max_length=128, null=True, blank=False,)
-    c_user_phone = models.CharField("车主电话" ,max_length=11, null=True, blank=False, )
-    c_start_city = models.CharField("出发城市", max_length=128, null=True, blank=False,db_index=True)
-    c_end_city =  models.CharField("到达城市", max_length=128, null=True, blank=False,db_index=True)
+    # c_user_phone = models.CharField("车主电话" ,max_length=11, null=True, blank=False, )
+    c_start_city = models.CharField("出发城市", max_length=128, null=False, blank=False,db_index=True)
+    c_end_city =  models.CharField("到达城市", max_length=128, null=False, blank=False,db_index=True)
     t_line = models.TextField("路线",null=True, blank=False, default='')
-    d_go_time = models.DateTimeField("出发时间",null=True, blank=False, db_index=True)
+    d_go_time = models.DateTimeField("出发时间",null=False, blank=False, db_index=True)
     c_bus_type = models.CharField("车型", max_length=128, null=True, blank=False)
     i_vehicle_number = models.SmallIntegerField("该车型荷载", null=True, blank=True)
     i_seat = models.SmallIntegerField("总共座位",null=False, blank=True, default=0)
     i_booked_seat = models.SmallIntegerField("已预订的座位", null=False, blank=False, default=0)
     i_no_booked_seat = models.SmallIntegerField("剩余座位", null=False, blank=False,db_index=True)
-    i_cash = models.IntegerField("费用", null=True, blank=False, default=0)
+    i_cash = models.IntegerField("费用", null=False, blank=False, default=0)
     t_remark = models.TextField("备注",  null=True, blank=False, default='')
-    i_status = models.SmallIntegerField("行程状态",null=True,help_text=("参考CurTripStatus"))
-    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
-    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
+    i_status = models.SmallIntegerField("行程状态",null=False,help_text=("参考CurTripStatus"))
+    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=False)
+    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=False)
     status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
 
     class Meta:
@@ -58,7 +58,7 @@ class CarPoolingAssDetail(models.Model):
 
     @property
     def list_field(self):
-        return ['c_id', 'c_userid', 'c_card_owner', 'c_user_phone', 'status']
+        return ['c_id', 'c_userid', 'c_card_owner', 'status']
 
 class CarPoolingUserConf(models.Model):
     '''
@@ -70,6 +70,8 @@ class CarPoolingUserConf(models.Model):
     c_phone = models.CharField("电话号码" ,max_length=11, null=True, blank=False, )
     b_phone_status = models.BooleanField("电话号码状态" , null=False, blank=False, default=False,help_text="true,false")
     i_cumulative_sum = models.SmallIntegerField("累积积分" , null=True, blank=False, default=10)
+    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=False)
+    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=False)
     status = models.BooleanField("是否有效" , null=False, blank=False, default=True,help_text="true,false")
 
     class Meta:
@@ -140,17 +142,18 @@ class CarPoolingRecDetail(models.Model):
     c_id = models.CharField("行程唯一id", max_length=128, null=False, blank=False, unique=True, db_index=True)
     c_userid = models.CharField("乘客id", max_length=128, null=False, blank=False, db_index=True)
     c_assid = models.CharField("行程id", max_length=128, null=False, blank=False, db_index=True)
-    c_card_owner = models.CharField("车主姓名", max_length=128, null=True, blank=False, )
-    c_user_phone = models.CharField("车主电话", max_length=11, null=True, blank=False, )
-    c_start_city = models.CharField("出发城市", max_length=128, null=True, blank=False, db_index=True)
-    c_end_city = models.CharField("到达城市", max_length=128, null=True, blank=False, db_index=True)
+    c_username = models.CharField("乘客姓名", max_length=128, null=False, blank=False, )
+    c_card_owner = models.CharField("车主姓名", max_length=128, null=False, blank=False, )
+    # c_user_phone = models.CharField("车主电话", max_length=11, null=False, blank=False, )
+    c_start_city = models.CharField("出发城市", max_length=128, null=False, blank=False, db_index=True)
+    c_end_city = models.CharField("到达城市", max_length=128, null=False, blank=False, db_index=True)
     d_go_time = models.DateTimeField("出发时间", null=True, blank=False, db_index=True)
     t_remark = models.TextField("备注", null=True, blank=False, default='')
     i_booked_seat = models.SmallIntegerField("预定座位数", null=False, blank=True)
-    c_phone = models.CharField("电话号码", max_length=11, null=True, blank=False, )
+    # c_phone = models.CharField("电话号码", max_length=11, null=True, blank=False, )
     i_status = models.SmallIntegerField("行程状态",null=False,help_text=("参考CurTripStatus"))
-    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=True)
-    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=True)
+    update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=False)
+    create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=False)
     status = models.BooleanField("是否删除", null=False, blank=False, default=True, help_text="true,false,用于用户显示")
 
     class Meta:

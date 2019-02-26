@@ -8,7 +8,7 @@
 
     <meta charset="UTF-8" />
 
-    <title>来往拼车</title>
+    <title>UserAssEdit</title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 
@@ -28,6 +28,7 @@
     <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font_526810_qk3yrpzlw4.css">
     <!--App自定义的css-->
     <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mystyle.css">
+
    <style>
 
        .mui-modal{display:none;}
@@ -36,7 +37,7 @@
 
     
 
-     <link href="/static/carPooling/css/mui.indexedlist.css" rel="stylesheet" />
+    <link href="/static/carPooling/css/mui.indexedlist.css" rel="stylesheet" />
 
     <link href="/static/carPooling/css/mui.picker.min.css" rel="stylesheet" />
 
@@ -52,11 +53,13 @@
 
     <header class="mui-bar mui-bar-nav">
 
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-left-nav"></span>首页</a>
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserAss/List')"><span class="mui-icon mui-icon-left-nav"></span>我的行程</a>
+
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-home"></span></a>
 
 
 
-        <h1 class="mui-title">车主发布</h1>
+        <h1 class="mui-title">修改行程</h1>
 
     </header>
 
@@ -68,35 +71,35 @@
 
                 <div class="mui-input-row" v-on:click="chooseCity(0)">
 
-                    <label>【出发】</label>
+                    <label>出发</label>
 
                     
 
-                    <input type="text" readonly="readonly"  v-model="ass.StartCity"  placeholder="请选择出发地" />
+                    <input type="text" readonly="readonly" v-model="ass.StartCity" placeholder="请选择出发地" v-bind:disabled="btnStatus!=1"/>
 
                 </div>
 
                 <div class="mui-input-row" v-on:click="chooseCity(1)">
 
-                    <label>【到达】</label>
+                    <label>到达</label>
 
                     
 
-                    <input type="text" readonly="readonly" v-model="ass.EndCity" placeholder="请选择目的地" />
+                    <input type="text" readonly="readonly" v-model="ass.EndCity" placeholder="请选择目的地" v-bind:disabled="btnStatus!=1"/>
 
                 </div>
 
 
 
-                <div class="car-change" v-on:click="exchange()"><i class="hh-icon hh-icon-qiehuan desc_red"></i></div>
+                <div class="car-change" v-on:click="exchange()"><i class="hh-icon hh-icon-qiehuan desc_red" v-bind:class="{'desc_999':btnStatus!=1}"></i></div>
 
 
 
                 <div class="mui-input-row">
 
-                    <label>【路线】</label>
+                    <label>路线</label>
 
-                    <textarea v-model="ass.Line" id="Line" maxlength="200" placeholder="例：XX 出发，途径X 地铁站（推荐上车点），X 站上高速，X 站下高速，目的地：XX"></textarea>
+                    <textarea id="Line" v-model="ass.Line" maxlength="200" placeholder="例：XX 出发，途径X 地铁站（推荐上车点），X 站上高速，X 站下高速，目的地：XX" v-bind:disabled="btnStatus!=1"></textarea>
 
                 </div>
 
@@ -104,9 +107,9 @@
 
                 <div class="mui-input-row">
 
-                    <label>【时间】</label>
+                    <label>时间</label>
 
-                    <input type="text" readonly="readonly" id="GoTimeShow"  v-model="ass.GoTimeShow" v-on:click="chooseGoTime()" placeholder="请选择出发时间"/>
+                    <input type="text" readonly="readonly" id="GoTimeShow"  v-model="ass.GoTimeShow" v-on:click="chooseGoTime()" placeholder="请选择出发时间" v-bind:disabled="btnStatus!=1"/>
 
                     <input type="hidden" class="car-time" id="GoTime" v-model="ass.GoTime" >
 
@@ -116,25 +119,25 @@
 
                 <div class="mui-input-row">
 
-                    <label>【车型】</label>
+                    <label>车型</label>
 
                     <template v-if="!carList||carList.length==0">
 
-                        <input id="BusType" v-model="ass.BusType" type="text" maxlength="10" placeholder="例：别克英朗" class="mui-input-clear" />
+                        <input id="BusType" v-model="ass.BusType" type="text" maxlength="10" placeholder="例：别克英朗" class="mui-input-clear" v-bind:disabled="btnStatus!=1"/>
 
                     </template>
 
                     <template v-else>
 
-                        <select v-model="ass.VehicleNumber" id="VehicleNumber" v-on:change="changeBusType()">
+                        <select v-model="ass.VehicleNumber" id="VehicleNumber" v-on:change="changeBusType()" v-bind:disabled="btnStatus!=1">
 
-                            <option v-for="car in carList" v-bind:value="car.VehicleNumber" >{{car.Barnd}}{{car.Model}} [{{car.VehicleNumber}}]</option>
+                            <option v-for="car in carList" v-bind:value="car.VehicleNumber">{{car.Barnd}}{{car.Model}} [{{car.VehicleNumber}}]</option>
 
                         </select>
 
                         <div class="mui-input-row-btn" style="width:40px">
 
-                            <a class="desc_red padl5 mui-icon mui-icon-plus"  href="/WebApp/UserAuth/RealVehiclesList"></a>
+                            <a class="desc_red padl5 mui-icon mui-icon-plus" href="/WebApp/UserAuth/RealVehiclesList"></a>
 
                         </div>
 
@@ -144,16 +147,17 @@
 
                 <div class="mui-input-row">
 
-                    <label>【余座】</label>
+                    <label>余座</label>
 
-                    <select v-model="ass.Seat"  id="Seat">
+                    <select v-model="ass.Seat"  id="Seat" v-bind:disabled="btnStatus!=1">
+
+                            <option value="0" > 0 座</option>
 
                             <option value="1" > 1 座</option>
 
                             <option value="2" > 2 座</option>
 
-                            <!--<option value="3" selected> 3 座</option>-->
-                            <option value="3" selected=&quot;selected&quot; > 3 座</option>
+                            <option value="3" selected> 3 座</option>
 
                             <option value="4" > 4 座</option>
 
@@ -167,9 +171,9 @@
 
                 <div class="mui-input-row">
 
-                    <label>【A费】</label>
+                    <label>A费</label>
 
-                    <select v-model="ass.Cash" id="Cash">
+                    <select v-model="ass.Cash" id="Cash" v-bind:disabled="btnStatus!=1">
 
 
 
@@ -194,7 +198,6 @@
                             <option value="45" > 45 元</option>
 
                             <option value="50" selected=&quot;selected&quot;> 50 元</option>
-                            <!--<option value="50" > 50 元</option>-->
 
                             <option value="55" > 55 元</option>
 
@@ -264,37 +267,72 @@
 
                 <div class="mui-input-row car-publish-texth">
 
-                    <label>【备注】</label>
+                    <label>备注</label>
 
-                    <textarea id="Remark" maxlength="50" v-model="ass.Remark" placeholder="例：顺路上下，预订后请电话确认一下。" ></textarea>
-
-                </div>
-
-                <div class="mui-input-row">
-
-                    <div class="mui-checkbox">
-
-                        <label class="f15px" for="agree">我已阅读并同意来往拼车<a v-on:tap="hh.go('/WebApp/About?code=UserCarpoolAgreement')" class="desc_red">《合乘协议》</a></label>
-
-                        <input name="agree"  id="agree" value="true" type="checkbox" v-model="ass.agreeStatus">
-
-                    </div>
+                    <textarea id="Remark" maxlength="50" v-model="ass.Remark" placeholder="例：顺路上下，预订后请电话确认一下。" v-bind:disabled="btnStatus!=1"></textarea>
 
                 </div>
 
-                <div class="pad5">
 
-                    <button v-on:click="save()" class="mui-btn mui-btn-orange mui-btn-block" v-bind:disabled="saving||!ass.agreeStatus">发布出行信息</button>
-
-
-
-                </div>
 
 
 
             </div>
 
-            <div class="cGray pad5 f14px">温馨提示：请务必保证所填信息真实，如被拼友投诉，将被平台 限制发信息。</div>
+
+
+            <template v-if="btnStatus==0">
+
+                <div class="mui-input-group pad5" >
+
+                    <button  class="mui-btn mui-btn-block" disabled="disabled">行程已撤下</button>
+
+                </div>
+
+                <div class="cGray pad5 f14px">当前行程已撤下，不可编辑信息。如需发布信息，请点击<a class="desc_red border-bottom-dashed" href="/WebApp/UserAss/Publish">车主发布</a>，发布新信息。</div>
+
+            </template>
+
+                <template v-else-if="btnStatus==1">
+                    <div>设为无座：不影响已预订的乘客，只将剩余座位调整为0.不影响车主诚信值</div>
+                    <div>取消行程：将会通知所有预定乘客车主已取消行程。车主诚信值会降低</div>
+                    <div class="mui-input-group pad5" >
+
+                        <div class="mui-row">
+
+                            <div class="mui-col-xs-6 padr5">
+
+                                <button v-on:click="set_no_left_seat()" class="mui-btn mui-btn-block" v-bind:disabled="saving">设为无座</button>
+
+                            </div>
+
+                            <div class="mui-col-xs-6 padl5">
+
+                                <button v-on:click="cancel()" class="mui-btn mui-btn-orange mui-btn-block" v-bind:disabled="saving">取消行程</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="cGray pad5 f14px">温馨提示：请务必保证所填信息真实，如被拼友投诉，将被平台 限制发信息。</div>
+
+                </template>
+
+
+
+            <template v-else-if="btnStatus==2">
+
+                <div class="mui-input-group pad5">
+
+                    <button class="mui-btn mui-btn-block" disabled="disabled">行程已完成</button>
+
+                </div>
+
+                <div class="cGray pad5 f14px">当前行程已完成，不可编辑信息。如需发布信息，请点击<a class="desc_red border-bottom-dashed" href="/WebApp/UserAss/Publish">车主发布</a>，发布新信息。</div>
+
+            </template>
 
         </div>
 
@@ -396,7 +434,7 @@
 
                         </p>
 
-                <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
+               <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
 
                 <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
 
@@ -410,15 +448,15 @@
 
 
 
-    <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+     <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/vue.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/carPooling/js/app.js" type="text/javascript" charset="utf-8"></script>
+    
 
-    <script src="/static/carPooling/js/qqmap.js"></script>
     <script src="/static/carPooling/js/mui.indexedlist.js"></script>
-    <script src="/static/carPooling/js/mui.picker.min.js"></script>
 
+    <script src="/static/carPooling/js/mui.picker.min.js"></script>
 
     <script type="text/javascript">
 
@@ -428,10 +466,7 @@
 
             app.getCarList();
 
-            app.getDefault();
-
-
-
+            app.getData();
 
         });
 
@@ -443,9 +478,11 @@
 
             data: {
 
-                carList:null,
+                carList: null,
 
                 ass: {
+
+                    Id:"",
 
                     StartCity: "",
 
@@ -459,9 +496,11 @@
 
                     BusType: "",
 
-                    VehicleNumber: "",
+                    VehicleNumber:"",
 
-                    Seat: "",
+                    BookedSeat:0,
+
+                    Seat: "3",
 
                     Cash: "50",
 
@@ -469,22 +508,26 @@
 
                     Phone: "",
 
-                    agreeStatus: "1" == "1"
+                    CardOwner: "",
+
+                    Status:1
 
                 },
 
-                saving: false,
+                saving:false,
 
                 chooseCityType: 0,
 
                 cityGroup: [],
 
-                cityDetails: []
+                cityDetails: [],
+
+                btnStatus:-1
 
             },
 
             methods: {
-
+//                该方法无效
                 getCarList: function () {
 
                     if ("0" == "1") {
@@ -503,62 +546,101 @@
 
                 },
 
+                getData: function () {
+
+                    mui.post("/WebApp/UserAss/GetDetailData", { id: hh.getQueryString("id") }, function (json) {
+
+                        if (json.statusCode == "200") {
+
+
+
+                            json.data.GoTimeShow = hh.formatGoTime(json.data.GoTime);
+
+                            if (json.data.Status == 0) {
+
+                                app.btnStatus = 0;//撤下
+
+                            }
+
+                            else {
+
+                                var gotime = new Date(json.data.GoTime);
+
+                                if (new Date() - gotime >= 7200000) {//出发后2小时
+
+                                    app.btnStatus = 2;//行程结束
+
+                                }
+
+                                else
+
+                                    app.btnStatus = 1;//正常
+
+                            }
+
+
+
+                            app.ass = json.data;
+
+                        } else {
+
+                            hh.go("/WebApp/UseAss/List");
+
+                        }
+
+                    });
+
+                },
+
                 getDefault: function () {
 
-                    var tempAssFormDataStr = localStorage.getItem("tempAssFormData");
+                    if (app.btnStatus != 1)
 
-                    if (!!tempAssFormDataStr) {
+                        return;
 
-                        var tempAssFormData = JSON.parse(tempAssFormDataStr);
+                    mui.post("/WebApp/UserAss/GetLastAss", { StartCity: app.ass.StartCity, EndCity: app.ass.EndCity }, function (data) {
 
-                        app.ass = tempAssFormData;
-                        var tempChangePhone = localStorage.getItem("tempChangePhone");
-                        if(!!tempChangePhone){
-                            app.ass.Phone = tempChangePhone;
-                        }
-                        localStorage.removeItem("tempChangePhone");
+                        data.GoTime = app.ass.GoTime;
 
+                        data.GoTimeShow = app.ass.GoTimeShow;
+
+                        data.Id = app.ass.Id;
 
 
-                        localStorage.setItem("tempAssFormData", "");
 
-                        localStorage.removeItem("tempAssFormData");
+                        if (!data.Cash)
 
-                    }
+                            data.Cash = app.ass.Cash;
 
-                    else {
+                        if (!data.BusType)
 
-                        mui.post("/WebApp/UserAss/GetLastAss", { StartCity: app.ass.StartCity, EndCity: app.ass.EndCity }, function (json) {
+                            data.BusType = app.ass.BusType;
 
-                            json.GoTime = app.ass.GoTime;
+                        if (!data.VehicleNumber)
 
-                            json.GoTimeShow = app.ass.GoTimeShow;
+                            data.VehicleNumber = app.ass.VehicleNumber;
 
-                            json.agreeStatus = app.ass.agreeStatus;
 
-                           
 
-                            if (!json.Cash)
+                        app.ass = data;
 
-                                json.Cash= app.ass.Cash;
-
-                            if (!json.BusType)
-
-                                json.BusType = app.ass.BusType;
-
-                            if (!json.VehicleNumber)
-
-                                json.VehicleNumber= app.ass.VehicleNumber;
-
-                            app.ass = json;
-
-                        });
-
-                    }
+                    });
 
                 },
 
                 exchange: function () {
+
+                    if (app.btnStatus != 1)
+
+                        return;
+
+                    if (app.ass.BookedSeat > 0) {
+
+                        mui.alert("已有乘客预订,不可编辑出发地目的地信息！");
+
+                        return;
+
+                    }
 
                     var temp = this.ass.StartCity;
 
@@ -575,6 +657,20 @@
                 },
 
                 chooseCity: function (type) {
+
+                    if (app.btnStatus != 1)
+
+                        return;
+
+                    if (app.ass.BookedSeat > 0)
+
+                    {
+
+                        mui.alert("已有乘客预订,不可编辑出发地目的地信息！");
+
+                        return;
+
+                    }
 
                     this.chooseCityType = type;
 
@@ -682,6 +778,12 @@
 
                 chooseGoTime: function () {
 
+                    if (app.btnStatus != 1)
+
+                        return;
+
+
+
                     document.querySelector("#GoTimeShow").blur();
 
                     //mui(":focus").blur();
@@ -772,7 +874,9 @@
 
                     //判断是否为空
 
-                    if (!app.ass.StartCity) {
+                    if (!app.ass.StartCity)
+
+                    {
 
                         mui.alert("出发地不能为空。", function () {
 
@@ -818,29 +922,27 @@
 
                     }
 
+                     if (app.carList && app.carList.length > 0) {
 
+                         if (!app.ass.BusType || app.ass.BusType.length < 4) {
 
-                    if (app.carList && app.carList.length > 0) {
+                             mui.alert("请选择车型。", function () {
 
-                        if (!app.ass.BusType || app.ass.BusType.length < 4) {
+                                 mui("#VehicleNumber")[0].click();
 
-                            mui.alert("请选择车型。", function () {
+                                 app.saving = false;
 
-                                mui("#VehicleNumber")[0].click();
+                             });
 
-                                app.saving = false;
+                             return;
 
-                            });
-
-                            return;
-
-
-
-                        }
+                         }
 
                     }
 
                     else {
+
+
 
                         if (!app.ass.BusType || app.ass.BusType.length < 4 || "小车;私家;商务;越野;轿车;MPV;汽车;包车".split(';').filter(function (aa) { return app.ass.BusType.indexOf(aa) > -1; }).length > 0) {
 
@@ -858,7 +960,27 @@
 
                         }
 
+                     }
+
+
+
+                    if ((app.ass.BookedSeat + parseInt(app.ass.Seat)) > 6)
+
+                    {
+
+                        mui.alert("您本次出行已有"+app.ass.BookedSeat+"人，最多还可发布"+(6-app.ass.BookedSeat)+"个余座", function () {
+
+                            app.saving = false;
+
+                        });
+
+
+
+                        return;
+
                     }
+
+
 
                     if (!app.ass.Line || app.ass.Line.length < "10") {
 
@@ -874,7 +996,7 @@
 
 
 
-                        return;
+                        return ;
 
                     } else if (app.ass.Line.toLowerCase().indexOf("哪个") >= 0) {
 
@@ -886,7 +1008,7 @@
 
                         });
 
-                        return;
+                        return ;
 
                     }
 
@@ -900,11 +1022,9 @@
 
                         });
 
-                        return;
+                        return ;
 
                     }
-
-
 
                     if (!app.ass.Remark) {
 
@@ -916,19 +1036,7 @@
 
                         });
 
-                        return;
-
-                    }
-
-
-
-                    if (!app.ass.agreeStatus) {
-
-                        mui.alert("请勾选同意合乘协议");
-
-                        app.saving = false;
-
-                        return;
+                        return ;
 
                     }
 
@@ -936,57 +1044,95 @@
 
                     //======= 拼车最高价=========
 
-//                    var startCity = app.ass.StartCity;
-//
-//                    var endCity = app.ass.EndCity;
-//
-//                    var lineFeeMax = "0";
-//
-//                    var lineFeeList = eval('([{"Item1":"重庆","Item2":"巴中","Item3":"100","Item4":"120"},{"Item1":"重庆","Item2":"忠县","Item3":"60","Item4":"60"},{"Item1":"成都","Item2":"巴中","Item3":"100","Item4":"100"},{"Item1":"成都","Item2":"南江","Item3":"120","Item4":"130"},{"Item1":"南江","Item2":"巴中","Item3":"20","Item4":"30"},{"Item1":"重庆","Item2":"垫江","Item3":"40","Item4":"50"},{"Item1":"重庆","Item2":"万州","Item3":"80","Item4":"80"}])');
-//
-//                    for (var i = 0; i < lineFeeList.length; i++) {
-//
-//                        if ((lineFeeList[i].Item1 == startCity && lineFeeList[i].Item2 == endCity) || (lineFeeList[i].Item2 == startCity && lineFeeList[i].Item1 == endCity)) {
-//
-//                            lineFeeMax = lineFeeList[i].Item4;
-//
-//                            break;
-//
-//                        }
-//
-//                    }
-//
-//                    if (lineFeeMax > 0 && parseFloat(app.ass.Cash) > parseFloat(lineFeeMax)) {//提示一口价
-//
-//                        var tipHtml = "<p>【" + startCity + "-" + endCity + "】顺风车，最高价格是【" + lineFeeMax + "】元。您是否同意，发布【" + lineFeeMax + "】元的顺风车信息？</p>";
-//
-//                        mui.confirm(tipHtml, "", ["不同意", "我同意"], function (e) {
-//
-//                            if (e.index == 1) {//ok
-//
-//                                app.ass.Cash = lineFeeMax;
-//
-//                                assPost();
-//
-//                            }
-//
-//                            else {//cancel
-//
-//                                app.saving = false;
-//
-//                                return;
-//
-//                            }
-//
-//                        });
-//
-//                        return;
-//
-//                    }
+                    var startCity = app.ass.StartCity;
+
+                    var endCity = app.ass.EndCity;
+
+                    var lineFeeMax = "0";
+
+                    var lineFeeList = eval('([{"Item1":"重庆","Item2":"巴中","Item3":"100","Item4":"120"},{"Item1":"重庆","Item2":"忠县","Item3":"60","Item4":"60"},{"Item1":"成都","Item2":"巴中","Item3":"100","Item4":"100"},{"Item1":"成都","Item2":"南江","Item3":"120","Item4":"130"},{"Item1":"南江","Item2":"巴中","Item3":"20","Item4":"30"},{"Item1":"重庆","Item2":"垫江","Item3":"40","Item4":"50"},{"Item1":"重庆","Item2":"万州","Item3":"80","Item4":"80"}])');
+
+                    for (var i = 0; i < lineFeeList.length; i++) {
+
+                        if ((lineFeeList[i].Item1 == startCity && lineFeeList[i].Item2 == endCity) || (lineFeeList[i].Item2 == startCity && lineFeeList[i].Item1 == endCity)) {
+
+                            lineFeeMax = lineFeeList[i].Item4;
+
+                            break;
+
+                        }
+
+                    }
+
+                    if (lineFeeMax > 0 && parseFloat(app.ass.Cash) > parseFloat(lineFeeMax)) {//提示一口价
+
+                        var tipHtml = "<p>【" + startCity + "-" + endCity + "】顺风车，群价格是【" + lineFeeMax + "】元<br>您是否同意，发布【" + lineFeeMax + "】元的顺风车信息？</p>";
+
+                        mui.confirm(tipHtml, "", ["不同意", "我同意"], function (e) {
+
+                            if (e.index == 1) {//ok
+
+                                app.ass.Cash = lineFeeMax;
+
+                                assPost();
+
+                            }
+
+                            else {//cancel
+
+                                app.saving = false;
+
+                                return;
+
+                            }
+
+                        });
+
+                        return;
+
+                    }
 
 
 
                     assPost();
+
+                },
+
+                cancel: function () {
+
+                    mui.confirm("设为无座，仅将信息从拼车列表撤下，<span class='desc_red'>不影响已预订</span>的乘客。确定设为无座？", function (e) {
+
+                        if (e.index == 1) {
+
+                            app.saving = true;
+
+                            mui.post("/WebApp/UserAss/Cancel", { Id: app.ass.Id }, function (json) {
+
+                                if (json.statusCode == "200") {
+
+                                    mui.alert(json.message, function () {
+
+                                        hh.reload();
+
+                                    });
+
+
+
+                                }
+
+                                else {
+
+                                    mui.alert(json.message);
+
+                                    app.saving = false;
+
+                                }
+
+                            });
+
+                        }
+
+                    });
 
                 }
 
@@ -1000,81 +1146,37 @@
 
 
 
-            mui.confirm("请确认 <b class='desc_red'>" + app.ass.Phone.replace(/\B(?=(?:\d{4})+$)/g, ' ') + "</b> 能联系到您！", "", ["修改手机号", "确认无误"], function (e) {
+            mui.post("/WebApp/UserAss/SaveEdit", app.ass, function (json) {
 
-                if (e.index == 1) {//OK
+                mui.alert(json.message, function () {
 
-                    mui.post("/WebApp/UserAss/SavePublish", Object.assign(app.ass,{"id":hh.getQueryString("id")}) ,function (json) {
+                    if (json.data.Code == "100") {
 
-                        if (json.statusCode == "200") {
+                        hh.go("/WebApp/Home/AssShareTip?id=" + json.data.Id);
 
-                            var title = "";
+                    }
 
-                            var msg = "";
+                    else if (json.data.Code == "200") {
 
-                            if (!!json.data.TipMsg) {
+                        hh.go("/WebApp/UserCenter");
 
-                                title = "发布成功";
+                    }
 
-                                msg = json.data.TipMsg;
+                    else if (json.data.Code == "300") {
 
-                            }
+                        hh.go("/WebApp/UserAss/Edit?id=" + json.data.OldAssId);
 
-                            else {
+                    }
 
-                                title = "";
+                    else {
 
-                                msg = json.message;
+                        app.saving = false;
 
-                            }
-
-                            mui.alert(msg, title, function () {
-
-                                hh.go("/WebApp/Home/AssShareTip?id=" + json.data.Id);
-
-                            });
-
-                        } else {
-
-                            mui.alert(json.message,"发布失败", function () {
-                                app.saving = false;
-//                                if (json.data.Code == "200") {
-//
-//                                    hh.go("/WebApp/UserCenter");
-//
-//                                }
-//
-//                                else if (json.data.Code == "300") {
-//
-//                                    hh.go("/WebApp/UserAss/Edit?id=" + json.data.OldAssId);
-//
-//                                }
-//
-//                                else {
-//
-//                                    app.saving = false;
-//
-//                                }
+                    }
 
 
 
-                            });
-
-                        }
-
-                    });
-
-                }
-
-                else {
-
-                    //去修改手机号 ThinkWang 2018-08-31
-
-                    localStorage.setItem("tempAssFormData", JSON.stringify(app.ass));
-
-                    hh.go("/WebApp/UserCenter/ChangePhone");
-
-                }
+                });
 
             });
 
@@ -1103,6 +1205,7 @@
         });
 
     </script>
+
 
 
 
