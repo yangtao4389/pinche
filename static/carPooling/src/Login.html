@@ -1,0 +1,418 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8"/>
+
+    <title>Login</title>
+
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link href="/static/carPooling/images/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+    <!--标准mui.css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mui.showLoading.css">
+    <!--字体的css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/font_526810_qk3yrpzlw4.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="/static/carPooling/css/mystyle.css">
+
+    <style>
+
+        .mui-modal {
+            display: none;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+
+<header class="mui-bar mui-bar-nav">
+
+    <!--<a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span></a>-->
+
+    <h1 class="mui-title">用户登录</h1>
+
+</header>
+
+<div class="mui-content bgcolor-white" id="app">
+
+
+    <div class="car-login-box">
+
+
+        <div class="mui-input-group">
+            <div class="mui-input-row">
+
+                <label for="realName">真实姓名</label>
+
+                <input type="text" id="realName" class="mui-input-clear" v-model="realName" placeholder="请输入您的真实姓名">
+
+            </div>
+
+
+            <div class="mui-input-row">
+
+                <label for="phone">中国(+86)</label>
+
+                <input type="tel" id="phone" class="mui-input-clear" v-model="phone" placeholder="请输入您的手机号"
+                       v-on:change="formatPhone()">
+
+            </div>
+
+            <!--<div class="mui-input-row">-->
+
+            <!--<label for="imgCode">图形码</label>-->
+
+            <!--<input type="text" id="imgCode" class="mui-input" placeholder="请输入图形验证码" v-model="imgCode" maxlength="4">-->
+
+            <!--<div class="mui-input-row-btn"><img src="/WebApp/Account/VerifyCodeImg" v-bind:src="imgCodeSrc" v-on:click="changeImgCode()" /></div>-->
+
+            <!--</div>-->
+
+            <div class="mui-input-row">
+
+                <label for="smsCode">短信码</label>
+
+                <input type="tel" id="smsCode" class="mui-input" placeholder="请输入短信验证码" v-model="smsCode" maxlength="4">
+
+                <div class="mui-input-row-btn">
+
+                    <a class="desc_red padl5" v-on:click="getSmsCode()" v-text="smsBtnTxt" v-bind:disabled="!canGetSms">获取短信码</a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="pad10">
+
+            <button class="mui-btn mui-btn-orange mui-btn-block" v-bind:disabled="saving" v-on:click="save()">提交
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!--subscription-->
+
+<div id="subscription" class="mui-modal">
+
+    <header class="mui-bar mui-bar-nav">
+
+        <a class="mui-icon mui-icon-left-nav mui-pull-left"
+           onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+        <h1 class="mui-title">请先关注公众号</h1>
+
+    </header>
+
+    <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+        <div class="pad10 mui-text-center ">
+
+
+            <p class="mui-text-left mui-h5">
+
+                微信“扫一扫”下方二维码。
+
+            </p>
+
+            <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg"/>
+
+            <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/carPooling/js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/carPooling/js/app.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script type="text/javascript">
+
+    mui.init();
+
+
+//    mui.ready();
+
+
+    var app = new Vue({
+
+        el: '#app',
+
+        data: {
+            realName: "",
+            phone: "",
+
+            imgCode: "",
+
+            imgCodeSrc: "/WebApp/Account/VerifyCodeImg",
+
+            smsCode: "",
+
+            canGetSms: true,
+
+            smsBtnTxt: "获取验证码",
+
+            saving: false
+
+        },
+
+        methods: {
+            formatPhone: function () {
+
+                var text_len = app.phone.length;
+
+
+                var phone = app.phone.replace(/\s/g, "");
+
+                if (text_len > 3) {
+
+
+                    phone = phone.substr(0, 3) + " " + phone.substr(3);
+
+                }
+
+                if (text_len > 8) {
+
+
+                    phone = phone.substr(0, 8) + " " + phone.substr(8);
+
+                }
+
+                app.phone = phone;
+
+            },
+
+            changeImgCode: function () {
+
+                app.imgCodeSrc = '/WebApp/Account/VerifyCodeImg?_=' + new Date().getTime();
+
+            },
+
+            getSmsCode: function () {
+
+                if (!app.canGetSms)
+
+                    return;
+
+                if (app.phone == "" || app.phone.length != 13) {
+
+                    mui.alert("请输入正确手机号");
+
+                    return false;
+
+                }
+
+                if ("1" == "0" && app.imgCode == "") {
+
+                    mui.alert("请输入图形验证码");
+
+                    return false;
+
+                }
+
+                app.canGetSms = false;
+
+
+                app.smsBtnTxt = "正在获取…";
+
+                mui.post("/WebApp/UserCenter/GetCodeLogin", {
+                    phone: app.phone.replace(/\s/g, ""),
+                    code: app.imgCode
+                }, function (json) {
+
+                    if (json.statusCode != 200) {
+
+                        mui.alert(json.message, function () {
+
+                            app.changeImgCode();
+
+                        });
+
+
+                        if (json.message.indexOf("1分钟内只能发送一次") >= 0) {
+
+                            var sec = 60;
+
+                            var i = setInterval(function () {
+
+                                if (sec > 1) {
+
+                                    sec -= 1;
+
+                                    app.smsBtnTxt = sec + "秒后重试";
+
+                                } else {
+
+                                    clearInterval(i);
+
+                                    app.canGetSms = true;
+
+                                    app.smsBtnTxt = "获取短信码";
+
+                                }
+
+                            }, 1000);
+
+                        }
+
+                        else {
+
+                            app.canGetSms = true;
+
+                            app.smsBtnTxt = "获取短信码";
+
+                        }
+
+                        app.changeImgCode();
+
+                    }
+
+                    else {
+
+                        //app.canGetSms = true;
+
+                        //app.smsBtnTxt = "获取验证码";
+
+
+                        var sec = 60;
+
+                        var i = setInterval(function () {
+
+                            if (sec > 1) {
+
+                                sec -= 1;
+
+                                app.smsBtnTxt = sec + "秒后重试";
+
+                            } else {
+
+                                clearInterval(i);
+
+                                app.canGetSms = true;
+
+                                app.smsBtnTxt = "获取短信码";
+
+                            }
+
+                        }, 1000);
+
+                    }
+
+                });
+
+
+            },
+
+            save: function () {
+                if (app.realName == "") {
+
+                    mui.alert("请输入您的姓名");
+
+                    return false;
+
+                }
+
+
+                if (app.phone == "" || app.phone.length != 13) {
+
+                    mui.alert("请输入正确手机号");
+
+                    return false;
+
+                }
+
+                if (app.smsCode == "" || app.smsCode.length != 4) {
+
+                    mui.alert("请输入正确短信码");
+
+                    return false;
+
+                }
+
+                app.saving = true;
+
+                mui.post("/WebApp/Home/Login", {
+                    realName:app.realName.replace(/\s/g, ""),
+                    PhoneNum: app.phone.replace(/\s/g, ""),
+                    smsCode: app.smsCode.replace(/\s/g, "")
+                }, function (json) {
+
+                    if (json.statusCode == 200) {
+
+                        mui.alert(json.message, function () {
+
+                            hh.go(json.data.goUrl);
+
+                        });
+
+                    }
+
+                    else {
+
+                        mui.alert(json.message);
+
+                        app.saving = false;
+
+                    }
+
+                });
+
+            }
+
+
+        }
+
+    });
+
+</script>
+
+
+<script>
+
+    mui.ready(function () {
+
+        mui(".mui-modal").each(function () {
+
+            this.style.display = "block";
+
+        });
+
+    });
+
+</script>
+
+
+</body>
+
+</html>
+

@@ -48,8 +48,10 @@ urlpatterns = [
 
 ]
 
-
 # ajax请求
+
+
+
 urlpatterns += [
     url(r"^Home/GetCityList$", api_home.GetCityList),
     url(r"^Home/GetHotLine$", api_home.GetHotLine),

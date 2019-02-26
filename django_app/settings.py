@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'authority.UserAuthMiddleware.UserAuthMiddleware',
+    'carPooling.checkUserMiddleware.CheckUserMiddleware',
 
 ]
 
@@ -228,6 +229,8 @@ LOGIN_EXEMPT_URLS = [
     (r'%s*' % MEDIA_URL),
     (r'/favicon.ico'),
     (r'/WebApp/Home/Login'),
+    (r'/WebApp/UserCenter/GetCodeLogin'),
+    (r'/WebApp/Error/JsError'),
 ]
 LOGIN_URL = "/WebApp/Home/Login"
 

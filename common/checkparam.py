@@ -1,4 +1,4 @@
-import time,hashlib
+import time,hashlib,re
 def isVaildDate(date):
     '''
     判断日期格式是否符合标准
@@ -38,3 +38,13 @@ def get_md5(string):
     md5_string = hash_md5.hexdigest()
     return md5_string
 
+def checkTelPhone(phone):
+    phone_pat = re.compile(r'^(13\d|14[5|7]|15\d|166|17[3|6|7]|18\d)\d{8}$')
+    res = phone_pat.match(phone)
+    if res:
+        return True
+    else:
+        return False
+
+if __name__ == '__main__':
+    print(checkTelPhone("18649a5651"))
