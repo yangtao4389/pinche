@@ -109,7 +109,7 @@
 
                                 <template>
 
-                                    <li v-for="(rec,index) in recList" v-bind:class="{'dis-gray': recStatusTxt(rec.GoTime)!='进行中'}">
+                                    <li v-for="(rec,index) in recList" v-bind:class="{'dis-gray': recStatusTxt(rec.Status)!='进行中'}">
 
                                         <div class="car-record-text">
 
@@ -129,7 +129,7 @@
 
                                             <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(rec)">删除</a>
 
-                                            <p v-bind:class="{ 'desc_blue': recStatusTxt(rec.GoTime)=='进行中' }">{{recStatusTxt(rec.GoTime)}}</p>
+                                            <p v-bind:class="{ 'desc_blue': recStatusTxt(rec.Status)=='进行中' }">{{recStatusTxt(rec.Status)}}</p>
 
                                         </div>
 
@@ -342,33 +342,46 @@
 
                 },
 
-                recStatusTxt: function (goTimeStr)
+                recStatusTxt: function (Status)
 
                 {
-
-                    var gotime = new Date(goTimeStr);
-
-                    var timespan = gotime - new Date();
-
-                    if (timespan > 0) {
-
+                    var Status = Status;
+                    if(Status == 0){
+                        return "已退订";
+                    }
+                    else if(Status == 1){
                         return "进行中";
-
-                    }
-
-                    else if (timespan > -7200000)//2 * 60 * 60 * 1000
-
-                    {
-
+                    } else if(Status == 2){
                         return "已出发";
-
-                    }
-
-                    else if (timespan <= -7200000) {
-
+                    } else if(Status == 3){
                         return "已完成";
-
                     }
+
+
+
+//                    var gotime = new Date(goTimeStr);
+//
+//                    var timespan = gotime - new Date();
+//
+//                    if (timespan > 0) {
+//
+//                        return "进行中";
+//
+//                    }
+//
+//                    else if (timespan > -7200000)//2 * 60 * 60 * 1000
+//
+//                    {
+//
+//                        return "已出发";
+//
+//                    }
+//
+//                    else if (timespan <= -7200000) {
+//
+//                        return "已完成";
+//
+//                    }
 
                 },
 

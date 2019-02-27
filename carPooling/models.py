@@ -160,3 +160,13 @@ class CarPoolingRecDetail(models.Model):
         db_table = "carpooling_rec_detail"
         verbose_name_plural = "乘客行程关联表"
         unique_together = ["c_assid","c_userid"]  # 一个用户最多关联一次该行程
+
+
+class CarPoolingRecUnbook(models.Model):
+    c_recid = models.CharField("乘客行程id", max_length=128, null=False, blank=False, unique=True, db_index=True)
+    unsubscribeTags = models.CharField("乘客取消原因", max_length=128, null=True, blank=False, )
+    unsubscribeComplain = models.CharField("投诉原因", max_length=128, null=True, blank=False, )
+
+    class Meta:
+        db_table = "carpooling_rec_unbook"
+        verbose_name_plural = "乘客退订详情统计表"

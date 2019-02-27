@@ -34,7 +34,7 @@ urlpatterns = [
     url(r"^UserAss/List$", views.UserAssList),   #  我的行程列表  我是车主
 
     url(r"^UserRec/List$", views.UserRecList),  #  我的行程列表  我是乘客
-    url(r"^UserRec/Detail$", views.UserRecDetail),  #  我的行程  我是乘客 行程详情
+    url(r"^UserRec/Detail$", views.UserRecDetail),  #  我的行程  我是乘客 预订详情
 
 
 
@@ -78,6 +78,7 @@ urlpatterns += [
     url(r"^UserRec/GetList$", api_userrec.GetList),  # 乘客订座接口
     url(r"^UserRec/GetDetailData$", api_userrec.GetDetailData),  # 获取通用数据
     url(r"^UserRec/Del$", api_userrec.Del),  # 获取通用数据
+    url(r"^UserRec/UnbookSave$", api_userrec.UnbookSave),  # 获取通用数据
 
 ]
 

@@ -27,6 +27,7 @@ def Login(request):
     # 不存在，则非法访问（提示需要在微信客户端打开）
     if request.method == 'GET':
         c_weixin_id = uuid_maker.get_uuid_random()
+        # c_weixin_id = "f71f615f-2fb1-49a1-adfa-6978ac2decf7"
         entry_url = client.get_client_previous_url(request)
         request.session['entry_url'] = entry_url
         try:

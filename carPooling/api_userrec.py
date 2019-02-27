@@ -6,7 +6,7 @@ from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.conf import settings
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
-from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CarPoolingRecDetail,CurTripStatus
+from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CarPoolingRecDetail,CurTripStatus,CarPoolingRecUnbook
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import DatabaseError, transaction
 from carPooling.globalApi import commonGetCurTripTip
@@ -132,7 +132,7 @@ def GetList(request):
                 # Seat=i.i_no_booked_seat,  # 余座BookSeat
                 BookSeat=i.i_booked_seat, # 定座
                 StartPlace=i.t_remark, # 定座
-                # Status = i.status,
+                Status = i.i_status,
 
             )
             DataSource.append(dictItem)
@@ -154,28 +154,33 @@ def GetList(request):
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok",resultDict), content_type="application/json")
 
 def GetDetailData(request):
-    print("zheli")
     if request.method == "POST":
         id = request.POST.get("id")
-        print(id)
         if not id:
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "no params"), content_type="application/json")
         try:
             # 去数据库查看当前Id是否存在
-            assObj = CarPoolingRecDetail.objects.get(c_id=id)
+            recObj = CarPoolingRecDetail.objects.get(c_id=id,status=True)
+            assObj = CarPoolingAssDetail.objects.get(c_id=recObj.c_assid)
+            assUserObj = CarPoolingUserConf.objects.get(c_weixin_id=assObj.c_userid)
             dataDict = dict(
-                Id=id,
-                StartCity=assObj.c_start_city,
-                EndCity=assObj.c_end_city,
-                GoTime=str(assObj.d_go_time),
-                BookedSeat=assObj.i_booked_seat,  # 预定了的座位
-                Remark=assObj.t_remark,
-                CarOwner=assObj.c_card_owner,
-                Status=assObj.i_status,
+                Id=id,  # 乘客行程id
+                AssId = recObj.c_assid,  # 车主发布的详情
+                StartCity=recObj.c_start_city,
+                EndCity=recObj.c_end_city,
+                GoTime=str(recObj.d_go_time),
+                BookedSeat=recObj.i_booked_seat,  # 预定了的座位
+                Remark=recObj.t_remark,
+                CarOwner=recObj.c_card_owner,
+                Status=recObj.i_status,
                 # UserId=assObj.c_userid,
 
-            )
+                BusType = assObj.c_bus_type,
 
+                Phone = assUserObj.c_phone,
+
+            )
+            print(dataDict)
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok", dataDict), content_type="application/json")
         except:
             print(traceback.print_exc())
@@ -202,3 +207,38 @@ def Del(request):
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "删除成功"), content_type="application/json")
         except:
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "删除失败，联系管理员"), content_type="application/json")
+
+def UnbookSave(request):
+    if request.method == "POST":
+        RecId = request.POST.get("RecId")
+        unsubscribeTags = request.POST.get("unsubscribeTags")
+        unsubscribeComplain = request.POST.get("unsubscribeComplain")
+        # 退订  乘客行程动态改变，车主行程动态改变，通知
+
+        recObjList = CarPoolingRecDetail.objects.filter(c_id=RecId).filter(status=True).filter(i_status=CurTripStatus.Ing)
+        if len(recObjList) != 1:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败，该行程已删除|取消|出发|完成"), content_type="application/json")
+        recObj = recObjList[0]
+        assObjList = CarPoolingAssDetail.objects.filter(c_id=recObj.c_assid)
+        if len(assObjList) != 1:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败，系统错误"),
+                                content_type="application/json")
+        assObj = assObjList[0]
+
+        try:
+            recObj.i_status = CurTripStatus.Cancel
+            assObj.i_booked_seat -= recObj.i_booked_seat
+            recUnbookObj,created = CarPoolingRecUnbook.objects.get_or_create(c_recid=recObj.c_id)
+            recUnbookObj.unsubscribeTags = unsubscribeTags
+            recUnbookObj.unsubscribeComplain = unsubscribeComplain
+            with transaction.atomic():  # 事务，保证唯一 存在，则都存在。错误，则都不去改变
+                recObj.save()
+                assObj.save()
+                recUnbookObj.save()
+            #todo 这里需要通知
+            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "退订成功"),
+                                content_type="application/json")
+        except:
+            print(traceback.print_exc())
+            return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "退订失败，请稍后重试"),
+                                content_type="application/json")
