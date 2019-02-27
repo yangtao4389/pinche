@@ -1,207 +1,411 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
-
-</head>
-<body>
-    
-
-<div id="app">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
-        <a class="mui-btn  mui-btn-link mui-pull-right" v-on:click="toggleShowDel()" v-text="showDelTxt">管理</a>
-        <h1 class="mui-title">预约记录</h1>
-    </header>
-    <!--下拉刷新容器-->
-    <div id="scroll" class="mui-content mui-scroll-wrapper">
-        <div class="mui-scroll">
-            <!--数据列表-->
-            <!--list begin-->
-            <div class="car-record-list bgcolor-white pad10" v-show="!(list.length==0 && isLastPage)">
-                <ul>
-                    <template>
-                        <li v-for="(item,index) in list" >
-                            <div class="car-record-text" v-on:tap="hh.go('/WebApp/UserRec/Subscribe?id='+item.Id)">
-                                <p>{{item.StartCity}} -&gt {{item.EndCity}}</p>
-                                <p>时间：{{hh.formatGoTime(item.GoTime)}}</p>
-                                <p>等待：前后{{(item.WaitTime/60).toFixed(1)}}小时</p>
-                                <p>人数：{{item.Seat}}人</p>
-                            </div>
-                            <div class="car-record-desc">
-                                <a v-show="!isShowDel" class="mbtn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Subscribe?id='+item.Id)">编辑</a>
-                                <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(item)">删除</a>
-                                <p v-bind:class="{ 'desc_blue':item.Status==1}">{{item.Status==1?"匹配中":"已取消"}}</p>
-                            </div>
-                        </li>
-                    </template>
-                </ul>
-            </div>
-            <!--list end-->
-            <div class="car-nodata" style="display:none;" v-show="list.length==0 && isLastPage">
-                <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
-                <h3 class="mart10">暂无预约记录！</h3>
-            </div>
-        </div>
-       
-    </div>
-
-</div>
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
-    
-    <script type="text/javascript">
-        mui.init({
-            pullRefresh: {
-                container: '#scroll',
-                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
-                down: {
-                    style: 'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
-                    //auto: true,//可选,默认false.首次加载自动上拉刷新一次
-                    callback: function () {
-                        app.getData(0);
-                    }
-                },
-                up: {
-                    auto: true,
-                    //contentnomore: '没有更多数据了',
-                    callback: function () {
-                        app.getData(1);
-                    }
-                }
-            }
-        });
-
-        mui.ready(function () {
-
-        });
-
-        var app = new Vue({
-            el: '#app',
-            data: {
-                search: {
-                    pageNum: 0,
-                    numPerPage: 20
-                },
-                isLastPage: false,
-                list: [],
-                isShowDel: false
-            },
-            computed: {
-                showDelTxt: function () {
-                    if (this.isShowDel)
-                        return "取消";
-                    else
-                        return "管理";
-
-                }
-            },
-            methods: {
-                getData: function (type) {
-                    if (type == 1) {//上拉加载更多
-                        app.search.pageNum++;
-                    }
-                    else {//下拉刷新
-                        app.search.pageNum = 1;
-                    }
-
-                    mui.post("/WebApp/UserRec/GetSubscribeList", app.search, function (json) {
-                        app.search.pageNum = json.CurrentPageIndex;
-                        app.isLastPage = json.IsLastPage;
-
-                        if (type == 1) {//上拉加载更多
-                            app.list = app.list.concat(json.DataSource);
-                            mui('#scroll').pullRefresh().endPullupToRefresh(app.list.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
-                        }
-                        else {//下拉刷新
-                            app.list = json.DataSource;
-                            mui('#scroll').pullRefresh().endPulldownToRefresh();
-                            mui('#scroll').pullRefresh().refresh(true);
-                        }
-
-
-                    });
-                },
-                toggleShowDel: function () {
-                    this.isShowDel = !this.isShowDel;
-                },
-                del: function (item) {
-                    mui.confirm("确定删除？", function (e) {
-                        if (e.index == 1) {
-                            mui.post("/WebApp/UserRec/DelSubscribe", { id: item.Id }, function (json) {
-                                if (json.statusCode == "200") {
-                                    mui.toast(json.message);
-                                    for (var i = 0; i < app.list.length; i++) {
-                                        if (item.Id == app.list[i].Id) {
-                                            app.list.splice(i, 1);
-                                            break;
-                                        }
-                                    }
-
-                                }
-                                else {
-                                    mui.alert(json.message);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
-
-    </script>
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>同乡拼车e</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+
+
+    <!--标准mui.css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
+
+    <!--字体的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+
+    <!--App自定义的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+
+
+</head>
+
+<body>
+
+    
+
+
+
+<div id="app">
+
+    <header class="mui-bar mui-bar-nav">
+
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
+
+        <a class="mui-btn  mui-btn-link mui-pull-right" v-on:click="toggleShowDel()" v-text="showDelTxt">管理</a>
+
+        <h1 class="mui-title">预约记录</h1>
+
+    </header>
+
+    <!--下拉刷新容器-->
+
+    <div id="scroll" class="mui-content mui-scroll-wrapper">
+
+        <div class="mui-scroll">
+
+            <!--数据列表-->
+
+            <!--list begin-->
+
+            <div class="car-record-list bgcolor-white pad10" v-show="!(list.length==0 && isLastPage)">
+
+                <ul>
+
+                    <template>
+
+                        <li v-for="(item,index) in list" >
+
+                            <div class="car-record-text" v-on:tap="hh.go('/WebApp/UserRec/Subscribe?id='+item.Id)">
+
+                                <p>{{item.StartCity}} -&gt {{item.EndCity}}</p>
+
+                                <p>时间：{{hh.formatGoTime(item.GoTime)}}</p>
+
+                                <p>等待：前后{{(item.WaitTime/60).toFixed(1)}}小时</p>
+
+                                <p>人数：{{item.Seat}}人</p>
+
+                            </div>
+
+                            <div class="car-record-desc">
+
+                                <a v-show="!isShowDel" class="mbtn btn-size-b" v-on:tap="hh.go('/WebApp/UserRec/Subscribe?id='+item.Id)">编辑</a>
+
+                                <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(item)">删除</a>
+
+                                <p v-bind:class="{ 'desc_blue':item.Status==1}">{{item.Status==1?"匹配中":"已取消"}}</p>
+
+                            </div>
+
+                        </li>
+
+                    </template>
+
+                </ul>
+
+            </div>
+
+            <!--list end-->
+
+            <div class="car-nodata" style="display:none;" v-show="list.length==0 && isLastPage">
+
+                <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
+
+                <h3 class="mart10">暂无预约记录！</h3>
+
+            </div>
+
+        </div>
+
+       
+
+    </div>
+
+
+
+</div>
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
+
+    
+
+    <script type="text/javascript">
+
+        mui.init({
+
+            pullRefresh: {
+
+                container: '#scroll',
+
+                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
+
+                down: {
+
+                    style: 'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+
+                    //auto: true,//可选,默认false.首次加载自动上拉刷新一次
+
+                    callback: function () {
+
+                        app.getData(0);
+
+                    }
+
+                },
+
+                up: {
+
+                    auto: true,
+
+                    //contentnomore: '没有更多数据了',
+
+                    callback: function () {
+
+                        app.getData(1);
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+
+        mui.ready(function () {
+
+
+
+        });
+
+
+
+        var app = new Vue({
+
+            el: '#app',
+
+            data: {
+
+                search: {
+
+                    pageNum: 0,
+
+                    numPerPage: 20
+
+                },
+
+                isLastPage: false,
+
+                list: [],
+
+                isShowDel: false
+
+            },
+
+            computed: {
+
+                showDelTxt: function () {
+
+                    if (this.isShowDel)
+
+                        return "取消";
+
+                    else
+
+                        return "管理";
+
+
+
+                }
+
+            },
+
+            methods: {
+
+                getData: function (type) {
+
+                    if (type == 1) {//上拉加载更多
+
+                        app.search.pageNum++;
+
+                    }
+
+                    else {//下拉刷新
+
+                        app.search.pageNum = 1;
+
+                    }
+
+
+
+                    mui.post("/WebApp/UserRec/GetSubscribeList", app.search, function (json) {
+
+                        app.search.pageNum = json.CurrentPageIndex;
+
+                        app.isLastPage = json.IsLastPage;
+
+
+
+                        if (type == 1) {//上拉加载更多
+
+                            app.list = app.list.concat(json.DataSource);
+
+                            mui('#scroll').pullRefresh().endPullupToRefresh(app.list.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
+
+                        }
+
+                        else {//下拉刷新
+
+                            app.list = json.DataSource;
+
+                            mui('#scroll').pullRefresh().endPulldownToRefresh();
+
+                            mui('#scroll').pullRefresh().refresh(true);
+
+                        }
+
+
+
+
+
+                    });
+
+                },
+
+                toggleShowDel: function () {
+
+                    this.isShowDel = !this.isShowDel;
+
+                },
+
+                del: function (item) {
+
+                    mui.confirm("确定删除？", function (e) {
+
+                        if (e.index == 1) {
+
+                            mui.post("/WebApp/UserRec/DelSubscribe", { id: item.Id }, function (json) {
+
+                                if (json.statusCode == "200") {
+
+                                    mui.toast(json.message);
+
+                                    for (var i = 0; i < app.list.length; i++) {
+
+                                        if (item.Id == app.list[i].Id) {
+
+                                            app.list.splice(i, 1);
+
+                                            break;
+
+                                        }
+
+                                    }
+
+
+
+                                }
+
+                                else {
+
+                                    mui.alert(json.message);
+
+                                }
+
+                            });
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+        });
+
+
+
+    </script>
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
     <script>
 var _hmt = _hmt || [];
 (function() {
@@ -214,6 +418,9 @@ var _hmt = _hmt || [];
 
 
 
-    
-</body>
-</html>
+    
+
+</body>
+
+</html>
+

@@ -124,7 +124,7 @@ def GetList(request):
                 Id=i.c_id,
                 StartCity = i.c_start_city,
                 EndCity = i.c_end_city,
-                GoTime=str(i.d_go_time),
+                GoTime=i.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 CarOwner=i.c_card_owner,
                 UserId=i.c_userid,
                 # BusType=i.c_bus_type,
@@ -168,7 +168,7 @@ def GetDetailData(request):
                 AssId = recObj.c_assid,  # 车主发布的详情
                 StartCity=recObj.c_start_city,
                 EndCity=recObj.c_end_city,
-                GoTime=str(recObj.d_go_time),
+                GoTime=recObj.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 BookedSeat=recObj.i_booked_seat,  # 预定了的座位
                 Remark=recObj.t_remark,
                 CarOwner=recObj.c_card_owner,

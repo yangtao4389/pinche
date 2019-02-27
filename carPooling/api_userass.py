@@ -34,7 +34,7 @@ def GetDetailData(request):
                 StartCity = assObj.c_start_city,
                 EndCity = assObj.c_end_city,
                 Line = assObj.t_line,
-                GoTime = str(assObj.d_go_time),
+                GoTime=assObj.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 BusType=assObj.c_bus_type,
                 VehicleNumber=assObj.i_vehicle_number,
                 Seat=assObj.i_seat , # 总共座位
@@ -454,7 +454,7 @@ def GetList(request):
                 Id=i.c_id,
                 StartCity = i.c_start_city,
                 EndCity = i.c_end_city,
-                GoTime=str(i.d_go_time),
+                GoTime=i.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 CardOwner=i.c_card_owner,
                 UserId=i.c_userid,
                 BusType=i.c_bus_type,

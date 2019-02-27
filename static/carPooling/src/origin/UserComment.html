@@ -1,202 +1,401 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
-    <style>
-        img {
-            pointer-events: none;
-        }
-    </style>
-
-</head>
-<body>
-    
-<div id="app">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserComment/SendList')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
-        <h1 class="mui-title">评价车主</h1>
-    </header>
-    <div class="mui-content">
-        <div class="mui-card">
-            <div class="mui-card-content">
-                <div class="mui-card-content-inner">
-                    <template>
-                        <div class="car-travel-box">
-                            <div class="car-travel-con">
-                                <p>【起止地】 {{comment.StartCity}} -> {{comment.EndCity}}</p>
-                                <p>【时间】 {{hh.formatGoTime(comment.GoTime)}}</p>
-                                <p>【车主】 {{comment.CardOwner}}</p>
-                                <p>【车型】 {{comment.BusType}}</p>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
-            <div class="mui-card-footer">
-                <div class="car-travel-box widper100">
-                    <div class="car-travel-con">
-                        <p>
-                            【评价类型】
-                            <span v-bind:class="{'desc_red':comment.Score==1}" class="marr10" v-on:click="setScore(1)"><i class="hh-icon hh-icon-good"></i> 满意</span>
-                            <span v-bind:class="{'desc_red':comment.Score==0}" v-on:click="setScore(0)"><i class="hh-icon hh-icon-bad"></i> 吐槽</span>
-                        </p>
-                        <p>
-                            【评价内容】<br />
-                            <textarea id="context" class="pad5" rows="4" maxlength="200" placeholder="发表下感受吧,如车况、卫生、守时等..." v-model="comment.Context" v-bind:disabled="!!comment.Id"></textarea>
-                        </p>
-                        <p>
-                            <a class="mui-btn mui-btn-orange mui-btn-block" v-on:click="save()" v-if="!comment.Id" v-bind:disabled="saving">匿名提交</a>
-                        </p>
-                    </div>
-                    <div>
-                        <p>温馨提示：</p>
-                        <p>
-                            1、您可以对本次行程进行评价，请文明用语，如有违禁词汇将可能被<b class="desc_danger">封号</b>。
-                        </p>
-                        <p>
-                            2、评价一经提交<b class="desc_danger">不可修改</b>。
-                        </p>
-                    </div>
-                </div>
-               
-            </div>
-        </div>
-    </div>
-   
-</div>
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
-    
-    <script type="text/javascript">
-        mui.init();
-
-        mui.ready(function () {
-            app.getData();
-        });
-
-        var app = new Vue({
-            el: '#app',
-            data: {
-                comment: {},
-                saving:false
-            },
-            methods: {
-                getData: function () {
-                    mui.post("/WebApp/UserComment/GetCommentDataByRecId", { recId: hh.getQueryString("recId") }, function (json) {
-                        if (json.statusCode == "200") {
-                            app.comment = json.data;
-                            if (!!app.comment.Id)
-                            {
-                                hh.go("/WebApp/UserComment/SendList");
-                            }
-                        }
-                        else {
-                            mui.alert(json.message, function () {
-                                hh.go("/WebApp/UserComment/SendList");
-                            });
-                        }
-                    });
-
-                },
-                setScore: function (score) {
-                    app.comment.Score = score;
-                },
-                save: function () {
-                    if (app.comment.Score != 0 && app.comment.Score != 1)
-                    {
-                        mui.alert("请选择评价类型");
-                        return;
-                    }
-                    else if (!app.comment.Context)
-                    {
-                        var msg = "";
-                        if (app.comment.Score == 0) {
-                            msg ="请输入差评原因";
-                        }
-                        else {
-                            msg ="发表下感受吧";
-                        }
-                        mui.alert(msg, function () {
-                            mui("#context")[0].focus();
-                        });
-                        return;
-                    }
-
-                    mui.confirm("评论一经提交<b class='desc_danger'>不可修改</b>,确定要提交吗？", function (e) {
-                        if (e.index == 1) {//ok
-                            app.saving = true;
-                            mui.post("/WebApp/UserComment/SaveComment", { recId: hh.getQueryString("recId"), score: app.comment.Score, context: app.comment.Context }, function (json) {
-                                if (json.statusCode == "200") {
-                                    mui.alert("评价成功！", function () {
-                                        hh.go('/WebApp/UserComment/ViewComment?recId=' + hh.getQueryString("recId"));
-                                    });
-                                }
-                                else {
-                                    mui.alert(json.message);
-                                    app.saving = false;
-                                }
-                            });
-                        }
-                    });
-
-                   
-                }
-            }
-        });
-
-    </script>
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>同乡拼车e</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+
+
+    <!--标准mui.css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+
+    <!--字体的css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+
+    <!--App自定义的css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+    <style>
+
+        img {
+
+            pointer-events: none;
+
+        }
+
+    </style>
+
+
+
+</head>
+
+<body>
+
+    
+
+<div id="app">
+
+    <header class="mui-bar mui-bar-nav">
+
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserComment/SendList')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
+
+        <h1 class="mui-title">评价车主</h1>
+
+    </header>
+
+    <div class="mui-content">
+
+        <div class="mui-card">
+
+            <div class="mui-card-content">
+
+                <div class="mui-card-content-inner">
+
+                    <template>
+
+                        <div class="car-travel-box">
+
+                            <div class="car-travel-con">
+
+                                <p>【起止地】 {{comment.StartCity}} -> {{comment.EndCity}}</p>
+
+                                <p>【时间】 {{hh.formatGoTime(comment.GoTime)}}</p>
+
+                                <p>【车主】 {{comment.CardOwner}}</p>
+
+                                <p>【车型】 {{comment.BusType}}</p>
+
+                            </div>
+
+                        </div>
+
+                    </template>
+
+                </div>
+
+            </div>
+
+            <div class="mui-card-footer">
+
+                <div class="car-travel-box widper100">
+
+                    <div class="car-travel-con">
+
+                        <p>
+
+                            【评价类型】
+
+                            <span v-bind:class="{'desc_red':comment.Score==1}" class="marr10" v-on:click="setScore(1)"><i class="hh-icon hh-icon-good"></i> 满意</span>
+
+                            <span v-bind:class="{'desc_red':comment.Score==0}" v-on:click="setScore(0)"><i class="hh-icon hh-icon-bad"></i> 吐槽</span>
+
+                        </p>
+
+                        <p>
+
+                            【评价内容】<br />
+
+                            <textarea id="context" class="pad5" rows="4" maxlength="200" placeholder="发表下感受吧,如车况、卫生、守时等..." v-model="comment.Context" v-bind:disabled="!!comment.Id"></textarea>
+
+                        </p>
+
+                        <p>
+
+                            <a class="mui-btn mui-btn-orange mui-btn-block" v-on:click="save()" v-if="!comment.Id" v-bind:disabled="saving">匿名提交</a>
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p>温馨提示：</p>
+
+                        <p>
+
+                            1、您可以对本次行程进行评价，请文明用语，如有违禁词汇将可能被<b class="desc_danger">封号</b>。
+
+                        </p>
+
+                        <p>
+
+                            2、评价一经提交<b class="desc_danger">不可修改</b>。
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+               
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+</div>
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+
+    
+
+    <script type="text/javascript">
+
+        mui.init();
+
+
+
+        mui.ready(function () {
+
+            app.getData();
+
+        });
+
+
+
+        var app = new Vue({
+
+            el: '#app',
+
+            data: {
+
+                comment: {},
+
+                saving:false
+
+            },
+
+            methods: {
+
+                getData: function () {
+
+                    mui.post("/WebApp/UserComment/GetCommentDataByRecId", { recId: hh.getQueryString("recId") }, function (json) {
+
+                        if (json.statusCode == "200") {
+
+                            app.comment = json.data;
+
+                            if (!!app.comment.Id)
+
+                            {
+
+                                hh.go("/WebApp/UserComment/SendList");
+
+                            }
+
+                        }
+
+                        else {
+
+                            mui.alert(json.message, function () {
+
+                                hh.go("/WebApp/UserComment/SendList");
+
+                            });
+
+                        }
+
+                    });
+
+
+
+                },
+
+                setScore: function (score) {
+
+                    app.comment.Score = score;
+
+                },
+
+                save: function () {
+
+                    if (app.comment.Score != 0 && app.comment.Score != 1)
+
+                    {
+
+                        mui.alert("请选择评价类型");
+
+                        return;
+
+                    }
+
+                    else if (!app.comment.Context)
+
+                    {
+
+                        var msg = "";
+
+                        if (app.comment.Score == 0) {
+
+                            msg ="请输入差评原因";
+
+                        }
+
+                        else {
+
+                            msg ="发表下感受吧";
+
+                        }
+
+                        mui.alert(msg, function () {
+
+                            mui("#context")[0].focus();
+
+                        });
+
+                        return;
+
+                    }
+
+
+
+                    mui.confirm("评论一经提交<b class='desc_danger'>不可修改</b>,确定要提交吗？", function (e) {
+
+                        if (e.index == 1) {//ok
+
+                            app.saving = true;
+
+                            mui.post("/WebApp/UserComment/SaveComment", { recId: hh.getQueryString("recId"), score: app.comment.Score, context: app.comment.Context }, function (json) {
+
+                                if (json.statusCode == "200") {
+
+                                    mui.alert("评价成功！", function () {
+
+                                        hh.go('/WebApp/UserComment/ViewComment?recId=' + hh.getQueryString("recId"));
+
+                                    });
+
+                                }
+
+                                else {
+
+                                    mui.alert(json.message);
+
+                                    app.saving = false;
+
+                                }
+
+                            });
+
+                        }
+
+                    });
+
+
+
+                   
+
+                }
+
+            }
+
+        });
+
+
+
+    </script>
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
     <script>
 var _hmt = _hmt || [];
 (function() {
@@ -209,6 +408,9 @@ var _hmt = _hmt || [];
 
 
 
-    
-</body>
-</html>
+    
+
+</body>
+
+</html>
+

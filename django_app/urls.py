@@ -18,9 +18,14 @@ from django.urls import path,include
 from django.conf.urls import url
 from django_app.settings import MEDIA_ROOT
 from django.conf.urls.static import static
-
+from carPooling.views import Home
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^WebApp/", include('carPooling.urls')),
+
 ]
 urlpatterns += static('/media/', document_root=MEDIA_ROOT)
+
+urlpatterns += [
+    url(r"", Home)  # 所有未匹配的都跳到首页
+]

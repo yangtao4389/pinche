@@ -10,6 +10,8 @@ from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDe
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from common.json_result import RtnDefault,RtnCode
 from carPooling.globalApi import commonGetCurTripTip
+from logging import getLogger
+logger = getLogger("default")
 
 # Create your views here.
 def GetCityList(request):
@@ -160,8 +162,8 @@ def GetAssList(request):
         for i in page.object_list:
             dictItem = dict(
                 Id = i.c_id,
-                # GoTime = time.strptime(str(i.d_go_time),"%Y-%m-%d %H:%M:%S"),
-                GoTime = str(i.d_go_time),
+                GoTime = i.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
+                # GoTime = str(i.d_go_time),
                 CardOwner = i.c_card_owner,
                 UserId = i.c_userid,
                 BusType = i.c_bus_type,
@@ -191,7 +193,7 @@ def GetAssList(request):
         #         "CurrentStartIndex":1,
         #         "CurrentEndIndex":1,
         # }
-        print(resultDict)
+        logger.info(resultDict)
         return HttpResponse(json.dumps(resultDict), content_type="application/json")
 
 

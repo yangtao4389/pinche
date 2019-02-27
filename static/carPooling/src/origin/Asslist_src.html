@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>来往拼车</title>
+    <title>同乡拼车e</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="white">
@@ -240,7 +240,7 @@
                     </div>
                     <div class="mui-input-row">
                         <div class="mui-checkbox">
-                            <label for="agree">我已阅读并同意来往拼车<a v-on:tap="hh.go('/WebApp/About?code=UserCarpoolAgreement')" class="desc_red">《合乘协议》</a></label>
+                            <label for="agree">我已阅读并同意同乡拼车e<a v-on:tap="hh.go('/WebApp/About?code=UserCarpoolAgreement')" class="desc_red">《合乘协议》</a></label>
                             <input id="agree"  name="agree" value="true" type="checkbox" v-model="book.agreeStatus">
                         </div>
                     </div>
@@ -366,7 +366,7 @@
                             微信“扫一扫”下方二维码。
                         </p>
                 <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
             </div>
         </div>
     </div>
@@ -654,7 +654,7 @@
                         }
                         else {
                             if (json.data == null || !json.data.Phone) {
-                                mui.alert("您的手机号尚未<br>与【来往拼车】平台绑定<br>请绑定后再预定!", function () {
+                                mui.alert("您的手机号尚未<br>与【同乡拼车e】平台绑定<br>请绑定后再预定!", function () {
                                     if (hh.isQianfan())
                                     {
                                         hh.go("/WebApp/Account/QianFanRegister?userRegReturnUrl=" + location.href);
@@ -734,7 +734,7 @@
                                     hh.reload();
                                 });
                             } else if (json.data.Code == 200) {//请先绑定微信号
-                                mui.alert("您的手机号尚未<br>与【来往拼车】平台绑定<br>请绑定后再预定!", function () {
+                                mui.alert("您的手机号尚未<br>与【同乡拼车e】平台绑定<br>请绑定后再预定!", function () {
                                     if (hh.isWeixin()) {
                                         hh.go("/WebApp/Account/WeiXinRegister?userRegReturnUrl=" + location.href);
                                     }

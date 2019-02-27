@@ -30,7 +30,7 @@ def commonGetCurTripTip(userid):
                 Id=assObj.c_id,
                 StartCity=assObj.c_start_city,
                 EndCity=assObj.c_end_city,
-                GoTime=str(assObj.d_go_time),
+                GoTime=assObj.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 BookedSeat=assObj.i_booked_seat,
                 redirectUrl = "/WebApp/UserRec/Detail?id=%s" %assObj.c_id,
 
@@ -57,7 +57,7 @@ def commonGetCurTripTip(userid):
                 Id = assObj.c_id,
                 StartCity = assObj.c_start_city,
                 EndCity = assObj.c_end_city,
-                GoTime = str(assObj.d_go_time),
+                GoTime=assObj.d_go_time.strftime("%Y/%m/%d %H:%M:%S"),
                 BookedSeat = assObj.i_booked_seat,
                 Seat = assObj.i_seat,
                 redirectUrl="/WebApp/UserAss/Detail?id=%s" % assObj.c_id,

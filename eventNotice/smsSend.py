@@ -4,13 +4,15 @@ from __future__ import print_function
 import ssl, hmac, base64, hashlib,json
 from datetime import datetime as pydatetime
 from eventNotice.models import EventNoticeSmsSendStatistic
-
 try:
     from urllib import urlencode
     from urllib2 import Request, urlopen
 except ImportError:
     from urllib.parse import urlencode
     from urllib.request import Request, urlopen
+from logging import getLogger
+logger = getLogger("default")
+
 
 def smsSend(mobile,smsCode):
     # 云市场分配的密钥Id
@@ -58,9 +60,10 @@ def smsSend(mobile,smsCode):
     statisticObj = EventNoticeSmsSendStatistic()
     statisticObj.phone = mobile
     try:
-        response = urlopen(request, context=ctx,timeout=2)
+        response = urlopen(request, timeout=2)
         content = response.read()
-        dictContent = json.loads(content)
+        dictContent = json.loads(content.decode("utf-8"))
+        logger.info(dictContent)
         if dictContent:
             statisticObj.return_code = dictContent.get("return_code")
             statisticObj.order_id = dictContent.get("order_id")
@@ -69,8 +72,10 @@ def smsSend(mobile,smsCode):
         else:
             raise Exception
     except:
+        logger.exception("发送短信验证码失败")
         statisticObj.return_code = "999"
         statisticObj.save()
         return False
 if __name__ == '__main__':
-    smsSend("18649715651", "1234")
+    a = smsSend("18649715651", "1234")
+    print(a)

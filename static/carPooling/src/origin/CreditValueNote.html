@@ -1,115 +1,227 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
-
-</head>
-<body>
-    
-
-
-
-<header class="mui-bar mui-bar-nav">
-    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="history.go(-1)" ><span class="mui-icon mui-icon-left-nav"></span>返回</a>
-    <h1 class="mui-title">诚信值说明</h1>
-</header>
-<div class="mui-content">
-    <div class="mui-content-padded lh200">
-        <p>为营造诚信拼车氛围，来往拼车实行“诚信值”体系：</p>
-            <p>
-                1、拼友手机注册，初始诚信值为1.0分；
-            </p>
-            <p>
-                2、通过<a href="/WebApp/UserAuth/RealName" class="desc_red border-bottom-dashed">实名认证</a>，诚信值+0.5分；
-            </p>
-            <p>
-                3、拼友成功出行（无投诉），诚信值+0.1分；
-            </p>
-            <p>
-                4、通过<a href="/WebApp/UserAuth/RealDriver" class="desc_red border-bottom-dashed">车主认证</a>，诚信值+0.5分；
-            </p>
-            <p>
-                5、拼友退订被判断为<a href="/WebApp/About/UnsubscribeNote" class="desc_red border-bottom-dashed">有责退订</a>时，诚信值-0.2分；
-            </p>
-            <p>
-                6、拼友不诚信拼车（有投诉），经客服核实后，诚信值-0.2分；
-            </p>
-            <p>
-                7、诚信值低于1.0分，将需要额外再支付1元信息服务费；
-            </p>
-            <p>
-                8、诚信值每周更新一次，分值低于0分，将被封停账号；
-            </p>
-    </div>
-</div>
-
-
-
-
-
-
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
-    
-    <script type="text/javascript">
-        mui.init();
-
-        mui.ready(function () {
-
-        });
-    </script>
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>同乡拼车e</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+
+
+    <!--标准mui.css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mui.showLoading.css?v=20181201">
+
+    <!--字体的css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/font-awesome.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+
+    <!--App自定义的css-->
+
+    <link rel="stylesheet" type="text/css" href="/Areas/WebApp/Content/css/mystyle.css?v=20190219085926">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+
+
+</head>
+
+<body>
+
+    
+
+
+
+
+
+
+
+<header class="mui-bar mui-bar-nav">
+
+    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="history.go(-1)" ><span class="mui-icon mui-icon-left-nav"></span>返回</a>
+
+    <h1 class="mui-title">诚信值说明</h1>
+
+</header>
+
+<div class="mui-content">
+
+    <div class="mui-content-padded lh200">
+
+        <p>为营造诚信拼车氛围，同乡拼车e实行“诚信值”体系：</p>
+
+            <p>
+
+                1、拼友手机注册，初始诚信值为1.0分；
+
+            </p>
+
+            <p>
+
+                2、通过<a href="/WebApp/UserAuth/RealName" class="desc_red border-bottom-dashed">实名认证</a>，诚信值+0.5分；
+
+            </p>
+
+            <p>
+
+                3、拼友成功出行（无投诉），诚信值+0.1分；
+
+            </p>
+
+            <p>
+
+                4、通过<a href="/WebApp/UserAuth/RealDriver" class="desc_red border-bottom-dashed">车主认证</a>，诚信值+0.5分；
+
+            </p>
+
+            <p>
+
+                5、拼友退订被判断为<a href="/WebApp/About/UnsubscribeNote" class="desc_red border-bottom-dashed">有责退订</a>时，诚信值-0.2分；
+
+            </p>
+
+            <p>
+
+                6、拼友不诚信拼车（有投诉），经客服核实后，诚信值-0.2分；
+
+            </p>
+
+            <p>
+
+                7、诚信值低于1.0分，将需要额外再支付1元信息服务费；
+
+            </p>
+
+            <p>
+
+                8、诚信值每周更新一次，分值低于0分，将被封停账号；
+
+            </p>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+                <img class="mart20" src="/Areas/WebApp/Content/img/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+    <script src="/Areas/WebApp/Content/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/Areas/WebApp/Content/js/app.js?v=20190219085926" type="text/javascript" charset="utf-8"></script>
+
+    
+
+    <script type="text/javascript">
+
+        mui.init();
+
+
+
+        mui.ready(function () {
+
+
+
+        });
+
+    </script>
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
     <script>
 var _hmt = _hmt || [];
 (function() {
@@ -122,6 +234,9 @@ var _hmt = _hmt || [];
 
 
 
-    
-</body>
-</html>
+    
+
+</body>
+
+</html>
+

@@ -1,235 +1,467 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
-<script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/clipboard.min.js"></script>
-
-</head>
-<body>
-    
-
-
-<header class="mui-bar mui-bar-nav">
-    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
-    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-home"></span></a>
-    <h1 class="mui-title">出行详情</h1>
-</header>
-<div class="mui-content" id="app">
-    <div class="car-travel-box can-select">
-        <div class="car-travel-con">
-            <div class="mui-card">
-                <div class="mui-card-content">
-                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】成都 -> 巴中
-【时间】02月20日 00:00
-【路线】武侯大道 出发，途径武侯大道地铁站（推荐上车点），巴中西 站下高速，目的地：巴中，仅限巴中市区可送。
-【车型】丰田致炫
-【座位】3
-【有车】小杨
-【预订】t.cn/EVNdzYP
-【A费】 100元/人
-【备注】来呀，一起回家呀</textarea>
-                </div>
-            </div>
-           
-        </div>
-        <div class="mui-content-padded">
-            <div class="car-travel-tip" v-show="isSupported">
-                信息已同步到“我要拼车”列表！<br>
-                可复制粘贴到任意QQ、微信等拼车群
-            </div>
-            <div class="car-travel-tip" v-show="!isSupported" >
-                您的浏览器不支持一键复制<br>
-                可长按上方文字,全选后<br>
-                可复制粘贴到任意QQ、微信等拼车群
-            </div>
-            <button id="btnCopy" class="mui-btn mui-btn-orange mui-btn-block" data-clipboard-target="#txtAssInfo">一键复制</button>
-
-        </div>
-    </div>
-
-
-</div>
-
-
-
-
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
-    
-    <script type="text/javascript">
-        mui.init();
-        mui.ready(function () {
-            app.initCopy();
-
-            mui("#txtAssInfo")[0].style.height = mui("#txtAssInfo")[0].scrollHeight + "px";
-           
-        });
-
-
-        var app = new Vue({
-            el: '#app',
-            data: {
-                isSupported: true
-            },
-            methods: {
-                initCopy: function () {
-                    app.isSupported = ClipboardJS.isSupported();
-
-                    var clipboard = new ClipboardJS('#btnCopy');
-                    clipboard.on('success', function (e) {
-                        mui.alert("快去拼车群粘贴吧", "复制成功");
-                        e.clearSelection();
-                    });
-                    clipboard.on('error', function (e) {
-                        app.isSupported = false;
-                        mui.alert("请长按拼车信息文字,全选后复制粘贴到拼车群。", "复制失败", app.selectTxt());
-                    });
-                },
-                selectTxt: function () {
-                    mui("#txtAssInfo")[0].select();
-                }
-            }
-        });
-    </script>
-
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.min.js"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.signalR-2.2.3.min.js"></script>
-        <script>
-        try {
-            $(function () {
-                $.getScript("http://signalr.51bc.cc:8082/signalr/hubs", function () {
-
-                    var GROUP_NAME = "b8cf77a3-c671-4560-9bed-a746b8a52276";
-                    var MY_USER_ID = "4177159e-898c-4cc5-91ac-cc38c62e3c10 ";
-                    var MY_USER_NAME = "小杨";
-                    var MY_PHONE = "18649715651";
-                    var IS_CAR_OWNER = "1";
-                    var pushTimespan = parseInt("10") * 1000;
-                    var signalRHost = "http://signalr.51bc.cc:8082";
-
-                    //日记记录
-                    $.connection.hub.logging = true;
-                    //设置hubs的url
-                    $.connection.hub.url = signalRHost + "/signalr";
-
-                    // 声明一个代理来引用该集线器。
-                    CHAT_HUB = $.connection.chatHub;
-
-                    CHAT_HUB.client.addMessageToPage = function (chatModel) { };
-                    CHAT_HUB.client.updateMarkToPage = function (locationModel) { };
-                    // 启动 connection
-                    $.connection.hub.start().done(function () {
-                        //alert($.connection.hub.transport.name);
-                        //加入组
-                        CHAT_HUB.server.joinGroup({
-                            GroupName: GROUP_NAME,
-                            UserId: MY_USER_ID,
-                            IsCarOwner: IS_CAR_OWNER
-                        });
-
-                        $.post("/WebApp/Home/GetWenxinJsapiConfig").success(function (json) {
-                            json.jsApiList = ["getLocation"];
-                            wx.config(json);
-                            wx.ready(function () {
-                                pushMyLocation();
-                                //美间x秒上传我的位置
-                                setInterval(function () {
-                                    pushMyLocation();
-                                }, pushTimespan);
-
-                            });
-                        });
-
-
-                    });
-                    $.connection.hub.reconnected(function () {
-                        console.log("reconnected");
-                        //加入组
-                        CHAT_HUB.server.joinGroup({
-                            GroupName: GROUP_NAME,
-                            UserId: MY_USER_ID,
-                            IsCarOwner: IS_CAR_OWNER
-                        });
-                    });
-
-                    function pushMyLocation() {
-                        wx.getLocation({
-                            type: 'gcj02',//wgs84 gps坐标，gcj02火星坐标(腾讯)
-                            success: function (res) {
-                                var myLocationModel = {
-                                    UserId: MY_USER_ID,
-                                    IsCarOwner: IS_CAR_OWNER,
-                                    Sender: MY_USER_NAME,
-                                    Msg: "{\"lat\":" + res.latitude + ",\"lng\":" + res.longitude + "}",
-                                    GroupName: GROUP_NAME,
-                                    SendTime: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
-                                    Phone: MY_PHONE
-                                };
-                                //发送我的位置到服务器
-                                CHAT_HUB.server.shareToOther(myLocationModel);
-                            }
-                        });
-                    }
-                });
-            });
-        } catch (e) {
-            console.log(e);
-        }
-
-        </script>
-
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>同乡拼车e</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+
+
+    <!--标准mui.css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
+
+    <!--字体的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+
+    <!--App自定义的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+<script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/clipboard.min.js"></script>
+
+
+
+</head>
+
+<body>
+
+    
+
+
+
+
+
+<header class="mui-bar mui-bar-nav">
+
+    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
+
+    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-home"></span></a>
+
+    <h1 class="mui-title">出行详情</h1>
+
+</header>
+
+<div class="mui-content" id="app">
+
+    <div class="car-travel-box can-select">
+
+        <div class="car-travel-con">
+
+            <div class="mui-card">
+
+                <div class="mui-card-content">
+
+                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】成都 -> 巴中
+
+【时间】02月20日 00:00
+
+【路线】武侯大道 出发，途径武侯大道地铁站（推荐上车点），巴中西 站下高速，目的地：巴中，仅限巴中市区可送。
+
+【车型】丰田致炫
+
+【座位】3
+
+【有车】小杨
+
+【预订】t.cn/EVNdzYP
+
+【A费】 100元/人
+
+【备注】来呀，一起回家呀</textarea>
+
+                </div>
+
+            </div>
+
+           
+
+        </div>
+
+        <div class="mui-content-padded">
+
+            <div class="car-travel-tip" v-show="isSupported">
+
+                信息已同步到“我要拼车”列表！<br>
+
+                可复制粘贴到任意QQ、微信等拼车群
+
+            </div>
+
+            <div class="car-travel-tip" v-show="!isSupported" >
+
+                您的浏览器不支持一键复制<br>
+
+                可长按上方文字,全选后<br>
+
+                可复制粘贴到任意QQ、微信等拼车群
+
+            </div>
+
+            <button id="btnCopy" class="mui-btn mui-btn-orange mui-btn-block" data-clipboard-target="#txtAssInfo">一键复制</button>
+
+
+
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
+
+    
+
+    <script type="text/javascript">
+
+        mui.init();
+
+        mui.ready(function () {
+
+            app.initCopy();
+
+
+
+            mui("#txtAssInfo")[0].style.height = mui("#txtAssInfo")[0].scrollHeight + "px";
+
+           
+
+        });
+
+
+
+
+
+        var app = new Vue({
+
+            el: '#app',
+
+            data: {
+
+                isSupported: true
+
+            },
+
+            methods: {
+
+                initCopy: function () {
+
+                    app.isSupported = ClipboardJS.isSupported();
+
+
+
+                    var clipboard = new ClipboardJS('#btnCopy');
+
+                    clipboard.on('success', function (e) {
+
+                        mui.alert("快去拼车群粘贴吧", "复制成功");
+
+                        e.clearSelection();
+
+                    });
+
+                    clipboard.on('error', function (e) {
+
+                        app.isSupported = false;
+
+                        mui.alert("请长按拼车信息文字,全选后复制粘贴到拼车群。", "复制失败", app.selectTxt());
+
+                    });
+
+                },
+
+                selectTxt: function () {
+
+                    mui("#txtAssInfo")[0].select();
+
+                }
+
+            }
+
+        });
+
+    </script>
+
+
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.min.js"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/jquery.signalR-2.2.3.min.js"></script>
+
+        <script>
+
+        try {
+
+            $(function () {
+
+                $.getScript("http://signalr.51bc.cc:8082/signalr/hubs", function () {
+
+
+
+                    var GROUP_NAME = "b8cf77a3-c671-4560-9bed-a746b8a52276";
+
+                    var MY_USER_ID = "4177159e-898c-4cc5-91ac-cc38c62e3c10 ";
+
+                    var MY_USER_NAME = "小杨";
+
+                    var MY_PHONE = "18649715651";
+
+                    var IS_CAR_OWNER = "1";
+
+                    var pushTimespan = parseInt("10") * 1000;
+
+                    var signalRHost = "http://signalr.51bc.cc:8082";
+
+
+
+                    //日记记录
+
+                    $.connection.hub.logging = true;
+
+                    //设置hubs的url
+
+                    $.connection.hub.url = signalRHost + "/signalr";
+
+
+
+                    // 声明一个代理来引用该集线器。
+
+                    CHAT_HUB = $.connection.chatHub;
+
+
+
+                    CHAT_HUB.client.addMessageToPage = function (chatModel) { };
+
+                    CHAT_HUB.client.updateMarkToPage = function (locationModel) { };
+
+                    // 启动 connection
+
+                    $.connection.hub.start().done(function () {
+
+                        //alert($.connection.hub.transport.name);
+
+                        //加入组
+
+                        CHAT_HUB.server.joinGroup({
+
+                            GroupName: GROUP_NAME,
+
+                            UserId: MY_USER_ID,
+
+                            IsCarOwner: IS_CAR_OWNER
+
+                        });
+
+
+
+                        $.post("/WebApp/Home/GetWenxinJsapiConfig").success(function (json) {
+
+                            json.jsApiList = ["getLocation"];
+
+                            wx.config(json);
+
+                            wx.ready(function () {
+
+                                pushMyLocation();
+
+                                //美间x秒上传我的位置
+
+                                setInterval(function () {
+
+                                    pushMyLocation();
+
+                                }, pushTimespan);
+
+
+
+                            });
+
+                        });
+
+
+
+
+
+                    });
+
+                    $.connection.hub.reconnected(function () {
+
+                        console.log("reconnected");
+
+                        //加入组
+
+                        CHAT_HUB.server.joinGroup({
+
+                            GroupName: GROUP_NAME,
+
+                            UserId: MY_USER_ID,
+
+                            IsCarOwner: IS_CAR_OWNER
+
+                        });
+
+                    });
+
+
+
+                    function pushMyLocation() {
+
+                        wx.getLocation({
+
+                            type: 'gcj02',//wgs84 gps坐标，gcj02火星坐标(腾讯)
+
+                            success: function (res) {
+
+                                var myLocationModel = {
+
+                                    UserId: MY_USER_ID,
+
+                                    IsCarOwner: IS_CAR_OWNER,
+
+                                    Sender: MY_USER_NAME,
+
+                                    Msg: "{\"lat\":" + res.latitude + ",\"lng\":" + res.longitude + "}",
+
+                                    GroupName: GROUP_NAME,
+
+                                    SendTime: (new Date()).Format("yyyy-MM-dd hh:mm:ss"),
+
+                                    Phone: MY_PHONE
+
+                                };
+
+                                //发送我的位置到服务器
+
+                                CHAT_HUB.server.shareToOther(myLocationModel);
+
+                            }
+
+                        });
+
+                    }
+
+                });
+
+            });
+
+        } catch (e) {
+
+            console.log(e);
+
+        }
+
+
+
+        </script>
+
+
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
     <script>
 var _hmt = _hmt || [];
 (function() {
@@ -242,6 +474,9 @@ var _hmt = _hmt || [];
 
 
 
-    
-</body>
-</html>
+    
+
+</body>
+
+</html>
+

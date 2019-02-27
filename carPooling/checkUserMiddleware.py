@@ -23,6 +23,7 @@ class CheckUserMiddleware(MiddlewareMixin):
         logger.info("每一次进入的url记录：%s" % client.get_client_current_full_path(request))
         useragent = client.get_client_HTTP_USER_AGENT(request)
         logger.info("每一次进入的useragent记录：%s" % useragent)
+        logger.info("每一次进入用户ip：%s" % client.get_client_ip(request))
         # return HttpResponseRedirect("http://112.18.251.47:8801/hall/index.do")
         # request.session['userid'] = "checkuser"
         if not any(m.match(path) for m in EXEMPT_URLS):

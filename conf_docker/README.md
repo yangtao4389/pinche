@@ -17,7 +17,7 @@
 * session,cache 数据
 * rabbitmq数据
 > `docker run -d -p 8801:80  --name dev_pinche --restart=always -v /home/code/dev/pinche:/home/code/app -v /home/logs/dev/pinche/docker:/home/logs -v /home/session/dev/pinche/docker:/home/session -v /home/cache/dev/pinche/docker:/home/cache -v /home/logs/dev/pinche/docker/rabbitmq:/data/rabbitmq/mnesia sichuan_yd_video:1.0  `开发
-> `docker run -d -p 9000:80 --name online_pinche --restart=always -v /home/code/online/pinche:/home/code/app -v /home/logs/online/pinche/docker:/home/logs -v /home/session/online/pinche/docker:/home/session -v /home/cache/online/pinche/docker:/home/cache  -v /home/logs/online/pinche/docker/rabbitmq:/data/rabbitmq/mnesia django2.0:1.0  `正式
+> `docker run -d -p 8002:80 --name online_pinche --restart=always -v /home/code/online/pinche:/home/code/app -v /home/logs/online/pinche/docker:/home/logs -v /home/session/online/pinche/docker:/home/session -v /home/cache/online/pinche/docker:/home/cache  -v /home/logs/online/pinche/docker/rabbitmq:/data/rabbitmq/mnesia django2.0:1.0  `正式
     
 
 ### 容器操作 

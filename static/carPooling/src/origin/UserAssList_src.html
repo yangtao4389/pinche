@@ -1,237 +1,471 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>来往拼车</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
-
-    <!--标准mui.css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
-    <!--字体的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
-    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
-    <!--App自定义的css-->
-    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
-   <style>
-       .mui-modal{display:none;}
-   </style>
-    
- <style>
-     .mui-control-content {
-         height:100%;
-     }
-     .mui-bar~.mui-content .mui-fullscreen {
-				top: 115px;
-			}
-    
-    </style>
-
-</head>
-<body>
-    
-
-<div id="app">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
-        <a class="mui-btn  mui-btn-link mui-pull-right" v-on:click="toggleShowDel()" v-text="showDelTxt">管理</a>
-        <h1 class="mui-title">我的行程</h1>
-    </header>
-    <div class="mui-content">
-        <div class="car-myall-tab">
-            <div class="mui-segmented-control">
-                <a class="mui-control-item" v-on:tap="hh.go('/WebApp/UserRec/List')">我是乘客</a>
-                <a class="mui-control-item mui-active" href="#item2">我是车主</a>
-            </div>
-        </div>
-        <!--section1 begin-->
-        <div class="mui-fullscreen">
-            <div id="item2" class="mui-control-content  mui-active">
-                <div id="scroll" class="mui-scroll-wrapper">
-                    <div class="mui-scroll">
-                        <div class="car-record-list">
-                            <ul>
-                                <template>
-                                    <li v-for="(ass,index) in assList" v-bind:class="{'dis-gray': assStatusTxt(ass.GoTime,ass.Status)!='进行中'}">
-                                        <div class="car-record-text">
-                                            <p><strong>{{ass.StartCity}} -&gt {{ass.EndCity}}</strong></p>
-                                            <p>时间：{{formatGoTime(ass.GoTime)}}</p>
-                                            <p v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">订座/余座：<span class="border-bottom-dashed">{{ass.BookedSeat}}人/{{ass.Seat}}人</span><i class="hh-icon hh-icon-wenhao ver_btm"></i></p>
-                                        </div>
-                                        <div class="car-record-desc">
-                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">{{assStatusTxt(ass.GoTime,ass.Status)=='进行中'?"编辑":"查看"}}</a>
-                                            <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(ass)">删除</a>
-                                            <p v-bind:class="{ 'desc_blue': assStatusTxt(ass.GoTime,ass.Status)=='进行中' }">{{assStatusTxt(ass.GoTime,ass.Status)}}</p>
-                                        </div>
-                                    </li>
-                                </template>
-                            </ul>
-                        </div>
-                        <div class="car-nodata" style="display:none;" v-show="assList.length==0 && isLastPage">
-                            <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
-                            <h3 class="mart10">暂无发布信息！</h3>
-                        </div>
-                    </div>
-                    
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-
-    
-   
-    <!--subscription-->
-    <div id="subscription" class="mui-modal">
-        <header class="mui-bar mui-bar-nav">
-            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-            <h1 class="mui-title">请先关注公众号</h1>
-        </header>
-        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-            <div class="pad10 mui-text-center ">
-
-                        <p class="mui-text-left mui-h5">
-                            微信“扫一扫”下方二维码。
-                        </p>
-                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
-                <p class="mui-text-center mui-h6 mart10">微信公众号：来往拼车</p>
-            </div>
-        </div>
-    </div>
-   
-
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
-    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
-    
-    <script type="text/javascript">
-        mui.init({
-            pullRefresh: {
-                container: '#scroll',
-                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
-                up: {
-                    auto: true,
-                    //contentnomore: '没有更多数据了',
-                    callback: function () {
-                        app.getData();
-                    }
-                }
-            }
-        });
-        mui.ready(function () {
-            
-        });
-      
-       
-        var app = new Vue({
-            el: '#app',
-            data: {
-                search: {
-                    pageNum: 0,
-                    numPerPage: 20
-                },
-                isLastPage: false,
-                assList: [],
-                isShowDel: false
-            },
-            computed: {
-                showDelTxt: function () {
-                    if (this.isShowDel)
-                        return "取消";
-                    else
-                        return "管理";
-
-                }
-            },
-            methods: {
-                getData: function () {
-
-                    app.search.pageNum++;
-                    mui.post("/WebApp/UserAss/GetList", app.search, function (json) {
-                        app.search.pageNum = json.CurrentPageIndex;
-                        app.isLastPage = json.IsLastPage;
-
-                        //上拉加载更多
-                        app.assList = app.assList.concat(json.DataSource);
-                        mui('#scroll').pullRefresh().endPullupToRefresh(app.assList.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
-                    });
-                },
-                formatGoTime: function (goTimeStr) {
-                    var gotime = new Date(goTimeStr);
-                    return gotime.Format("MM月dd日 hh:mm");
-                },
-                assStatusTxt: function (goTimeStr,status)
-                {
-                    if (status == 0) {
-                        return "已撤下";
-                    } else {
-                        var gotime = new Date(goTimeStr);
-                        var timespan = gotime - new Date();
-                        if (timespan > 0) {
-                            return "进行中";
-                        }
-                        else if (timespan > -7200000)//2 * 60 * 60 * 1000
-                        {
-                            return "已出发";
-                        }
-                        else if (timespan <= -7200000) {
-                            return "已完成";
-                        }
-                    }
-                    
-                },
-                toggleShowDel: function () {
-                    this.isShowDel = !this.isShowDel;
-                },
-                del: function ( ass) {
-                    var gotime = new Date(ass.GoTime);
-                    var timespan = gotime - new Date();
-                    if (timespan > -7200000) {
-                        mui.alert("只有已完成的行程可以删除！");
-                        return;
-                    }
-                    
-                    mui.confirm("确定删除？", function (e) {
-                        if (e.index == 1) {
-                            mui.post("/WebApp/UserAss/Del", { id: ass.Id }, function (json) {
-                                if (json.statusCode == "200") {
-                                    mui.toast(json.message);
-                                    for (var i = 0; i < app.assList.length; i++) {
-                                        if (ass.Id == app.assList[i].Id) {
-                                            app.assList.splice(i, 1);
-                                            break;
-                                        }
-                                    }
-                                }
-                                else {
-                                    mui.alert(json.message);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        });
-    </script>
-
-    <script>
-        mui.ready(function () {
-            mui(".mui-modal").each(function () {
-                this.style.display = "block";
-            });
-        });
-    </script>
+
+
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <title>同乡拼车e</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+    <link href="/Areas/WebApp/Content/img/logo-lwpinche.jpg" rel="apple-touch-icon-precomposed">
+
+
+
+    <!--标准mui.css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mui.showLoading.css?v=20181201">
+
+    <!--字体的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/font-awesome.min.css?v=20181201">
+
+    <link rel="stylesheet" type="text/css" href="https://at.alicdn.com/t/font_526810_qk3yrpzlw4.css">
+
+    <!--App自定义的css-->
+
+    <link rel="stylesheet" type="text/css" href="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/css/mystyle.css?v=20190214210354">
+
+   <style>
+
+       .mui-modal{display:none;}
+
+   </style>
+
+    
+
+ <style>
+
+     .mui-control-content {
+
+         height:100%;
+
+     }
+
+     .mui-bar~.mui-content .mui-fullscreen {
+
+				top: 115px;
+
+			}
+
+    
+
+    </style>
+
+
+
+</head>
+
+<body>
+
+    
+
+
+
+<div id="app">
+
+    <header class="mui-bar mui-bar-nav">
+
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>个人中心</a>
+
+        <a class="mui-btn  mui-btn-link mui-pull-right" v-on:click="toggleShowDel()" v-text="showDelTxt">管理</a>
+
+        <h1 class="mui-title">我的行程</h1>
+
+    </header>
+
+    <div class="mui-content">
+
+        <div class="car-myall-tab">
+
+            <div class="mui-segmented-control">
+
+                <a class="mui-control-item" v-on:tap="hh.go('/WebApp/UserRec/List')">我是乘客</a>
+
+                <a class="mui-control-item mui-active" href="#item2">我是车主</a>
+
+            </div>
+
+        </div>
+
+        <!--section1 begin-->
+
+        <div class="mui-fullscreen">
+
+            <div id="item2" class="mui-control-content  mui-active">
+
+                <div id="scroll" class="mui-scroll-wrapper">
+
+                    <div class="mui-scroll">
+
+                        <div class="car-record-list">
+
+                            <ul>
+
+                                <template>
+
+                                    <li v-for="(ass,index) in assList" v-bind:class="{'dis-gray': assStatusTxt(ass.GoTime,ass.Status)!='进行中'}">
+
+                                        <div class="car-record-text">
+
+                                            <p><strong>{{ass.StartCity}} -&gt {{ass.EndCity}}</strong></p>
+
+                                            <p>时间：{{formatGoTime(ass.GoTime)}}</p>
+
+                                            <p v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">订座/余座：<span class="border-bottom-dashed">{{ass.BookedSeat}}人/{{ass.Seat}}人</span><i class="hh-icon hh-icon-wenhao ver_btm"></i></p>
+
+                                        </div>
+
+                                        <div class="car-record-desc">
+
+                                            <a v-show="!isShowDel" class="mui-btn btn-size-b" v-on:tap="hh.go('/WebApp/UserAss/Detail?id='+ass.Id)">{{assStatusTxt(ass.GoTime,ass.Status)=='进行中'?"编辑":"查看"}}</a>
+
+                                            <a v-show="isShowDel" class="mui-btn mui-btn-danger btn-size-b" v-on:tap="del(ass)">删除</a>
+
+                                            <p v-bind:class="{ 'desc_blue': assStatusTxt(ass.GoTime,ass.Status)=='进行中' }">{{assStatusTxt(ass.GoTime,ass.Status)}}</p>
+
+                                        </div>
+
+                                    </li>
+
+                                </template>
+
+                            </ul>
+
+                        </div>
+
+                        <div class="car-nodata" style="display:none;" v-show="assList.length==0 && isLastPage">
+
+                            <div class="car-data-ico"><i class="hh-icon hh-icon-zanwujilu"></i></div>
+
+                            <h3 class="mart10">暂无发布信息！</h3>
+
+                        </div>
+
+                    </div>
+
+                    
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+   
+
+    <!--subscription-->
+
+    <div id="subscription" class="mui-modal">
+
+        <header class="mui-bar mui-bar-nav">
+
+            <a class="mui-icon mui-icon-left-nav mui-pull-left" onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
+
+            <h1 class="mui-title">请先关注公众号</h1>
+
+        </header>
+
+        <div class="mui-content" style="height: 100%;overflow-y:scroll;">
+
+            <div class="pad10 mui-text-center ">
+
+
+
+                        <p class="mui-text-left mui-h5">
+
+                            微信“扫一扫”下方二维码。
+
+                        </p>
+
+                <img class="mart20" src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/img/wxqrcode-lwpinche.jpg" />
+
+                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.min.js?v=2018120311" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/mui.showLoading.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/vue.min.js?v=20181201" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://xzkj.oss-cn-hangzhou.aliyuncs.com/static/webapp/js/app.js?v=20190214210354" type="text/javascript" charset="utf-8"></script>
+
+    
+
+    <script type="text/javascript">
+
+        mui.init({
+
+            pullRefresh: {
+
+                container: '#scroll',
+
+                deceleration: 0.0006, //阻尼系数,系数越小滑动越灵敏
+
+                up: {
+
+                    auto: true,
+
+                    //contentnomore: '没有更多数据了',
+
+                    callback: function () {
+
+                        app.getData();
+
+                    }
+
+                }
+
+            }
+
+        });
+
+        mui.ready(function () {
+
+            
+
+        });
+
+      
+
+       
+
+        var app = new Vue({
+
+            el: '#app',
+
+            data: {
+
+                search: {
+
+                    pageNum: 0,
+
+                    numPerPage: 20
+
+                },
+
+                isLastPage: false,
+
+                assList: [],
+
+                isShowDel: false
+
+            },
+
+            computed: {
+
+                showDelTxt: function () {
+
+                    if (this.isShowDel)
+
+                        return "取消";
+
+                    else
+
+                        return "管理";
+
+
+
+                }
+
+            },
+
+            methods: {
+
+                getData: function () {
+
+
+
+                    app.search.pageNum++;
+
+                    mui.post("/WebApp/UserAss/GetList", app.search, function (json) {
+
+                        app.search.pageNum = json.CurrentPageIndex;
+
+                        app.isLastPage = json.IsLastPage;
+
+
+
+                        //上拉加载更多
+
+                        app.assList = app.assList.concat(json.DataSource);
+
+                        mui('#scroll').pullRefresh().endPullupToRefresh(app.assList.length > 0 && json.IsLastPage); //参数为true代表没有更多数据了。
+
+                    });
+
+                },
+
+                formatGoTime: function (goTimeStr) {
+
+                    var gotime = new Date(goTimeStr);
+
+                    return gotime.Format("MM月dd日 hh:mm");
+
+                },
+
+                assStatusTxt: function (goTimeStr,status)
+
+                {
+
+                    if (status == 0) {
+
+                        return "已撤下";
+
+                    } else {
+
+                        var gotime = new Date(goTimeStr);
+
+                        var timespan = gotime - new Date();
+
+                        if (timespan > 0) {
+
+                            return "进行中";
+
+                        }
+
+                        else if (timespan > -7200000)//2 * 60 * 60 * 1000
+
+                        {
+
+                            return "已出发";
+
+                        }
+
+                        else if (timespan <= -7200000) {
+
+                            return "已完成";
+
+                        }
+
+                    }
+
+                    
+
+                },
+
+                toggleShowDel: function () {
+
+                    this.isShowDel = !this.isShowDel;
+
+                },
+
+                del: function ( ass) {
+
+                    var gotime = new Date(ass.GoTime);
+
+                    var timespan = gotime - new Date();
+
+                    if (timespan > -7200000) {
+
+                        mui.alert("只有已完成的行程可以删除！");
+
+                        return;
+
+                    }
+
+                    
+
+                    mui.confirm("确定删除？", function (e) {
+
+                        if (e.index == 1) {
+
+                            mui.post("/WebApp/UserAss/Del", { id: ass.Id }, function (json) {
+
+                                if (json.statusCode == "200") {
+
+                                    mui.toast(json.message);
+
+                                    for (var i = 0; i < app.assList.length; i++) {
+
+                                        if (ass.Id == app.assList[i].Id) {
+
+                                            app.assList.splice(i, 1);
+
+                                            break;
+
+                                        }
+
+                                    }
+
+                                }
+
+                                else {
+
+                                    mui.alert(json.message);
+
+                                }
+
+                            });
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+        });
+
+    </script>
+
+
+
+    <script>
+
+        mui.ready(function () {
+
+            mui(".mui-modal").each(function () {
+
+                this.style.display = "block";
+
+            });
+
+        });
+
+    </script>
+
     <script>
 var _hmt = _hmt || [];
 (function() {
@@ -244,6 +478,9 @@ var _hmt = _hmt || [];
 
 
 
-    
-</body>
-</html>
+    
+
+</body>
+
+</html>
+
