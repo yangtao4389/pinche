@@ -1,4 +1,6 @@
 import time,hashlib,re
+import random
+import string
 def isVaildDate(date):
     '''
     判断日期格式是否符合标准
@@ -45,6 +47,22 @@ def checkTelPhone(phone):
         return True
     else:
         return False
+
+def generate_code(num):
+    '''
+    生成num位code
+    :param num:
+    :return:
+    '''
+    seeds = "1234567890"
+    # 定义一个空列表，每次循环，将拿到的值，加入列表
+    random_num = []
+    # choice函数：每次从seeds拿一个值，加入列表
+    for i in range(num):
+        random_num.append(random.choice(seeds))
+    # 将列表里的值，变成四位字符串
+    return "" . join(random_num)
+
 
 if __name__ == '__main__':
     print(checkTelPhone("18649a5651"))

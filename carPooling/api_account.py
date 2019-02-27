@@ -2,6 +2,7 @@ from carPooling.models import CarPoolingUserConf
 from common.json_result import RtnDefault,RtnCode
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from common import checkparam
+from eventNotice import smsSend
 
 
 def PhoneStatus(request):
@@ -69,7 +70,9 @@ def GetCodeLogin(request):
         if not checkparam.checkTelPhone(phone):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "参数出错"), content_type="application/json")
         # 全局短信验证码：
-        request.session["smsCode"] = "1234"
+        smsCode =checkparam.generate_code(4)
+        request.session["smsCode"] = smsCode
+        smsSend.smsSend(phone, smsCode)
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "发送成功"), content_type="application/json")
 
 
