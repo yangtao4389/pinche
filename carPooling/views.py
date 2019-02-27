@@ -26,7 +26,8 @@ def Login(request):
     # 如果微信id存在，则去数据库查询。如果没有电话信息，则弹绑定手机，如果有，则存session
     # 不存在，则非法访问（提示需要在微信客户端打开）
     if request.method == 'GET':
-        c_weixin_id = uuid_maker.get_uuid_random()
+        # c_weixin_id = uuid_maker.get_uuid_random()
+        c_weixin_id = client.get_client_ip(request)
         # c_weixin_id = "f71f615f-2fb1-49a1-adfa-6978ac2decf7"
         entry_url = client.get_client_previous_url(request)
         request.session['entry_url'] = entry_url

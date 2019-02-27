@@ -141,7 +141,7 @@ def GetAssList(request):
         # 备用字段
         lastId = request.POST.get("lastId","null")
 
-        allAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_start_city=startCity, c_end_city=endCity).filter(d_go_time__gte=goTime).filter(i_no_booked_seat__gte=seatNum)
+        allAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_start_city=startCity, c_end_city=endCity).filter(d_go_time__gte=goTime).filter(i_no_booked_seat__gte=seatNum).order_by("d_go_time")
         paginator = Paginator(allAss, numPerPage)
         page = paginator.page(pageNum)
 
@@ -174,6 +174,7 @@ def GetAssList(request):
                 BadNum = 0,  # 差评
                 IsRealName = 0, # 姓名是否有效
                 IsRealDriver = 0,  # 身份是否验证
+                Remark = i.t_remark,  # 身份是否验证
             )
             DataSource.append(dictItem)
         resultDict.update(DataSource=DataSource)
