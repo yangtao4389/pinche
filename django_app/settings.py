@@ -63,6 +63,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'authority.UserAuthMiddleware.UserAuthMiddleware',
     # 'carPooling.checkUserMiddleware.CheckUserMiddleware',
+    'centerEvent.checkUserMiddleware.CheckUserMiddleware',
 
 ]
 

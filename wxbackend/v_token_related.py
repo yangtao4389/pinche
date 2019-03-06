@@ -1,9 +1,11 @@
-import hashlib
-from common import client
-from django.shortcuts import HttpResponse
 import requests
 import json
 import time
+import hashlib
+from common import client,checkparam
+from django.shortcuts import HttpResponse
+from django.core.cache import cache
+
 from logging import getLogger
 logger = getLogger("default")
 
@@ -45,27 +47,43 @@ def verifyToken(request):
 
 
 def real_get_access_token():
-    APPID = "wxd2ee708e2f14a707"
-    APPSECRET = "7ea2c0df5e192baa3565bb0b6bed4cc7"
+    '''
+    该方法上线后需要被一直调用，保证access_token一直存在
+    或者每次手动去调用，如果有，则直接返回
+    :param request:
+    :return:
+    '''
+    APPID = "wx7b27955ce810b11f"
+    APPSECRET = "d2754228e5db08f3ce1a1011d59e9798"
     url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s" % (APPID,APPSECRET)
     try:
-        responseJson = requests.get(url).text
-        responseDict = json.loads(responseJson)
-        #{"access_token":"ACCESS_TOKEN","expires_in":7200}
-        # {"errcode": 40013, "errmsg": "invalid appid"}
-        logger.info("getToken-responseDict%s"%responseDict)
-        access_token = responseDict.get("access_token")
-        expires_in = responseDict.get("expires_in")
-        if access_token and expires_in:
-            return access_token,expires_in
+        access_token = cache.get("access_token")
+        if not access_token:
+            responseJson = requests.get(url,timeout=3).text
+            responseDict = json.loads(responseJson)
+            #{"access_token":"ACCESS_TOKEN","expires_in":7200}
+            # {"errcode": 40013, "errmsg": "invalid appid"}
+            logger.info("getToken-responseDict%s"%responseDict)
+            access_token = responseDict.get("access_token")
+            expires_in = responseDict.get("expires_in")
+            if access_token and expires_in and checkparam.isVaildInt(expires_in):
+                cache.set("access_token",access_token,int(expires_in))
+                return access_token
+            else:
+                raise Exception
         else:
-            raise Exception
+            return access_token
     except:
         logger.exception("获取token出错")
         return False
 
 
+def getToken(request):
+    return HttpResponse(real_get_access_token())
 
+
+if __name__ == '__main__':
+    print(real_get_access_token())
 
 
 

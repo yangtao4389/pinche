@@ -24,3 +24,5 @@ http://127.0.0.1:8000/carPooling/GetCityList/   POST  获取城市列表
 微信相关的逻辑全部用wxbackend来处理
 拼车主要业务通过carPooling
 
+weixinLibrary 是引用的https://github.com/zwczou/weixin-python
+

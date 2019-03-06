@@ -19,10 +19,12 @@ from django.conf.urls import url
 from django_app.settings import MEDIA_ROOT
 from django.conf.urls.static import static
 from carPooling.views import Home
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^WebApp/", include('carPooling.urls')),
     url(r"^wxbackend/", include('wxbackend.urls')),
+
 
 ]
 urlpatterns += static('/media/', document_root=MEDIA_ROOT)
