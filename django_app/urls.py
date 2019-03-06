@@ -22,10 +22,11 @@ from carPooling.views import Home
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^WebApp/", include('carPooling.urls')),
+    url(r"^wxbackend/", include('wxbackend.urls')),
 
 ]
 urlpatterns += static('/media/', document_root=MEDIA_ROOT)
 
 urlpatterns += [
-    url(r"", Home)  # 所有未匹配的都跳到首页
+    # url(r"", Home)  # 所有未匹配的都跳到首页
 ]

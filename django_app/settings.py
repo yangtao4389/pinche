@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'authority.UserAuthMiddleware.UserAuthMiddleware',
-    'carPooling.checkUserMiddleware.CheckUserMiddleware',
+    # 'carPooling.checkUserMiddleware.CheckUserMiddleware',
 
 ]
 

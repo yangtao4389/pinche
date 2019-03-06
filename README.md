@@ -19,4 +19,8 @@ http://127.0.0.1:8000/carPooling/GetCityList/   POST  获取城市列表
 
 这里需要通过微信后台去发送消息了。
 
+#### 框架逻辑
+进入的时候会进行用户信息验证
+微信相关的逻辑全部用wxbackend来处理
+拼车主要业务通过carPooling
 
