@@ -143,7 +143,7 @@ class WeixinMsg(object):
     def parse_invalid_type(self, raw):
         return {}
 
-    def reply(self, username=None, type='text', sender=None, **kwargs):
+    def __msg_reply(self, username=None, type='text', sender=None, **kwargs):
         if not username:
             raise RuntimeError("username is missing")
         sender = sender or self.sender
@@ -203,6 +203,7 @@ class WeixinMsg(object):
     def text(self, key='*'):
         return self.register('text', key)
 
+
     def __getattr__(self, key):
         key = key.lower()
         if key in ['image', 'video', 'voice', 'shortvideo', 'location', 'link', 'event']:
@@ -240,9 +241,7 @@ class WeixinMsg(object):
 
                 func = None
                 type = ret['type']
-                print(type,'type')
                 _registry = self._registry.get(type, dict())
-                print(_registry,"_registry")
                 if type == 'text':
                     if ret['content'] in _registry:
                         func = _registry[ret['content']]
@@ -264,17 +263,16 @@ class WeixinMsg(object):
 
                 content = ''
                 if isinstance(text, basestring):
-                    print(text)
                     if text:
-                        content = self.reply(
+                        content = self.__msg_reply(
                             username=ret['sender'],
                             sender=ret['receiver'],
-                            content=text,
+                            content=text
                         )
                 elif isinstance(text, dict):
                     text.setdefault('username', ret['sender'])
                     text.setdefault('sender', ret['receiver'])
-                    content = self.reply(**text)
+                    content = self.__msg_reply(**text)
 
                 return HttpResponse(content, content_type='text/xml; charset=utf-8')
             return HttpResponseNotAllowed(['GET', 'POST'])
@@ -323,7 +321,7 @@ class WeixinMsg(object):
         content = ''
         if isinstance(text, basestring):
             if text:
-                content = self.reply(
+                content = self.__msg_reply(
                     username=ret['sender'],
                     sender=ret['receiver'],
                     content=text,
@@ -331,7 +329,7 @@ class WeixinMsg(object):
         elif isinstance(text, dict):
             text.setdefault('username', ret['sender'])
             text.setdefault('sender', ret['receiver'])
-            content = self.reply(**text)
+            content = self.__msg_reply(**text)
 
         return Response(content, content_type='text/xml; charset=utf-8')
 

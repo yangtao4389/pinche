@@ -101,7 +101,7 @@ class WeixinPay(object):
             return data
         return content
 
-    def reply(self, msg, ok=True):
+    def pay_reply(self, msg, ok=True):
         code = SUCCESS if ok else FAIL
         return self.to_xml(dict(return_code=code, return_msg=msg))
 
