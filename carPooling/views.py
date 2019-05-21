@@ -27,27 +27,28 @@ def Login(request):
     # 不存在，则非法访问（提示需要在微信客户端打开）
     if request.method == 'GET':
         # c_weixin_id = uuid_maker.get_uuid_random()
-        c_weixin_id = client.get_client_ip(request)
-        # c_weixin_id = "f71f615f-2fb1-49a1-adfa-6978ac2decf7"
-        entry_url = client.get_client_previous_url(request)
-        request.session['entry_url'] = entry_url
-        try:
-            userObj = CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
-            if userObj.c_phone and userObj.b_phone_status == True:
-                request.session['c_weixin_id'] = c_weixin_id
-                return HttpResponseRedirect(entry_url)
-        except:
-            logger.info("该用户不存在")
-        request.session['tmp_weixin_id'] = c_weixin_id
+        # c_weixin_id = client.get_client_ip(request)
+        # # c_weixin_id = "f71f615f-2fb1-49a1-adfa-6978ac2decf7"
+        # entry_url = client.get_client_previous_url(request)
+        # request.session['entry_url'] = entry_url
+        # try:
+        #     userObj = CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
+        #     if userObj.c_phone and userObj.b_phone_status == True:
+        #         request.session['c_weixin_id'] = c_weixin_id
+        #         return HttpResponseRedirect(entry_url)
+        # except:
+        #     logger.info("该用户不存在")
+        # request.session['tmp_weixin_id'] = c_weixin_id
         # 数据库不存在，则表示未创建，需要直接去登录页。
         with open("static/carPooling/src/Login.html", 'rb') as f:
             html = f.read()
         return HttpResponse(html)
 
     elif request.method == 'POST':
-        tmp_weixin_id = request.session.get("tmp_weixin_id")
-        if not tmp_weixin_id:
-            return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "请刷新页面重试"), content_type="application/json")
+        # 这一步是微信登录，暂且取消
+        # tmp_weixin_id = request.session.get("tmp_weixin_id")
+        # if not tmp_weixin_id:
+        #     return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "请刷新页面重试"), content_type="application/json")
         realName = request.POST.get("realName")
         PhoneNum = request.POST.get("PhoneNum")
         smsCode = request.POST.get("smsCode")
@@ -57,18 +58,30 @@ def Login(request):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "电话验证码出错"), content_type="application/json")
 
         try:
-            CarPoolingUserConf(
-                c_weixin_id = tmp_weixin_id,
-                c_name = realName,
-                c_phone = PhoneNum,
-                b_phone_status = True,
-                i_cumulative_sum = 10,
-                status = True,
-            ).save()
+            tmp_weixin_id = uuid_maker.get_uuid_random()
+            carobj,created = CarPoolingUserConf.objects.get_or_create(c_phone=PhoneNum)
+            if created:
+                carobj.c_weixin_id = tmp_weixin_id
+                carobj.c_name = realName
+                carobj.b_phone_status = True
+                carobj.i_cumulative_sum = 10
+                carobj.status = True
+                carobj.save()
+
+            #
+            # CarPoolingUserConf(
+            #     c_weixin_id = tmp_weixin_ip,  # 暂时存ip
+            #     c_name = realName,
+            #     c_phone = PhoneNum,
+            #     b_phone_status = True,
+            #     i_cumulative_sum = 10,
+            #     status = True,
+            # ).save()
             goUrl = request.session.get('entry_url') if request.session.get('entry_url') else "/WebApp/Home"
             request.session['c_weixin_id'] = tmp_weixin_id
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "登录成功",dict(goUrl=goUrl)), content_type="application/json")
         except:
+            logger.exception("创建用户数据出错")
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "系统出错"), content_type="application/json")
 
     #

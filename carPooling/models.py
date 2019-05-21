@@ -65,10 +65,12 @@ class CarPoolingUserConf(models.Model):
     用户表
     '''
     # c_userid = models.CharField("用户id", max_length=128, null=False, blank=False, db_index=True,unique=True )
-    c_weixin_id = models.CharField("微信id", max_length=128, null=False, blank=False,db_index=True,unique=True,)
-    c_name = models.CharField("姓名", max_length=128, null=True, blank=False,)
-    c_phone = models.CharField("电话号码" ,max_length=11, null=True, blank=False, )
-    b_phone_status = models.BooleanField("电话号码状态" , null=False, blank=False, default=False,help_text="true,false")
+
+
+    c_weixin_id = models.CharField("微信id", max_length=128, null=True, blank=False,db_index=True)
+    c_name = models.CharField("真实姓名", max_length=128, null=True, blank=False,)
+    c_phone = models.CharField("电话号码" ,max_length=11, null=False, blank=False,db_index=True)
+    b_phone_status = models.BooleanField("电话号码状态" , null=False, blank=False, default=False,help_text="true,false,暂时不用")
     i_cumulative_sum = models.SmallIntegerField("累积积分" , null=True, blank=False, default=10)
     update_time = models.DateTimeField(verbose_name="更新时间", auto_now=True, db_index=True, null=False)
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, db_index=True, null=False)

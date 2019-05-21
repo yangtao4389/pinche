@@ -70,6 +70,7 @@ MIDDLEWARE = [
     # 'authority.UserAuthMiddleware.UserAuthMiddleware',
     # 'carPooling.checkUserMiddleware.CheckUserMiddleware',
     # 'centerEvent.checkUserMiddleware.CheckUserMiddleware',
+    'app_carpool.must_carpoollogin_request.MustCarpoolloginRequest',
 
 ]
 
