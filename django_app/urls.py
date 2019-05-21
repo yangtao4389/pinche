@@ -23,7 +23,7 @@ from carPooling.views import Home
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^WebApp/", include('carPooling.urls')),
-    url(r"^wxbackend/", include('wxbackend.urls')),
+    url(r"^wxbackend/", include('app_weixin.urls')),
 
 
 ]
