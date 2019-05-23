@@ -1,9 +1,15 @@
+import re
+import random
 from datetime import datetime, timedelta
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from common import uuid_maker, client,checkparam
 from carPooling.models import CarPoolingUserConf, CarPoolingAssDetail
 from carPooling.globalApi import commonGetCurTripTip
 from common.json_result import RtnDefault,RtnCode
+from app_weixin.settings import wx_login
+from . import settings
+
 from logging import getLogger
 logger = getLogger("default")
 
@@ -14,6 +20,67 @@ def Home(request):
     with open("static/carPooling/src/Home.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)
+
+
+def WeixinLogin(request):
+    '''
+    微信登录，获取用户的昵称，可能过后需要获取用户的定位等。获取用户的全部信息，拿到昵称，头像，城市，
+    :param request:
+    :return:
+    '''
+    # 获取当前地址  微信登录成功后使用
+    # previous_url = client.get_client_previous_url(request)
+    # if not re.match("http:\/\/.*?",current_full_path):
+        # 这里会有bug，就是对当前路径的判断，不过没关系。先这样吧
+        # current_full_path = settings.WX_DOMAIN + current_full_path
+    # 缓存一个临时的状态，以免不知道怎么验证微信的callback  #重定向后会带上state参数，开发者可以填写a-zA-Z0-9的参数值，最多128字节
+    LIST = ["a","b","c","d","e","f",'g','h','i',"1","2","H","K"]
+    w_tmp_state =  "".join(random.sample(LIST, 5))
+    request.session["w_tmp_state"] = w_tmp_state
+    redirect_uri = settings.WX_DOMAIN + reverse("WeiXinLoginCallBack")  #/WebApp/Home/WeiXinLoginCallBack
+    logger.info("redirect_uri:%s"%redirect_uri)  # 如果不行，该callback需要再次编码
+
+    url = wx_login.authorize(client.decode_url(redirect_uri), "snsapi_userinfo",state=w_tmp_state)
+    logger.info("获取code的url：%s"%url)
+    return HttpResponseRedirect(url)
+
+def WeiXinLoginCallBack(request):
+    '''
+    正常情况应该获取到用户的code跟state
+    :param request:
+    :return:
+    '''
+    w_code = request.GET.get("code")
+    w_state = request.GET.get("state")
+
+    if not w_code or w_state!=request.session.get("w_tmp_state"):
+        return HttpResponse("验证失败，尴尬")
+    data = wx_login.access_token(w_code)
+    logger.info("微信验证用户数据获取的data:%s"%data)
+    logger.info("微信验证用户数据获取的refresh_token:%s"%data.refresh_token)
+    # 该refresh_token 的有效期为30天。也就是当access_token 2分钟后失效时可以用refresh_token刷新来重新获取
+    #{'openid': 'oSczv05h7ZJ6KISCTfOeZ3SOel2M', 'scope': 'snsapi_userinfo', 'access_token': '21_wPXARwQVWCsdmpfHsIpnn0RRufKCTMfhMvSMQcUEA1ZqP2hkm-7K_rUBZZjUZbH2X32pQiZv2HfloiulsWJ2Fw', 'errcode': {}, 'refresh_token': '21_b2-zR21o0Qc_K_xeNBkBSHPnzvpWgM2o2gnnOSiUb416kb7Z-FLP-rA5pQmiRnD2BwQQh0eKYJcUWIffjUg0GA', 'expires_in': 7200}
+
+    # 刷新令牌 获取用户信息
+    # r_data = wx_login.refresh_token(data.refresh_token)
+    # logger.info("刷新令牌后数据获取的data:%s" % r_data)
+
+    u_data = wx_login.userinfo(data.access_token,data.openid)
+    userconf,created = CarPoolingUserConf.objects.get_or_create(w_openid = u_data.openid)
+    if (datetime.now() - userconf.update_time).total_seconds() > 60*60*72: # datetime.now() - userconf.update_time得到datetime.timedelta(0, 68, 269473)  三天没更新过才去更新
+        userconf.w_nickname = u_data.nickname
+        userconf.w_sex = u_data.sex
+        userconf.w_country = u_data.country
+        userconf.w_province = u_data.province
+        userconf.w_city = u_data.city
+        userconf.w_headimgurl = u_data.headimgurl
+        userconf.save()
+
+    request.session["w_openid"] = u_data.openid
+    # openid = data.openid
+    next_url = request.session.get("tmp_current_full_url","/WebApp/Home")
+    return HttpResponseRedirect(next_url)
+    # return HttpResponse("ok")
 
 
 def Login(request):

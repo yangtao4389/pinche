@@ -1,13 +1,14 @@
 from re import compile
 from django.utils.deprecation import MiddlewareMixin
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
+from common import client
 from logging import getLogger
 logger = getLogger("default")
 
 
-extra_urls = ["/WebApp/Home/Login","/WebApp/Home/Register"]
+extra_urls = ["/WebApp/Home/WeixinLogin","/WebApp/Home/WeiXinLoginCallBack"]
 must_login_urls = [
-    (r'/WebApp/Home/*'),
+    (r'/WebApp/*'),
 ]
 must_login_urls_compile = [compile(expr) for expr in must_login_urls]
 
@@ -15,8 +16,9 @@ class MustCarpoolloginRequest(MiddlewareMixin):
     def process_request(self, request):
         path = request.path_info
         if any(m.match(path) for m in must_login_urls_compile) and path not in extra_urls:
-            print(path)
-            sessionUserId = request.session.get('c_weixin_id')
-            logger.info("session中用户id：%s" % (sessionUserId))
-            if not sessionUserId:
+            logger.info("MustCarpoolloginRequest:每一次进入的url记录：%s" % client.get_client_current_full_path(request))
+            w_openid = request.session.get('w_openid')
+            logger.info("session中用户id：%s" % (w_openid))
+            if not w_openid:
+                request.session["tmp_current_full_url"] = client.get_client_current_full_path(request)
                 return HttpResponseRedirect(extra_urls[0])

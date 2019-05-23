@@ -14,15 +14,15 @@ def createMenu(request):
             {
                 "type": "view",
                 "name": "拼车首页",
-                "url": "http://211.149.180.119/WebApp/Home"
+                "url": "http://www.rhax.cn/WebApp/Home"
             },
             {
                 "name": "我的",
                 "sub_button": [
                     {
                         "type": "view",  # web页面
-                        "name": "搜索",
-                        "url": "http://www.soso.com/"
+                        "name": "更新菜单",
+                        "url": "http://211.149.180.119/wxbackend/createMenu/"
                     },
                     {
                         "type": "miniprogram",  # 小程序

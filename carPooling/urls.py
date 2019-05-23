@@ -22,7 +22,9 @@ from carPooling import views,api_home,error,api_userass,api_account,api_userrec
 urlpatterns = [
     url(r"^Home$", views.Home),
     url(r"^Home/Index$", views.Home),  #首页
-    url(r"^Home/Login$", views.Login),  # 微信登录
+    url(r"^Home/Login$", views.Login),  # 登录
+    url(r"^Home/WeixinLogin$", views.WeixinLogin),  # 微信登录
+    url(r"^Home/WeiXinLoginCallBack$", views.WeiXinLoginCallBack,name="WeiXinLoginCallBack"),  # 微信登录后的回调
 
     url(r"^Home/AssList$", views.AssList),  # 行程列表
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程

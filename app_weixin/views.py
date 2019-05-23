@@ -15,7 +15,7 @@ def hello(message):
 
 @myrobot.click
 def abort(message):
-    if message.key == "key1":
-        return "我要拼车"
+    if message.key == "key1":  #我要拼车
+        return "该项目趋于功能完善阶段，目前差一台服务器跟域名，有赞助的朋友嘛？微信(18649715651)"
     elif message.key == "key2":
         return "http://211.149.180.119/admin/login"
