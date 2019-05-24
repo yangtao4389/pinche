@@ -157,15 +157,17 @@ class WeixinMP(object):
         char = string.ascii_letters + string.digits
         return "".join(random.choice(char) for _ in range(32))
 
-    def jsapi_sign(self, **kwargs):
+    def jsapi_sign(self,url):
         """
         生成签名给js使用
         """
+        kwargs = dict()
         timestamp = str(int(time.time()))
         nonce_str = self.nonce_str
         kwargs.setdefault("jsapi_ticket", self.jsapi_ticket)
         kwargs.setdefault("timestamp", timestamp)
         kwargs.setdefault("noncestr", nonce_str)
+        kwargs.setdefault("url", url)
         raw = [(k, kwargs[k]) for k in sorted(kwargs.keys())]
         s = "&".join("=".join(kv) for kv in raw if kv[1])
         sign = hashlib.sha1(s.encode("utf-8")).hexdigest().lower()
@@ -422,3 +424,8 @@ class WeixinMP(object):
         return self.post("/message/template/send", kwargs)
 
 
+if __name__ == '__main__':
+    APP_ID = "wx7b27955ce810b11f"
+    APP_SECRET = "d2754228e5db08f3ce1a1011d59e9798"
+    a = WeixinMP(APP_ID,APP_SECRET).access_token
+    print(a)

@@ -1,4 +1,8 @@
 var hh = {
+    getLoctionHref:function () {
+        var LoctionHref = location.href;
+        return LoctionHref;
+    },
     go: function (url) {
         //if (navigator.userAgent.toLowerCase().indexOf("ios") > 0)
         //    location.replace(url);

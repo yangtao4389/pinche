@@ -10,9 +10,9 @@ def PhoneStatus(request):
     查看当前用户是否绑定电话
     :return:
     '''
-    c_weixin_id = request.session["c_weixin_id"]
+    w_openid = request.session["w_openid"]
     try:
-        userObj = CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
+        userObj = CarPoolingUserConf.objects.get(w_openid=w_openid)
         if not userObj.b_phone_status:
             dataDict = dict(
                 PhoneStatus=False,
@@ -35,18 +35,18 @@ def GetUserInfo(request):
     '''
     if request.method == "POST":
         try:
-            c_weixin_id = request.session["c_weixin_id"]
-            userconfObj = CarPoolingUserConf.objects.get(c_weixin_id=c_weixin_id)
+            w_openid = request.session["w_openid"]
+            userconfObj = CarPoolingUserConf.objects.get(w_openid=w_openid)
             dictItem = dict(
-                Id = c_weixin_id,
+                Id = w_openid,
                 Phone = userconfObj.c_phone,
                 Name = userconfObj.c_name,
                 Sex = None,
                 IsEnabled = userconfObj.status,
-                OpenId = None,
+                OpenId = w_openid,
                 Dalance = userconfObj.i_cumulative_sum,
                 CreditValue = userconfObj.i_cumulative_sum,
-                Photo = "", # 图片地址
+                Photo = userconfObj.w_headimgurl, # 图片地址
                 BlackNote = "",
                 IsRealName = "", #是否实名认证
                 IsRealDriver = "",  #是否驾驶认证

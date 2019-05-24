@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title>同乡拼车e</title>
+    <title>里行</title>
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -88,17 +88,25 @@
 
     </nav>
     <div class="mui-content ">
+        <!-- 可以滑动的多张大图 -->
         <div class="mui-slider" id="banner">
-            <div class="mui-slider-group  ">
-                <div class="mui-slider-item">
-                    <a>
-                        <img src="/static/carPooling/images/banner-1.jpg" alt="同乡拼车e"/>
-                    </a>
-                </div>
+            <!-- 参考： http://dev.dcloud.net.cn/mui/ui/#gallery  -->
+            <div class="mui-slider-group mui-slider-loop">
+                <!--<div class="mui-slider-item">-->
+                    <!--<a>-->
+                        <!--<img src="/static/carPooling/images/banner-1.jpg" alt="里行"/>-->
+                        <!--<img src="/static/carPooling/images/bus2.png" alt="里行"/>-->
+                    <!--</a>-->
+                <!--</div>-->
+                 <div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="/static/carPooling/images/bus.jpg" /></a></div>
+                 <div class="mui-slider-item"><a href="#"><img src="/static/carPooling/images/banner-1.jpg" /></a></div>
+                <div class="mui-slider-item"><a href="#"><img src="/static/carPooling/images/bus2.png" /></a></div>
+                <div class="mui-slider-item"><a href="#"><img src="/static/carPooling/images/bus.jpg" /></a></div>
+            <div class="mui-slider-item mui-slider-item-duplicate"><a href="#"><img src="/static/carPooling/images/banner-1.jpg" /></a></div>
             </div>
 
         </div>
-
+        <!--  选择 出发 到达地 -->
         <div class="section">
             <div class="car-search-box">
                 <form class="mui-input-group">
@@ -122,7 +130,7 @@
             </div>
         </div>
         <!--carsearch end-->
-        <!--car2 begin-->
+        <!--当前是否有trip提示 -->
         <div class="section">
             <template>
                 <div class="car-homeall-box" v-if="curRecSubscribe">
@@ -229,25 +237,6 @@
 </div>
 
 
-<!--subscription-->
-<div id="subscription" class="mui-modal">
-    <header class="mui-bar mui-bar-nav">
-        <a class="mui-icon mui-icon-left-nav mui-pull-left"
-           onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-        <h1 class="mui-title">请先关注公众号</h1>
-    </header>
-    <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-        <div class="pad10 mui-text-center ">
-
-            <p class="mui-text-left mui-h5">
-                微信“扫一扫”下方二维码。
-            </p>
-            <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg"/>
-            <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
-        </div>
-    </div>
-</div>
-
 
 <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/carPooling/js/mui.showLoading.js" type="text/javascript" charset="utf-8"></script>
@@ -256,6 +245,7 @@
 
 <script src="/static/carPooling/js/qqmap.js"></script>
 <script src="/static/carPooling/js/mui.indexedlist.js"></script>
+<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script type="text/javascript">
     mui.init();
     mui.ready(function () {
@@ -310,12 +300,14 @@
         mui('.mui-scroll-wrapper').scroll();
 
         //轮播
-        if ("1" > 1) {
+        if (1>0) {
             //banner
-            mui("#banner").slider({
-                interval: 3000
+            mui('.mui-slider').slider({
+                interval: 1000
             });
         }
+
+
 
         //活动
         var isShowActivity = "0" == "1"
@@ -332,7 +324,7 @@
         //自动定位当前用户所在地市
         if (hh.isWeixin()) {
             setTimeout(function () {
-                mui.post("/WebApp/Home/GetWenxinJsapiConfig", function (json) {
+                mui.post("/WebApp/Home/GetWenxinJsapiConfig",{current_url:hh.getLoctionHref()}, function (json) {
                     json.jsApiList = ["getLocation"];
                     wx.config(json);
                     wx.ready(function () {
@@ -342,13 +334,6 @@
                                 // 地址解析:http://lbs.qq.com/javascript_v2/guide-service.html#link-four
                                 var geocoder = new qq.maps.Geocoder({
                                     complete: function (result) {
-                                        if (result.detail.addressComponents.province == "河南省" && "1" == "1" && "0" != 1) {
-                                            app.isStopServer = true;
-                                            return;
-                                        }
-                                        if ("lwpinche" == "pinchechengdu") {
-                                            return;
-                                        }
 
                                         getGpsCityByName(result.detail.addressComponents.city);
                                     }
@@ -374,10 +359,10 @@
                 //当 当前城市为空时，直接将定位城市赋值上去，不用提示用户
                 mui.confirm("当前定位地址为【" + cityName + "】，是否切换出发地到【" + cityName + "】？", function (e) {
                     if (e.index == 1) {
-                        if (cityName != "成都") {//不是郑州了，目的地改为郑州
+                        if (cityName != "成都") {
                             app.line.endCity = "成都";
                         }
-                        else {//是郑州了，将目的地切换为当前的出发地
+                        else {
                             app.line.endCity = app.line.startCity;
                         }
                         app.line.startCity = cityName;
@@ -509,6 +494,8 @@
             }
         });
     }
+
+
 </script>
 
 <script>

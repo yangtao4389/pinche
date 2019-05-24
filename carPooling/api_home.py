@@ -5,11 +5,13 @@ import time
 from enum import Enum
 from datetime import datetime
 from django.shortcuts import render,HttpResponse
+from django.conf import settings
 from common import client,checkparam
 from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from common.json_result import RtnDefault,RtnCode
 from carPooling.globalApi import commonGetCurTripTip
+from app_weixin import settings as wxsettings
 from logging import getLogger
 logger = getLogger("default")
 
@@ -82,7 +84,7 @@ def GetCurTripTip(request):
     :param request:
     :return:
     '''
-    userid = request.session["c_weixin_id"]
+    userid = request.session["w_openid"]
     dataresult = commonGetCurTripTip(userid)
     print(dataresult)
     if dataresult.get("result") == 0:
@@ -198,11 +200,38 @@ def GetAssList(request):
         return HttpResponse(json.dumps(resultDict), content_type="application/json")
 
 
-def GetWenxinJsapiConfig():
+def GetWenxinJsapiConfig(request):
     '''
     :return: {"debug":false,"appId":"wx56b24a9f02010e10","timestamp":"1550636346","nonceStr":"A7A1ECABE61CFF230F11EC241A825AD6","signature":"1b07f146fc7e34132db3fa0658c1f9ecb33f53fe","jsApiList":null}
+    wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: '', // 必填，公众号的唯一标识
+    timestamp: , // 必填，生成签名的时间戳
+    nonceStr: '', // 必填，生成签名的随机串
+    signature: '',// 必填，签名
+    jsApiList: [] // 必填，需要使用的JS接口列表
+});
     '''
-    return HttpResponse()
+    if request.method != "POST":
+        return HttpResponse()
+    current_url = request.POST.get("current_url")
+    if not current_url:
+        return HttpResponse()
+    logger.info("current_url:%s"%current_url)
 
-def CheckWeiXinSubscribe():
+    signature =  wxsettings.wx_map.jsapi_sign(url=current_url)
+
+    logger.info("signature:%s"%signature)
+    resultDict = dict(
+        debug =settings.DEBUG,
+        appId = signature.appId,
+        timestamp=signature.timestamp,
+        nonceStr =signature.noncestr,
+        signature = signature.sign,
+        jsApiList =[] # 该参数由前端自己定义 openLocation getLocation 等等 参考：https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141115
+
+    )
+    return HttpResponse(json.dumps(resultDict), content_type="application/json")
+
+def CheckWeiXinSubscribe(request):
     return HttpResponse()

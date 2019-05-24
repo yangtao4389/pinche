@@ -78,7 +78,7 @@ xmltodict
 
 #### 部署
 部署在119服务器，所以需要将静态文件放到172上面
-scp -P 22000 -r ./* root@XXXXXXXXXXXXXX:/home/website/rhaxSite-Python/static
+scp -P 22000 -r ./* root@XXXXXXXXXXXXXX:/home/officesite/rhEnv/rhaxSite/static
 
 #### 微信登录隔天失效问题
 
