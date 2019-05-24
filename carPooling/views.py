@@ -9,7 +9,6 @@ from carPooling.globalApi import commonGetCurTripTip
 from common.json_result import RtnDefault,RtnCode
 from app_weixin.settings import wx_login
 from . import settings
-
 from logging import getLogger
 logger = getLogger("default")
 
@@ -28,19 +27,20 @@ def WeixinLogin(request):
     :param request:
     :return:
     '''
-    # 获取当前地址  微信登录成功后使用
-    # previous_url = client.get_client_previous_url(request)
-    # if not re.match("http:\/\/.*?",current_full_path):
-        # 这里会有bug，就是对当前路径的判断，不过没关系。先这样吧
-        # current_full_path = settings.WX_DOMAIN + current_full_path
-    # 缓存一个临时的状态，以免不知道怎么验证微信的callback  #重定向后会带上state参数，开发者可以填写a-zA-Z0-9的参数值，最多128字节
+    # 获取参数：
+    snsapi_userinfo = request.GET.get("snsapi_userinfo") # true,false
+
+
     LIST = ["a","b","c","d","e","f",'g','h','i',"1","2","H","K"]
     w_tmp_state =  "".join(random.sample(LIST, 5))
     request.session["w_tmp_state"] = w_tmp_state
-    redirect_uri = settings.WX_DOMAIN + reverse("WeiXinLoginCallBack")  #/WebApp/Home/WeiXinLoginCallBack
-    logger.info("redirect_uri:%s"%redirect_uri)  # 如果不行，该callback需要再次编码
 
-    url = wx_login.authorize(client.decode_url(redirect_uri), "snsapi_userinfo",state=w_tmp_state)
+    redirect_uri = settings.WX_DOMAIN + reverse("WeiXinLoginCallBack")  #/WebApp/Home/WeiXinLoginCallBack
+    url = wx_login.authorize(client.decode_url(redirect_uri), "snsapi_base",state=w_tmp_state)      # 实现数据库用的用户直接登录，不用再次授权
+
+    if snsapi_userinfo == "true":
+        redirect_uri += "?&snsapi_userinfo=true"
+        url = wx_login.authorize(client.decode_url(redirect_uri), "snsapi_userinfo",state=w_tmp_state)  # 获取用户信息是在发现数据库没有该用户的时候决定
     logger.info("获取code的url：%s"%url)
     return HttpResponseRedirect(url)
 
@@ -52,22 +52,30 @@ def WeiXinLoginCallBack(request):
     '''
     w_code = request.GET.get("code")
     w_state = request.GET.get("state")
+    snsapi_userinfo = request.GET.get("snsapi_userinfo")
 
     if not w_code or w_state!=request.session.get("w_tmp_state"):
         return HttpResponse("验证失败，尴尬")
     data = wx_login.access_token(w_code)
     logger.info("微信验证用户数据获取的data:%s"%data)
     logger.info("微信验证用户数据获取的refresh_token:%s"%data.refresh_token)
-    # 该refresh_token 的有效期为30天。也就是当access_token 2分钟后失效时可以用refresh_token刷新来重新获取
-    #{'openid': 'oSczv05h7ZJ6KISCTfOeZ3SOel2M', 'scope': 'snsapi_userinfo', 'access_token': '21_wPXARwQVWCsdmpfHsIpnn0RRufKCTMfhMvSMQcUEA1ZqP2hkm-7K_rUBZZjUZbH2X32pQiZv2HfloiulsWJ2Fw', 'errcode': {}, 'refresh_token': '21_b2-zR21o0Qc_K_xeNBkBSHPnzvpWgM2o2gnnOSiUb416kb7Z-FLP-rA5pQmiRnD2BwQQh0eKYJcUWIffjUg0GA', 'expires_in': 7200}
 
-    # 刷新令牌 获取用户信息
-    # r_data = wx_login.refresh_token(data.refresh_token)
-    # logger.info("刷新令牌后数据获取的data:%s" % r_data)
+    userconf,created = CarPoolingUserConf.objects.get_or_create(w_openid = data.openid)
+    if created:
+        return HttpResponseRedirect(reverse("WeixinLogin")+"?&snsapi_userinfo=true" )
+    # 非创建，如果来自snsapi_userinfo 则更新数据
+    if snsapi_userinfo == "true":
+        # 该refresh_token 的有效期为30天。也就是当access_token 2分钟后失效时可以用refresh_token刷新来重新获取
+        #{'openid': 'oSczv05h7ZJ6KISCTfOeZ3SOel2M', 'scope': 'snsapi_userinfo', 'access_token': '21_wPXARwQVWCsdmpfHsIpnn0RRufKCTMfhMvSMQcUEA1ZqP2hkm-7K_rUBZZjUZbH2X32pQiZv2HfloiulsWJ2Fw', 'errcode': {}, 'refresh_token': '21_b2-zR21o0Qc_K_xeNBkBSHPnzvpWgM2o2gnnOSiUb416kb7Z-FLP-rA5pQmiRnD2BwQQh0eKYJcUWIffjUg0GA', 'expires_in': 7200}
 
-    u_data = wx_login.userinfo(data.access_token,data.openid)
-    userconf,created = CarPoolingUserConf.objects.get_or_create(w_openid = u_data.openid)
-    if (datetime.now() - userconf.update_time).total_seconds() > 60*60*72: # datetime.now() - userconf.update_time得到datetime.timedelta(0, 68, 269473)  三天没更新过才去更新
+        # 刷新令牌 获取用户信息
+        # r_data = wx_login.refresh_token(data.refresh_token)
+        # logger.info("刷新令牌后数据获取的data:%s" % r_data)
+
+        # 如果创建，再去请求获取用户信息，这里携带具体的参数回调
+        u_data = wx_login.userinfo(data.access_token,data.openid)
+
+        # if (datetime.now() - userconf.update_time).total_seconds() > 60*60*72: # datetime.now() - userconf.update_time得到datetime.timedelta(0, 68, 269473)  三天没更新过才去更新
         userconf.w_nickname = u_data.nickname
         userconf.w_sex = u_data.sex
         userconf.w_country = u_data.country
@@ -76,7 +84,8 @@ def WeiXinLoginCallBack(request):
         userconf.w_headimgurl = u_data.headimgurl
         userconf.save()
 
-    request.session["w_openid"] = u_data.openid
+
+    request.session["w_openid"] = data.openid
     # openid = data.openid
     next_url = request.session.get("tmp_current_full_url","/WebApp/Home")
     return HttpResponseRedirect(next_url)
@@ -183,8 +192,8 @@ def UserAssPublish(request):
     id = request.GET.get("id")
     if not id:
         # todo 去数据库查询当前的状态，如果有发布信息，则返回当前车程状态，未发布，则创建新的id.
-        userid = request.session["c_weixin_id"]
-        dataresult = commonGetCurTripTip(userid)
+        w_openid = request.session["w_openid"]
+        dataresult = commonGetCurTripTip(w_openid)
         if dataresult.get("result") == 0:
             return HttpResponseRedirect(dataresult.get("redirectUrl"))
 
@@ -254,12 +263,13 @@ def UserCenterChangePhone(request):
         if smsCode != request.session.get("smsCode"):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "验证码出错"), content_type="application/json")
         try:
-            userObj = CarPoolingUserConf.objects.get(c_weixin_id=request.session["c_weixin_id"])
+            userObj = CarPoolingUserConf.objects.get(w_openid=request.session["w_openid"])
             userObj.c_phone = newPhoneNum
             userObj.save()
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "修改成功"), content_type="application/json")
         except:
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "保存失败"), content_type="application/json")
+
 
 
 

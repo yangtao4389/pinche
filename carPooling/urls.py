@@ -23,7 +23,7 @@ urlpatterns = [
     url(r"^Home$", views.Home),
     url(r"^Home/Index$", views.Home),  #首页
     url(r"^Home/Login$", views.Login),  # 登录
-    url(r"^Home/WeixinLogin$", views.WeixinLogin),  # 微信登录
+    url(r"^Home/WeixinLogin$", views.WeixinLogin,name="WeixinLogin"),  # 微信登录
     url(r"^Home/WeiXinLoginCallBack$", views.WeiXinLoginCallBack,name="WeiXinLoginCallBack"),  # 微信登录后的回调
 
     url(r"^Home/AssList$", views.AssList),  # 行程列表

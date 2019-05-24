@@ -75,3 +75,16 @@ xmltodict
 
 #### eventNotice 
 + 用于调用发送短信接口
+
+#### 部署
+部署在119服务器，所以需要将静态文件放到172上面
+scp -P 22000 -r ./* root@XXXXXXXXXXXXXX:/home/website/rhaxSite-Python/static
+
+#### 微信登录隔天失效问题
+
+从WebView返回微信主界面	cookie不失效
+返回手机系统主界面	cookie不失效
+后台关闭微信进程	cookie失效
+微信切换账号	cookie失效
+
+

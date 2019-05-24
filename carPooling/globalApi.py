@@ -11,7 +11,7 @@ class CurTripType():
     Subscribe = 1 #预约
 
 
-def commonGetCurTripTip(userid):
+def commonGetCurTripTip(w_openid):
     '''
     是否有该用户当前行程的信息，如果没有或者错误，则返回-1
     :param userid:
@@ -20,7 +20,7 @@ def commonGetCurTripTip(userid):
     # # 乘客身份查看
     try:
         # 车主身份查看
-        recDetail = CarPoolingRecDetail.objects.filter(c_userid=userid).filter(status=True).filter(
+        recDetail = CarPoolingRecDetail.objects.filter(w_openid=w_openid).filter(status=True).filter(
             i_status__in=[1, 2]).order_by("-d_go_time")
         if len(recDetail) > 0:
             assObj = recDetail[0]
@@ -48,7 +48,7 @@ def commonGetCurTripTip(userid):
 
     try:
         # 车主身份查看
-        assDetail = CarPoolingAssDetail.objects.filter(c_userid=userid).filter(status=True).filter(i_status__in=[1,2]).order_by("-d_go_time")
+        assDetail = CarPoolingAssDetail.objects.filter(w_openid=w_openid).filter(status=True).filter(i_status__in=[1,2]).order_by("-d_go_time")
         if len(assDetail)>0:
             assObj = assDetail[0]
             data = dict(
