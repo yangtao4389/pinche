@@ -110,7 +110,7 @@ def GetAssList(request):
         endCity = request.POST.get("endCity")
         # if not startCity or not endCity:
         #     return
-        print(startCity,endCity)
+
 
         # 每页数据
         numPerPage = request.POST.get("numPerPage", 20)
@@ -132,17 +132,18 @@ def GetAssList(request):
 
         # goTime 出发时间 2019-02-18
         goTime = request.POST.get("goTime")
-        if goTime == "null":
+        if goTime == "null" or not goTime:
             goTime = datetime.now()
         else:
             if not checkparam.isVaildDate(goTime):
-                return
+                return HttpResponse()
         # if not checkparam.isVaildDate(goTime):
         #     return
         print(goTime)
         # 备用字段
         lastId = request.POST.get("lastId","null")
 
+        logger.info("获取请求数据：startCity%s-endCity%s-pageNum%s-seatNum%s--goTime%s"%(startCity,endCity,pageNum,seatNum,goTime))
         allAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_start_city=startCity, c_end_city=endCity).filter(d_go_time__gte=goTime).filter(i_no_booked_seat__gte=seatNum).order_by("d_go_time")
         paginator = Paginator(allAss, numPerPage)
         page = paginator.page(pageNum)
