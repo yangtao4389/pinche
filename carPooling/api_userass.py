@@ -54,7 +54,7 @@ def GetDetailData(request):
             print(traceback.print_exc())
             dataDict = dict(
                 Id = id,
-                UserId = request.session["c_weixin_id"],
+                UserId = request.session["w_openid"],
                 Status= 1,
                 # GoTime = datetime.strftime(datetime.now() + timedelta(minutes=10),"%Y-%m-%d %H:%M:%S")
             )
@@ -86,7 +86,7 @@ def GetRecListByAss(request):
             dictItem = dict(
                 Id = obj.c_userid,
                 Name=obj.c_username,
-                Phone=CarPoolingUserConf.objects.get(c_weixin_id=obj.c_userid).c_phone,
+                Phone=CarPoolingUserConf.objects.get(w_openid=obj.c_userid).c_phone,
                 BookSeat=obj.i_booked_seat,
                 StartPlace=obj.t_remark,
             )
@@ -107,7 +107,7 @@ def GetLastAss(request):
         EndCity = request.POST.get("EndCity")
         # print(StartCity,EndCity)
         # 获取用户信息
-        userObj = CarPoolingUserConf.objects.get(c_weixin_id=request.session['c_weixin_id'])
+        userObj = CarPoolingUserConf.objects.get(w_openid=request.session['w_openid'])
         dataDict.update(
             Phone = userObj.c_phone,
             Name = userObj.c_name,
@@ -115,7 +115,7 @@ def GetLastAss(request):
 
         # print(StartCity,EndCity)
         # 如果有这条线路的，则返回已经填过的信息，如果没有，只保留车的信息，其余都改变
-        assDetailQuery = CarPoolingAssDetail.objects.filter(c_userid=request.session['c_weixin_id'])
+        assDetailQuery = CarPoolingAssDetail.objects.filter(c_userid=request.session['w_openid'])
 
         if len(assDetailQuery) > 0:
             # 已在系统中存在过，则bus信息可以保留
@@ -266,7 +266,7 @@ def SaveEdit(request):
 
         try:
 
-            userObj = CarPoolingUserConf.objects.get(c_weixin_id=request.session["c_weixin_id"])
+            userObj = CarPoolingUserConf.objects.get(w_openid=request.session["w_openid"])
         except:
             # 用户id不存在，直接去login页面
             print(traceback.print_exc())
@@ -331,7 +331,7 @@ def SavePublish(request):
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "请刷新页面重试"), content_type="application/json")
         try:
 
-            userObj = CarPoolingUserConf.objects.get(c_weixin_id=request.session["c_weixin_id"])
+            userObj = CarPoolingUserConf.objects.get(w_openid=request.session["w_openid"])
         except:
             # 用户id不存在，直接去login页面
             # print(traceback.print_exc())
@@ -379,7 +379,7 @@ def SavePublish(request):
 
         try:
             #todo 差是否需要验证当前用户的行程状态。
-            userid = userObj.c_weixin_id
+            userid = userObj.w_openid
             dataresult = commonGetCurTripTip(userid)
             print(dataresult)
             if dataresult.get("result") == 0:
@@ -387,7 +387,7 @@ def SavePublish(request):
             # assDeatilObj,created = CarPoolingAssDetail.objects.get_or_create(c_id=id)
             assDeatilObj= CarPoolingAssDetail()
             assDeatilObj.c_id = id
-            assDeatilObj.c_userid = userObj.c_weixin_id
+            assDeatilObj.c_userid = userObj.w_openid
             assDeatilObj.c_card_owner = userObj.c_name
             # assDeatilObj.c_user_phone = userObj.c_phone
             assDeatilObj.c_start_city =StartCity
@@ -431,7 +431,7 @@ def GetList(request):
 
 
 
-        allMyAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_userid=request.session["c_weixin_id"]).order_by("-d_go_time")
+        allMyAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_userid=request.session["w_openid"]).order_by("-d_go_time")
         paginator = Paginator(allMyAss, numPerPage)
         page = paginator.page(pageNum)
 

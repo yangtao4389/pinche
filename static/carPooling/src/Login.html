@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8"/>
 
-    <title>同乡拼车e</title>
+    <title>里行</title>
 
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
@@ -45,7 +45,8 @@
 
     <!--<a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span></a>-->
 
-    <h1 class="mui-title">用户登录</h1>
+    <h1 class="mui-title">注册</h1>
+
 
 </header>
 
@@ -53,9 +54,22 @@
 
 
     <div class="car-login-box">
+        <div class="mui-card">
+            <!--页眉，放置标题-->
+            <div class="mui-card-header" style="color:#FF6600">为了您的体验，麻烦填写真实姓名及手机号码哦<.o.></div>
+
+        </div>
 
 
         <div class="mui-input-group">
+            <!--<h3 class="mui-title">为了您的体验，麻烦填写真实姓名及手机号码哦</h3>-->
+            <!--<div class="mui-input-row">-->
+
+            <!--<label for="realName">为了您的体验，麻烦填写真实姓名及手机号码哦</label>-->
+
+            <!---->
+
+            <!--</div>-->
             <div class="mui-input-row">
 
                 <label for="realName">真实姓名</label>
@@ -115,39 +129,7 @@
 </div>
 
 
-<!--subscription-->
 
-<div id="subscription" class="mui-modal">
-
-    <header class="mui-bar mui-bar-nav">
-
-        <a class="mui-icon mui-icon-left-nav mui-pull-left"
-           onclick="mui('#subscription')[0].classList.remove('mui-active')"></a>
-
-        <h1 class="mui-title">请先关注公众号</h1>
-
-    </header>
-
-    <div class="mui-content" style="height: 100%;overflow-y:scroll;">
-
-        <div class="pad10 mui-text-center ">
-
-
-            <p class="mui-text-left mui-h5">
-
-                微信“扫一扫”下方二维码。
-
-            </p>
-
-            <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg"/>
-
-            <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
-
-        </div>
-
-    </div>
-
-</div>
 
 
 <script src="/static/carPooling/js/mui.min.js" type="text/javascript" charset="utf-8"></script>
@@ -161,7 +143,7 @@
     mui.init();
 
 
-//    mui.ready();
+    //    mui.ready();
 
 
     var app = new Vue({
@@ -234,7 +216,7 @@
 
                 if ("1" == "0" && app.imgCode == "") {
 
-                    mui.alert("请输入图形验证码");
+                    mui.alert("请输入验证码");
 
                     return false;
 
@@ -362,7 +344,7 @@
                 app.saving = true;
 
                 mui.post("/WebApp/Home/Login", {
-                    realName:app.realName.replace(/\s/g, ""),
+                    realName: app.realName.replace(/\s/g, ""),
                     PhoneNum: app.phone.replace(/\s/g, ""),
                     smsCode: app.smsCode.replace(/\s/g, "")
                 }, function (json) {
