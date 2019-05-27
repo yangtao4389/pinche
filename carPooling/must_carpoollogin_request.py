@@ -21,7 +21,7 @@ class MustCarpoolloginRequest(MiddlewareMixin):
         # 实现微信登录
         if any(m.match(path) for m in must_login_urls_compile) and path not in extra_urls:
             logger.info("MustCarpoolloginRequest:每一次进入的url记录：%s" % client.get_client_current_full_path(request))
-            request.session["w_openid"] = "oSczv05h7ZJ6KISCTfOeZ3SOel2M"  # 发布用户
+            # request.session["w_openid"] = "oSczv05h7ZJ6KISCTfOeZ3SOel2M"  # 发布用户
             request.session["w_openid"] = "11111122222222"  # 预定用户
             w_openid = request.session.get('w_openid')
             logger.info("session中用户id：%s" % (w_openid))

@@ -72,7 +72,7 @@
                 src="/static/carPooling/images/tran_a.png" alt=""> <span v-text="search.endCity"></span></h1>
     </header>
 
-    <!-- 这个是判断当前行程用的  这个页面可以取消  看展示在哪里，是否展示在最下面呀？  -->
+    <!-- 这个是判断当前行程用的  这个页面可以取消  展示在最下面  -->
     <div class="mui-bar mui-bar-tab">
         <template>
             <div class="mui-tab-item" v-if="curRecSubscribe">
@@ -110,7 +110,8 @@
                 </div>
             </div>
             <div class="mui-tab-item" v-else>
-                没有合适车辆？<a v-on:tap="goSubscribe()" class="mbtn car-list-btn">马上预约</a>
+                <!--没有合适车辆？<a v-on:tap="goSubscribe()" class="mbtn car-list-btn">马上预约</a>-->
+                别着急，你要的待会儿就来！
             </div>
         </template>
     </div>
@@ -458,18 +459,23 @@
     mui.ready(function () {
         app.getData(1);
         //当前预约信息、预定信息
-        mui.post("/WebApp/Home/GetCurTripTip", function (curTrip) {
-            if (!!curTrip) {
-                if (curTrip.Type == 1) {
-                    app.curRecSubscribe = curTrip;
-                }
-                else if (curTrip.Type == 2) {
-                    app.curRec = curTrip;
-                }
-                else if (curTrip.Type == 3) {
-                    app.curAss = curTrip;
+        mui.post("/WebApp/Home/GetCurTripTip", function (json) {
+            if (json.statusCode == "200") {
+                  curTrip = json.data;
+                   if (!!curTrip) {
+                    if (curTrip.Type == 1) {
+                        app.curRecSubscribe = curTrip;
+                    }
+                    else if (curTrip.Type == 2) {
+                        app.curRec = curTrip;
+                    }
+                    else if (curTrip.Type == 3) {
+                        app.curAss = curTrip;
+                    }
                 }
             }
+
+
         });
 
         //某车主 评价列表

@@ -46,11 +46,11 @@ def SaveBook(request):
         # agreeStatus= request.POST.get("agreeStatus")
 
 
-
-
         # 车主行程表改变
         try:
             assDetailObj = CarPoolingAssDetail.objects.get(c_id=assId)
+            if assDetailObj.c_userid == userid:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "请不要订阅自己发布的行程"), content_type="application/json")
             i_booked_seat = assDetailObj.i_booked_seat
             i_booked_seat += int(bookSeat)
             if i_booked_seat>assDetailObj.i_seat:
@@ -63,11 +63,17 @@ def SaveBook(request):
 
         #  乘客行程表改变
         # 同一个人不能定两次该行程 退订再次订呢？ 筛选，如果有，则在原基础上更新，没有，则新增
+        rec_detail_list = CarPoolingRecDetail.objects.filter(c_userid=userid, i_status=CurTripStatus.Ing)
+        if len(rec_detail_list) > 0:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "您有未完成行程，请行程结束后再预订"),
+                                content_type="application/json")
         try:
-            rec_detail_obj = CarPoolingRecDetail.objects.get( c_userid = userid,c_assid = assId)
+            # 如果有作为乘客正在进行的订单，则不允许再次预定
+            rec_detail_obj = CarPoolingRecDetail.objects.get(c_userid = userid,c_assid = assId)
             rec_detail_obj.t_remark = startPlace
             rec_detail_obj.i_booked_seat = bookSeat
             rec_detail_obj.i_status = CurTripStatus.Ing
+            rec_detail_obj.status = True
         except:
             rec_detail_obj = CarPoolingRecDetail(
                 c_id=uuid_maker.get_uuid_random(),

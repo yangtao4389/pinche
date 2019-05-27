@@ -224,7 +224,8 @@ def GetWenxinJsapiConfig(request):
 
     logger.info("signature:%s"%signature)
     resultDict = dict(
-        debug =settings.DEBUG,
+        # debug =settings.DEBUG,
+        debug =False,
         appId = signature.appId,
         timestamp=signature.timestamp,
         nonceStr =signature.noncestr,
