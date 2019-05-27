@@ -1,5 +1,5 @@
 import traceback
-from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail
+from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail,CurTripStatus
 
 
 
@@ -19,9 +19,8 @@ def commonGetCurTripTip(w_openid):
     '''
     # # 乘客身份查看
     try:
-        # 车主身份查看
         recDetail = CarPoolingRecDetail.objects.filter(c_userid=w_openid).filter(status=True).filter(
-            i_status__in=[1, 2]).order_by("-d_go_time")
+            i_status__in=[CurTripStatus.Ing, CurTripStatus.Gone]).order_by("-d_go_time")
         if len(recDetail) > 0:
             assObj = recDetail[0]
             data = dict(
@@ -48,7 +47,7 @@ def commonGetCurTripTip(w_openid):
 
     try:
         # 车主身份查看
-        assDetail = CarPoolingAssDetail.objects.filter(c_userid=w_openid).filter(status=True).filter(i_status__in=[1,2]).order_by("-d_go_time")
+        assDetail = CarPoolingAssDetail.objects.filter(c_userid=w_openid).filter(status=True).filter(i_status__in=[CurTripStatus.Ing, CurTripStatus.Gone]).order_by("-d_go_time")
         if len(assDetail)>0:
             assObj = assDetail[0]
             data = dict(

@@ -63,6 +63,7 @@ urlpatterns += [
     url(r"^Home/CheckWeiXinSubscribe$", api_home.CheckWeiXinSubscribe),
 ]
 
+# 车主
 urlpatterns += [
     url(r"^UserAss/GetDetailData$", api_userass.GetDetailData), # 获取通用数据 不进行任何判断
     url(r"^UserAss/GetRecListByAss$", api_userass.GetRecListByAss), # 获取通用数据 不进行任何判断
@@ -75,6 +76,8 @@ urlpatterns += [
     url(r"^UserAss/GetList$", api_userass.GetList),  # 保存
     url(r"^UserAss/Del$", api_userass.Del),  # 保存
 ]
+
+# 乘客
 urlpatterns += [
     url(r"^UserRec/SaveBook$", api_userrec.SaveBook),  # 乘客订座接口
     url(r"^UserRec/GetList$", api_userrec.GetList),  # 乘客订座接口

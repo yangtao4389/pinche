@@ -90,8 +90,9 @@
 
                                 <p>【出发时间】 {{hh.formatGoTime(rec.GoTime)}}</p>
 
-                                <p>【电话】<span class="desc_red f16px fb"><a class="border-bottom-dashed padr10 cRed"
-                                                                          v-bind:href="rec.PhoneUrl">{{rec.Phone}}</a></span>
+
+                                <p>【电话】<span class="desc_red f16px fb"><a  v-bind:href="'tel:'+rec.Phone"  class="border-bottom-dashed padr10 cRed"
+                                                 >{{rec.Phone}}</a></span>
                                 </p>
 
                             </div>
@@ -577,11 +578,20 @@
 
                 });
 
+            },
+            callPhone:function (phone) {
+//                var phone = app.rec.Phone;
+                var jsphone = "tel:"+phone;
+                 hh.go(jsphone);
+
             }
 
         }
 
     });
+
+
+
 
 
 </script>

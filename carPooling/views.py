@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from common import uuid_maker, client,checkparam
 from carPooling.models import CarPoolingUserConf, CarPoolingAssDetail
-from carPooling.globalApi import commonGetCurTripTip
+from carPooling.globalApi import commonGetCurTripTip,CurTripType
 from carPooling.globalSession import LSRU
 from common.json_result import RtnDefault,RtnCode
 from app_weixin.settings import wx_login
@@ -156,6 +156,8 @@ def Login(request):
 
 
 def AssList(request):
+    if not (request.GET.get("startCity") and request.GET.get("endCity")):
+        return HttpResponseRedirect(settings.DEFAULT_HOME_FULL_PATH)
     with open("static/carPooling/src/Asslist.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)
@@ -181,7 +183,7 @@ def UserAssPublish(request):
         # todo 去数据库查询当前的状态，如果有发布信息，则返回当前车程状态，未发布，则创建新的id.
 
         dataresult = commonGetCurTripTip(w_openid)
-        if dataresult.get("result") == 0:
+        if dataresult.get("result") == 0 and dataresult.get("Type")!=CurTripType.Subscribe:
             return HttpResponseRedirect(dataresult.get("redirectUrl"))
 
         id = uuid_maker.get_uuid_random()

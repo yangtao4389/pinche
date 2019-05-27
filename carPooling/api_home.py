@@ -108,9 +108,19 @@ def GetAssList(request):
         # 出发城市与到达城市
         startCity = request.POST.get("startCity")
         endCity = request.POST.get("endCity")
-        # if not startCity or not endCity:
-        #     return
+        if not startCity or not endCity:
+            return HttpResponse()
 
+        # 从微信短链接过来的\u处理掉：https://blog.csdn.net/u014519194/article/details/53927149
+        # print(startCity,endCity)
+        # print(type(startCity))
+
+        # if startCity.startswith("\u"):
+        #     startCity = startCity.encode('utf-8').decode('unicode_escape')
+
+
+        # endCity = endCity.encode('utf-8').decode('unicode_escape')
+        # print(startCity,endCity)
 
         # 每页数据
         numPerPage = request.POST.get("numPerPage", 20)

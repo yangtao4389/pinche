@@ -36,7 +36,11 @@ def GetDetailData(request):
             # 去数据库查看当前Id是否存在
             assObj = CarPoolingAssDetail.objects.get(c_id=id)
             try:
-                BookLinkUrl = wx_map.shorturl(csettings.DEFAULT_ASSLIST_FULL_PATH %(assObj.c_start_city,assObj.c_end_city))
+
+                from urllib.parse import quote
+                longurl = csettings.DEFAULT_ASSLIST_FULL_PATH %(quote(assObj.c_start_city,'utf-8'),quote(assObj.c_end_city,'utf-8'))
+                print(longurl)
+                BookLinkUrl = wx_map.shorturl(longurl)
             except:
                 BookLinkUrl = None
             dataDict = dict(

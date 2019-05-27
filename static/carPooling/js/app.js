@@ -8,15 +8,25 @@ var hh = {
         //    location.replace(url);
         //else
         location.href = url;
-        event.stopPropagation();
-    },
+        try{
+             event.stopPropagation();
+        }catch(e){
+
+        }
+    }
+
+    ,
     back: function (url) {
         if (history.length > 1)
             history.go(-1);
         else {
             location.href = url;
         }
-        event.stopPropagation();
+         try{
+             event.stopPropagation();
+        }catch(e){
+
+        }
     },
     getQueryString: function (name) {
         //获取url里的参数

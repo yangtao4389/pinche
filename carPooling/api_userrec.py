@@ -207,6 +207,7 @@ def GetDetailData(request):
 
                 Phone = assUserObj.c_phone,
 
+
             )
             print(dataDict)
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok", dataDict), content_type="application/json")

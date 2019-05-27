@@ -72,22 +72,14 @@
 
                 <div class="mui-card-content">
 
-                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">【起止地】{{ass.StartCity}} -&gt; {{ass.EndCity}}
-
+                        <textarea id="txtAssInfo" style="border:0" class="lh180 pad5" v-on:click="selectTxt()">
+【起止地】{{ass.StartCity}} -&gt; {{ass.EndCity}}
 【时间】{{hh.formatGoTime(ass.GoTime)}}
-
 【路线】{{ass.Line}}
-
 【车型】{{ass.BusType}}
-
 【座位】{{ass.Seat}}
-
-【车主】{{ass.CardOwner}}
-
 【预订】{{ass.BookLinkUrl}}
-
-【A费】 {{ass.Cash}}元/人
-
+【车费】 {{ass.Cash}}元/人
 【备注】{{ass.Remark}}</textarea>
 
                 </div>
