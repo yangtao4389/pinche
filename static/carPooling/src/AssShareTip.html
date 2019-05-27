@@ -8,7 +8,7 @@
 
     <meta charset="UTF-8" />
 
-    <title>同乡拼车e</title>
+    <title>里行</title>
 
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 
@@ -54,7 +54,7 @@
 
 <header class="mui-bar mui-bar-nav">
 
-    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
+    <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserCenter')"><span class="mui-icon mui-icon-left-nav"></span>返回</a>
 
     <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span class="mui-icon mui-icon-home"></span></a>
 
@@ -84,7 +84,7 @@
 
 【车主】{{ass.CardOwner}}
 
-<!--【预订】{{ass.BusType}}-->
+【预订】{{ass.BookLinkUrl}}
 
 【A费】 {{ass.Cash}}元/人
 
@@ -172,7 +172,7 @@
 
               <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg" />
 
-                <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+                <p class="mui-text-center mui-h6 mart10">微信公众号：里行</p>
 
             </div>
 
@@ -281,7 +281,7 @@
 
     <script src="/static/carPooling/js/jquery.min.js"></script>
 
-    <script src="/static/carPooling/js/jquery.signalR-2.2.3.min.js"></script>
+    <!--<script src="/static/carPooling/js/jquery.signalR-2.2.3.min.js"></script>-->
 
         <!--<script>-->
 

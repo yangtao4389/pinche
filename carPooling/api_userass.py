@@ -6,10 +6,13 @@ from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.conf import settings
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
+from common.long_short_url import get_short_url
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CurTripStatus,CarPoolingRecDetail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from carPooling.globalApi import commonGetCurTripTip
 from django.db import DatabaseError, transaction
+from carPooling import settings as csettings
+
 from logging import getLogger
 logger = getLogger("default")
 
@@ -45,7 +48,7 @@ def GetDetailData(request):
                 Status=assObj.i_status,
                 UserId=assObj.c_userid,
                 NoBookedSeat=assObj.i_no_booked_seat,
-
+                BookLinkUrl =get_short_url(csettings.DEFAULT_ASSLIST_FULL_PATH %(assObj.c_start_city,assObj.c_end_city))  # 用于分享的链接
 
             )
 
