@@ -88,23 +88,30 @@ def WeiXinLoginCallBack(request):
 
     request.session["w_openid"] = data.openid
     # openid = data.openid
-    next_url = request.session.get("tmp_current_full_url","/WebApp/Home")
+    next_url = request.session.get("tmp_current_full_url",settings.DEFAULT_HOME_FULL_PATH)
     return HttpResponseRedirect(next_url)
     # return HttpResponse("ok")
 
 
 def Login(request):
     '''
-    登录创建数据表
+    主要用于新增 真实姓名跟手机字段
+    get请求中有  LoginSuccessRedirectUri，则直接跳转到该地址
+    如果没有，在跳转到该地址的时候，是否有request.session[LSRU]
+    如果都没有，回首页
     :param request:
     :return:
     '''
-    # 微信端会传送过来微信id
-    # 如果微信id存在，则去数据库查询。如果没有电话信息，则弹绑定手机，如果有，则存session
-    # 不存在，则非法访问（提示需要在微信客户端打开）
+
     w_openid = request.session["w_openid"]
 
     if request.method == 'GET':
+        # 有明确要求的，则返回具体的url
+        LoginSuccessRedirectUri = request.GET.get("LoginSuccessRedirectUri")
+        if LoginSuccessRedirectUri:
+            print(LoginSuccessRedirectUri,'login---')
+            request.session[LSRU] = LoginSuccessRedirectUri
+
         with open("static/carPooling/src/Login.html", 'rb') as f:
             html = f.read()
         return HttpResponse(html)
@@ -126,7 +133,7 @@ def Login(request):
             user_conf_obj.b_phone_status = True
             user_conf_obj.save()
 
-            goUrl = request.session.get(LSRU) if request.session.get(LSRU) else "/WebApp/Home"
+            goUrl = request.session.get(LSRU) if request.session.get(LSRU) else settings.DEFAULT_HOME_FULL_PATH
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "登录成功",dict(goUrl=goUrl)), content_type="application/json")
         except:
             logger.exception("创建用户数据出错")
@@ -167,7 +174,7 @@ def UserAssPublish(request):
     user_conf_obj = CarPoolingUserConf.objects.get(w_openid=w_openid)
     if not user_conf_obj.c_phone or user_conf_obj.b_phone_status == False:
         request.session[LSRU] = client.get_client_current_full_path(request)
-        return HttpResponseRedirect("/WebApp/Home/Login")
+        return HttpResponseRedirect(settings.DEFAULT_LOGIN_FULL_PATH)
 
     id = request.GET.get("id")
     if not id:

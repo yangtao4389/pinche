@@ -10,7 +10,8 @@ from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingC
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import DatabaseError, transaction
 from carPooling.globalApi import commonGetCurTripTip
-
+from carPooling.globalSession import WOPENID
+from carPooling import settings as csettings
 from logging import getLogger
 logger = getLogger("default")
 
@@ -22,37 +23,48 @@ def SaveBook(request):
     :return:
     '''
     if request.method == "POST":
-        userid = request.session["c_weixin_id"]
-        dataresult = commonGetCurTripTip(userid)
-        if dataresult.get("result") == 0:
-            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已经存在"), content_type="application/json")
+        userid = request.session[WOPENID]
+
+        # 不需要判断当前行程的
+        # dataresult = commonGetCurTripTip(userid)
+        # if dataresult.get("result") == 0:
+        #     return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已经存在"), content_type="application/json")
 
         try:
-            userObj = CarPoolingUserConf.objects.get(c_weixin_id=userid)
+            userObj = CarPoolingUserConf.objects.get(w_openid=userid)
+            # 同时这里也可以来判断，该用户是否应该付费等情况
         except:
+            logger.exception("预定接口：用户账户有问题")
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "用户账户有问题"), content_type="application/json")
 
 
         assId = request.POST.get("assId")
         bookSeat = request.POST.get("bookSeat")
         startPlace= request.POST.get("startPlace")
-        phone= request.POST.get("phone")
-        saving= request.POST.get("saving")
-        agreeStatus= request.POST.get("agreeStatus")
+        # phone= request.POST.get("phone")
+        # saving= request.POST.get("saving")
+        # agreeStatus= request.POST.get("agreeStatus")
+
+
 
 
         # 车主行程表改变
-        assDetailObj = CarPoolingAssDetail.objects.get(c_id=assId)
-        i_booked_seat = assDetailObj.i_booked_seat
-        i_booked_seat += int(bookSeat)
-        if i_booked_seat>assDetailObj.i_seat:
-            return
-        assDetailObj.i_booked_seat = i_booked_seat
+        try:
+            assDetailObj = CarPoolingAssDetail.objects.get(c_id=assId)
+            i_booked_seat = assDetailObj.i_booked_seat
+            i_booked_seat += int(bookSeat)
+            if i_booked_seat>assDetailObj.i_seat:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该座位已被预定"), content_type="application/json")
+            assDetailObj.i_booked_seat = i_booked_seat
+        except:
+            logger.exception("预定接口：该行程已撤销")
+            return  HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "啊哦，该行程已撤销"), content_type="application/json")
+
 
         #  乘客行程表改变
         recDetailObj = CarPoolingRecDetail(
             c_id = uuid_maker.get_uuid_random(),
-            c_userid = request.session["c_weixin_id"],
+            c_userid = userid,
             c_assid = assId,
             c_username = userObj.c_name,
             c_card_owner = assDetailObj.c_card_owner,
@@ -74,10 +86,12 @@ def SaveBook(request):
         #     return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "预定异常"), content_type="application/json")
         except:
             print(traceback.print_exc())
+            logger.exception("预定接口：预定异常")
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "预定异常"), content_type="application/json")
         data = dict(
             detail_id = recDetailObj.c_id
         )
+        print(data)
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "预定成功",data), content_type="application/json")
 
 
@@ -101,7 +115,7 @@ def GetList(request):
         #     return
         pageNum = int(pageNum)
 
-        allMyAss = CarPoolingRecDetail.objects.filter(status=True).filter(c_userid=request.session["c_weixin_id"]).order_by("-d_go_time")
+        allMyAss = CarPoolingRecDetail.objects.filter(status=True).filter(c_userid=request.session[WOPENID]).order_by("-d_go_time")
         paginator = Paginator(allMyAss, numPerPage)
         page = paginator.page(pageNum)
 
@@ -162,7 +176,7 @@ def GetDetailData(request):
             # 去数据库查看当前Id是否存在
             recObj = CarPoolingRecDetail.objects.get(c_id=id,status=True)
             assObj = CarPoolingAssDetail.objects.get(c_id=recObj.c_assid)
-            assUserObj = CarPoolingUserConf.objects.get(c_weixin_id=assObj.c_userid)
+            assUserObj = CarPoolingUserConf.objects.get(w_openid=assObj.c_userid)
             dataDict = dict(
                 Id=id,  # 乘客行程id
                 AssId = recObj.c_assid,  # 车主发布的详情
@@ -187,7 +201,7 @@ def GetDetailData(request):
             # 没有数据
             dataDict = dict(
                 Id=id,
-                UserId=request.session["c_weixin_id"],
+                UserId=request.session[WOPENID],
                 Status=1,
                 # GoTime = datetime.strftime(datetime.now() + timedelta(minutes=10),"%Y-%m-%d %H:%M:%S")
             )

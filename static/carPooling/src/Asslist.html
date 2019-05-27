@@ -72,7 +72,7 @@
                 src="/static/carPooling/images/tran_a.png" alt=""> <span v-text="search.endCity"></span></h1>
     </header>
 
-    <!-- 这个是判断当前行程用的  这个页面可以取消  -->
+    <!-- 这个是判断当前行程用的  这个页面可以取消  看展示在哪里，是否展示在最下面呀？  -->
     <div class="mui-bar mui-bar-tab">
         <template>
             <div class="mui-tab-item" v-if="curRecSubscribe">
@@ -115,6 +115,8 @@
         </template>
     </div>
 
+
+    <!---->
     <div class="mui-content ">
         <!--list begin-->
         <div class="car-list-box can-select">
@@ -558,7 +560,7 @@
             book: {
                 assId: '',
                 bookSeat: 1,
-                maxSeat: 6,
+                maxSeat: 0,
                 startPlace: '',
                 phone: '',
                 saving: false,
@@ -716,6 +718,7 @@
                 });
             },
 //                显示预订座位页面
+//            ass 为单独的assList的一条数据
             showbook: function (ass) {
 //                      检测是否绑定手机号
                 mui.post("/WebApp/UserCenter/GetPhoneStatus", {}, function (json) {
@@ -725,7 +728,7 @@
                         } else {
 
                             if (json.data.PhoneStatus == false) {
-                                hh.go("/WebApp/UserCenter/Phone?userRegReturnUrl=" + location.href);
+                                hh.go("/WebApp/Home/Login?LoginSuccessRedirectUri=" + encodeURIComponent(location.href));
                             } else {
                                 app.book.assId = ass.Id;
                                 app.book.bookSeat = 1;
