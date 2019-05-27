@@ -62,25 +62,33 @@ def SaveBook(request):
 
 
         #  乘客行程表改变
-        recDetailObj = CarPoolingRecDetail(
-            c_id = uuid_maker.get_uuid_random(),
-            c_userid = userid,
-            c_assid = assId,
-            c_username = userObj.c_name,
-            c_card_owner = assDetailObj.c_card_owner,
-            c_start_city = assDetailObj.c_start_city,
-            c_end_city = assDetailObj.c_end_city,
-            d_go_time = assDetailObj.d_go_time,
-            t_remark = startPlace,
-            i_booked_seat = bookSeat,
-            i_status = CurTripStatus.Ing,
-            status = True,
-        )
+        # 同一个人不能定两次该行程 退订再次订呢？ 筛选，如果有，则在原基础上更新，没有，则新增
+        try:
+            rec_detail_obj = CarPoolingRecDetail.objects.get( c_userid = userid,c_assid = assId)
+            rec_detail_obj.t_remark = startPlace
+            rec_detail_obj.i_booked_seat = bookSeat
+            rec_detail_obj.i_status = CurTripStatus.Ing
+        except:
+            rec_detail_obj = CarPoolingRecDetail(
+                c_id=uuid_maker.get_uuid_random(),
+                c_userid=userid,
+                c_assid=assId,
+                c_username=userObj.c_name,
+                c_card_owner=assDetailObj.c_card_owner,
+                c_start_city=assDetailObj.c_start_city,
+                c_end_city=assDetailObj.c_end_city,
+                d_go_time=assDetailObj.d_go_time,
+                t_remark=startPlace,
+                i_booked_seat=bookSeat,
+                i_status=CurTripStatus.Ing,
+                status=True,
+            )
+
 
         try:
             with transaction.atomic():  # 事务，保证唯一 存在，则都存在。错误，则都不去改变
                 assDetailObj.save()
-                recDetailObj.save()
+                rec_detail_obj.save()
         # except DatabaseError:
         #     print(traceback.print_exc())
         #     return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "预定异常"), content_type="application/json")
@@ -89,7 +97,7 @@ def SaveBook(request):
             logger.exception("预定接口：预定异常")
             return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "预定异常"), content_type="application/json")
         data = dict(
-            detail_id = recDetailObj.c_id
+            detail_id = rec_detail_obj.c_id
         )
         print(data)
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "预定成功",data), content_type="application/json")
@@ -227,29 +235,43 @@ def UnbookSave(request):
         RecId = request.POST.get("RecId")
         unsubscribeTags = request.POST.get("unsubscribeTags")
         unsubscribeComplain = request.POST.get("unsubscribeComplain")
-        # 退订  乘客行程动态改变，车主行程动态改变，通知
 
-        recObjList = CarPoolingRecDetail.objects.filter(c_id=RecId).filter(status=True).filter(i_status=CurTripStatus.Ing)
-        if len(recObjList) != 1:
-            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败，该行程已删除|取消|出发|完成"), content_type="application/json")
-        recObj = recObjList[0]
-        assObjList = CarPoolingAssDetail.objects.filter(c_id=recObj.c_assid)
-        if len(assObjList) != 1:
-            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败，系统错误"),
-                                content_type="application/json")
-        assObj = assObjList[0]
+        # RecId  查出乘客行程，根据乘客行程，改变乘客行程跟车主行程。
 
+        # 乘客行程
         try:
-            recObj.i_status = CurTripStatus.Cancel
-            assObj.i_booked_seat -= recObj.i_booked_seat
-            recUnbookObj,created = CarPoolingRecUnbook.objects.get_or_create(c_recid=recObj.c_id)
-            recUnbookObj.unsubscribeTags = unsubscribeTags
-            recUnbookObj.unsubscribeComplain = unsubscribeComplain
+            rec_detail_obj = CarPoolingRecDetail.objects.get(c_id=RecId)
+            # if rec_detail_obj.i_status != CurTripStatus.Ing:
+            #     return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败,该行程已失效。有问题,请在个人中心联系客服"),
+            #                         content_type="application/json")
+        except:
+            logger.exception("退订失败：该行程已失效")
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已失效,请在个人中心联系客服"),
+                                content_type="application/json")
+
+
+        # 车主行程
+        try:
+            ass_detail_obj = CarPoolingAssDetail.objects.get(c_id=rec_detail_obj.c_assid)
+        except:
+            logger.exception("退订失败：该行程已失效")
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败,车主行程已失效。有问题,请在个人中心联系客服"),
+                                content_type="application/json")
+
+        # 退订
+        try:
+            rec_detail_obj.i_status = CurTripStatus.Cancel
+            ass_detail_obj.i_booked_seat -= rec_detail_obj.i_booked_seat
+            rec_unbook_obj,created = CarPoolingRecUnbook.objects.get_or_create(c_recid=rec_detail_obj.c_id)  # 因为可能退订两次
+            rec_unbook_obj.unsubscribeTags = unsubscribeTags
+            rec_unbook_obj.unsubscribeComplain = unsubscribeComplain
             with transaction.atomic():  # 事务，保证唯一 存在，则都存在。错误，则都不去改变
-                recObj.save()
-                assObj.save()
-                recUnbookObj.save()
+                rec_unbook_obj.save()
+                ass_detail_obj.save()
+                rec_detail_obj.save()
             #todo 这里需要通知
+
+
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "退订成功"),
                                 content_type="application/json")
         except:

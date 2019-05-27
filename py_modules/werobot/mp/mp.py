@@ -298,7 +298,9 @@ class WeixinMP(object):
         :param long_url: 长链接
         """
         data = dict(action="long2short", long_url=long_url)
-        return self.post("/shorturl", data)
+        result =  self.post("/shorturl", data)
+        if result.errcode =="0":
+            return result.short_url
 
     def qrcode_create(self, scene_id, expires=30):
         """

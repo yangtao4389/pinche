@@ -25,3 +25,7 @@ ac_path = os.path.join(settings.BASE_DIR, ".weixin_access_token")
 
 wx_map = WeixinMP(APP_ID,APP_SECRET,ac_path=ac_path, jt_path=jt_path)
 # 通过该wx_map 可以直接获取 全局微信  access_token  jsapi_ticket  nonce_str  还有其他关于微信平台的方法
+
+template_id_001 = "" # ***
+template_id_002 = "" # ***
+template_id_003 = "" # ***

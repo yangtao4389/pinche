@@ -4,13 +4,16 @@ import traceback
 from datetime import datetime,timedelta
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db import DatabaseError, transaction
+
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
-from common.long_short_url import get_short_url
+# from common.long_short_url import get_short_url
+from app_weixin.settings import wx_map
+
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CurTripStatus,CarPoolingRecDetail
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from carPooling.globalApi import commonGetCurTripTip
-from django.db import DatabaseError, transaction
 from carPooling import settings as csettings
 
 from logging import getLogger
@@ -32,6 +35,10 @@ def GetDetailData(request):
         try:
             # 去数据库查看当前Id是否存在
             assObj = CarPoolingAssDetail.objects.get(c_id=id)
+            try:
+                BookLinkUrl = wx_map.shorturl(csettings.DEFAULT_ASSLIST_FULL_PATH %(assObj.c_start_city,assObj.c_end_city))
+            except:
+                BookLinkUrl = None
             dataDict = dict(
                 Id=id,
                 StartCity = assObj.c_start_city,
@@ -48,7 +55,7 @@ def GetDetailData(request):
                 Status=assObj.i_status,
                 UserId=assObj.c_userid,
                 NoBookedSeat=assObj.i_no_booked_seat,
-                BookLinkUrl =get_short_url(csettings.DEFAULT_ASSLIST_FULL_PATH %(assObj.c_start_city,assObj.c_end_city))  # 用于分享的链接
+                BookLinkUrl =BookLinkUrl,  # 用于分享的链接
 
             )
 
