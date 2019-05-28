@@ -173,7 +173,10 @@ def AssShareTip(request):
 def UserAssPublish(request):
     # 验证是否有手机号
     w_openid = request.session["w_openid"]
-    user_conf_obj = CarPoolingUserConf.objects.get(w_openid=w_openid)
+    try:
+        user_conf_obj = CarPoolingUserConf.objects.get(w_openid=w_openid)
+    except:
+        return HttpResponseRedirect(settings.DEFAULT_HOME_FULL_PATH)
     if not user_conf_obj.c_phone or user_conf_obj.b_phone_status == False:
         request.session[LSRU] = client.get_client_current_full_path(request)
         return HttpResponseRedirect(settings.DEFAULT_LOGIN_FULL_PATH)

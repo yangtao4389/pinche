@@ -42,7 +42,6 @@ def GetDetailData(request):
 
                 from urllib.parse import quote
                 longurl = csettings.DEFAULT_ASSLIST_FULL_PATH %(quote(assObj.c_start_city,'utf-8'),quote(assObj.c_end_city,'utf-8'))
-                print(longurl)
                 BookLinkUrl = wx_map.shorturl(longurl)
             except:
                 BookLinkUrl = None
@@ -68,7 +67,6 @@ def GetDetailData(request):
 
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "已下过单用户",dataDict), content_type="application/json")
         except:
-            print(traceback.print_exc())
             dataDict = dict(
                 Id = id,
                 UserId = request.session["w_openid"],
@@ -258,6 +256,8 @@ def noLeftSeat(request):
                 # todo 行程状态控制，只能取消正在进行的行程，除此之外的一律不准取消
                 return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已取消|出发|完成，修改无效"), content_type="application/json")
             assDetailObj.i_seat = assDetailObj.i_booked_seat
+            if assDetailObj.i_booked_seat == 0:
+                assDetailObj.i_status = CurTripStatus.Cancel
             assDetailObj.save()
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "余座设置为0成功"), content_type="application/json")
         except:

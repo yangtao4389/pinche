@@ -13,7 +13,7 @@ from django.db import DatabaseError, transaction
 
 from app_weixin.settings import template_id_101,template_id_002,template_id_102,template_id_003
 
-from carPooling.globalApi import commonGetCurTripTip
+from carPooling.globalApi import commonGetCurTripTip,CurTripType
 from carPooling.globalSession import WOPENID
 from carPooling import settings as csettings
 from carPooling.tasks import aync_wx_template
@@ -30,10 +30,10 @@ def SaveBook(request):
     if request.method == "POST":
         userid = request.session[WOPENID]
 
-        # 不需要判断当前行程的
-        # dataresult = commonGetCurTripTip(userid)
-        # if dataresult.get("result") == 0:
-        #     return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已经存在"), content_type="application/json")
+        #todo 需要判断当前行程的
+        dataresult = commonGetCurTripTip(userid)
+        if dataresult.get("result") == 0 and dataresult.get("Type") != CurTripType.Subscribe:
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "您有正在进行的行程，不能预定行程哦"), content_type="application/json")
 
         try:
             userObj = CarPoolingUserConf.objects.get(w_openid=userid)

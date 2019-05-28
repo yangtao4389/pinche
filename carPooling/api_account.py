@@ -3,6 +3,7 @@ from common.json_result import RtnDefault,RtnCode
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
 from common import checkparam
 from eventNotice import smsSend
+from app_weixin.settings import logger
 
 
 def PhoneStatus(request):
@@ -24,6 +25,7 @@ def PhoneStatus(request):
             )
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "ok",dataDict), content_type="application/json")
     except:
+        logger.exception("电话号码状态验证失败")
         return HttpResponse(RtnDefault(RtnCode.STATUS_SYSERROR, "系统出错"), content_type="application/json")
 
 
