@@ -228,6 +228,9 @@ def UserRecList(request):
 
 
 def UserRecDetail(request):
+    id = request.GET.get("id")
+    if not id:
+        return HttpResponse("无id")
     with open("static/carPooling/src/UserRecDetail.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)

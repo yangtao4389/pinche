@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import traceback
@@ -9,9 +10,13 @@ from common.json_result import RtnDefault,RtnCode
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CarPoolingRecDetail,CurTripStatus,CarPoolingRecUnbook
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import DatabaseError, transaction
+
+from app_weixin.settings import template_id_101,template_id_002,template_id_102,template_id_003
+
 from carPooling.globalApi import commonGetCurTripTip
 from carPooling.globalSession import WOPENID
 from carPooling import settings as csettings
+from carPooling.tasks import aync_wx_template
 from logging import getLogger
 logger = getLogger("default")
 
@@ -106,6 +111,40 @@ def SaveBook(request):
             detail_id = rec_detail_obj.c_id
         )
         print(data)
+
+        #todo 向乘客发送订座成功通知
+        template_data = dict(
+            first=dict(value="您已成功预定该座位", color="#173177"),
+            keyword1=dict(value="%s->%s"%(assDetailObj.c_start_city,assDetailObj.c_end_city), color="#173177"),
+            keyword2=dict(value=assDetailObj.c_card_owner, color="#173177"),
+            # keyword3=dict(value=assDetailObj.c_phone, color="#173177"),
+            keyword4=dict(value=assDetailObj.c_bus_type, color="#173177"),
+            keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+            remark=dict(value="退订请点击详情", color="#173177"),
+        )
+        template_url = csettings.DEFAULT_UserRecDetail_FULL_PATH % rec_detail_obj.c_id
+        if os.name != "posix":
+            aync_wx_template(template_id_101, userid, template_data, template_url)
+        else:
+            aync_wx_template.delay(template_id_101, userid, template_data, template_url)
+
+        #todo 向车主发送订座成功通知
+        template_data = dict(
+            first=dict(value="有新的乘客预定了您的座位", color="#173177"),
+            keyword1=dict(value=rec_detail_obj.c_username, color="#173177"),
+            keyword2=dict(value=rec_detail_obj.i_booked_seat, color="#173177"),
+            keyword3=dict(value=userObj.c_phone, color="#173177"),
+            keyword4=dict(value=rec_detail_obj.t_remark, color="#173177"),
+            # keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+            remark=dict(value="祝您旅途愉快!", color="#173177"),
+        )
+        template_url = csettings.DEFAULT_UserAssDetail_FULL_PATH % assDetailObj.c_id
+        if os.name != "posix":
+            aync_wx_template(template_id_002, assDetailObj.c_userid, template_data, template_url)
+        else:
+            aync_wx_template.delay(template_id_002, assDetailObj.c_userid, template_data, template_url)
+
+
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "预定成功",data), content_type="application/json")
 
 
@@ -248,6 +287,9 @@ def UnbookSave(request):
         # 乘客行程
         try:
             rec_detail_obj = CarPoolingRecDetail.objects.get(c_id=RecId)
+            if rec_detail_obj.c_userid != request.session[WOPENID]:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "非本人不能退订该行程"),
+                                        content_type="application/json")
             # if rec_detail_obj.i_status != CurTripStatus.Ing:
             #     return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "退订失败,该行程已失效。有问题,请在个人中心联系客服"),
             #                         content_type="application/json")
@@ -276,7 +318,41 @@ def UnbookSave(request):
                 rec_unbook_obj.save()
                 ass_detail_obj.save()
                 rec_detail_obj.save()
-            #todo 这里需要通知
+
+
+            # todo 向乘客发送退订通知
+            template_data = dict(
+                first=dict(value="退订成功，本次是无责退订。", color="#173177"),
+                keyword1=dict(value=rec_detail_obj.c_username,
+                              color="#173177"),
+                keyword2=dict(value="此次退订对您无任何影响", color="#173177"),
+                keyword3=dict(value=unsubscribeTags, color="#173177"),
+                # keyword4=dict(value=unsubscribeTags, color="#173177"),
+                # keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+                remark=dict(value="请不要连续多次退订，否则您的行为将会受到影响", color="#173177"),
+            )
+            template_url = csettings.DEFAULT_UserRecDetail_FULL_PATH % rec_detail_obj.c_id
+            if os.name != "posix":
+                aync_wx_template(template_id_102, rec_detail_obj.c_userid, template_data, template_url)
+            else:
+                aync_wx_template.delay(template_id_102,  rec_detail_obj.c_userid, template_data, template_url)
+
+            # todo 向车主发送退订通知
+            template_data = dict(
+                first=dict(value="有乘客退订了您的座位", color="#173177"),
+                keyword1=dict(value=rec_detail_obj.c_username,
+                              color="#173177"),
+                keyword2=dict(value=rec_detail_obj.i_booked_seat, color="#173177"),
+                keyword3=dict(value=unsubscribeTags, color="#173177"),
+                # keyword4=dict(value=unsubscribeTags, color="#173177"),
+                # keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+                remark=dict(value="请点击详情查看您发布的行程", color="#173177"),
+            )
+            template_url = csettings.DEFAULT_UserAssDetail_FULL_PATH % ass_detail_obj.c_id
+            if os.name != "posix":
+                aync_wx_template(template_id_003, ass_detail_obj.c_userid, template_data, template_url)
+            else:
+                aync_wx_template.delay(template_id_003, ass_detail_obj.c_userid, template_data, template_url)
 
 
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "退订成功"),

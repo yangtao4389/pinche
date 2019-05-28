@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import traceback
@@ -10,11 +11,12 @@ from django.db import DatabaseError, transaction
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
 # from common.long_short_url import get_short_url
-from app_weixin.settings import wx_map
+from app_weixin.settings import wx_map,template_id_001
 
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CurTripStatus,CarPoolingRecDetail
-from carPooling.globalApi import commonGetCurTripTip
+from carPooling.globalApi import commonGetCurTripTip,CurTripType
 from carPooling import settings as csettings
+from carPooling.tasks import aync_wx_template
 
 from logging import getLogger
 logger = getLogger("default")
@@ -279,7 +281,6 @@ def SaveEdit(request):
 
 
         try:
-
             userObj = CarPoolingUserConf.objects.get(w_openid=request.session["w_openid"])
         except:
             # 用户id不存在，直接去login页面
@@ -297,6 +298,7 @@ def SaveEdit(request):
                 raise Exception
         except:
             return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该状态不能被编辑"), content_type="application/json")
+
         # todo 查看是否有乘客了。如果有，只能将剩余座位设置为0，其它的都不能变。
         recDetailList = CarPoolingRecDetail.objects.filter(c_assid=Id).filter(status=True).filter(
             i_status=CurTripStatus.Ing)
@@ -396,8 +398,8 @@ def SavePublish(request):
             userid = userObj.w_openid
             dataresult = commonGetCurTripTip(userid)
             print(dataresult)
-            if dataresult.get("result") == 0:
-                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "已经存在"), content_type="application/json")
+            if dataresult.get("result") == 0 and dataresult.get("Type") !=CurTripType.Subscribe:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "您有存在的行程，不可发布行程哦"), content_type="application/json")
             # assDeatilObj,created = CarPoolingAssDetail.objects.get_or_create(c_id=id)
             assDeatilObj= CarPoolingAssDetail()
             assDeatilObj.c_id = id
@@ -421,11 +423,25 @@ def SavePublish(request):
                 "Code": 100,  # 100代表 分享，200代表去用户中心，300代表再次编辑？？
                 "Id": id,
             }
-            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "下单成功，去分享", data), content_type="application/json")
+            template_data = dict(
+                first=dict(value="行程发布成功",color="#173177"),
+                keyword1=dict(value=StartCity,color="#173177"),
+                keyword2=dict(value=EndCity,color="#173177"),
+                keyword3=dict(value=GoTime,color="#173177"),
+                keyword4=dict(value=Seat,color="#173177"),
+                keyword5=dict(value=userObj.c_phone,color="#173177"),
+                remark=dict(value="查看请点击我的详情",color="#173177"),
+            )
+            template_url = csettings.DEFAULT_UserAssDetail_FULL_PATH % id
+            if os.name != "posix":
+                aync_wx_template(template_id_001,userid,template_data,template_url)
+            else:
+                aync_wx_template.delay(template_id_001, userid, template_data, template_url)
+            return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "发布行程成功，去分享咯", data), content_type="application/json")
         except:
             print(traceback.print_exc())
             logger.exception("save ass detail error")
-            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "数据存储出错，请联系客服"), content_type="application/json")
+            return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "数据存储出错，请到个人中心联系客服"), content_type="application/json")
 
 
 
