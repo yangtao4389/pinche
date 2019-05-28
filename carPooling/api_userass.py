@@ -11,10 +11,11 @@ from django.db import DatabaseError, transaction
 from common import client,uuid_maker,checkparam
 from common.json_result import RtnDefault,RtnCode
 # from common.long_short_url import get_short_url
-from app_weixin.settings import wx_map,template_id_001
+from app_weixin.settings import wx_map,template_id_001,template_id_103
 
 from carPooling.models import CarPoolingAssDetail,CarPoolingUserConf,CarPoolingCity,CurTripStatus,CarPoolingRecDetail
 from carPooling.globalApi import commonGetCurTripTip,CurTripType
+from carPooling.globalSession import WOPENID
 from carPooling import settings as csettings
 from carPooling.tasks import aync_wx_template
 
@@ -191,17 +192,47 @@ def Cancel(request):
         Id = request.POST.get("Id")
         try:
             assDetailObj = CarPoolingAssDetail.objects.get(c_id=Id)
+            if assDetailObj.c_userid != request.session[WOPENID]:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "您无权变动该行程"),
+                                    content_type="application/json")
+
             if assDetailObj.status != True or assDetailObj.i_status != CurTripStatus.Ing:
+                #todo 行程状态控制，只能取消正在进行的行程，除此之外的一律不准取消
                 return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已取消|出发|完成，修改无效"),
                                     content_type="application/json")
             assDetailObj.i_status = CurTripStatus.Cancel
 
-            # 查看所有乘客，并取消他们的行程 #todo 这里需要通知所有用户
+            # 查看所有乘客，并取消他们的行程 #todo 这里需要通知所有用户 并且是可以直接取消的。也太fuck了吧？
             recDetailObj = CarPoolingRecDetail.objects.filter(c_assid=Id).filter(i_status=CurTripStatus.Ing).filter(status=True)
+            # if recDetailObj>0:
+
+
+
 
             with transaction.atomic():  # 事务，保证唯一 存在，则都存在。错误，则都不去改变
                 assDetailObj.save()
                 recDetailObj.update(i_status=CurTripStatus.Cancel)
+            # 行程在进行的时候，需要车主本人去联系乘客  退单。如果这样的话，多个乘客，一个乘客退了，结果又会显示在有余座的情况。
+            # 所以，最终应该是要直接取消，   只是查看该车主诚信值问题，暂且不处理
+            # todo 向乘客发送 车主取消通知
+            for i in recDetailObj:
+                template_data = dict(
+                    first=dict(value="很抱歉,车主行程有变，您的此次行程已被取消", color="#173177"),
+                    keyword1=dict(value=assDetailObj.c_start_city,
+                                  color="#173177"),
+                    keyword2=dict(value=assDetailObj.c_end_city, color="#173177"),
+                    keyword3=dict(value=assDetailObj.d_go_time, color="#173177"),
+                    # keyword4=dict(value=unsubscribeTags, color="#173177"),
+                    # keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+                    remark=dict(value="点击详情查看此次行程", color="#173177"),
+                )
+                template_url = csettings.DEFAULT_UserRecDetail_FULL_PATH % i.c_id
+                if os.name != "posix":
+                    aync_wx_template(template_id_103, i.c_userid, template_data, template_url)
+                else:
+                    aync_wx_template.delay(template_id_103, i.c_userid, template_data, template_url)
+
+
 
             return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "取消行程成功"), content_type="application/json")
         except:
@@ -220,7 +251,11 @@ def noLeftSeat(request):
         Id = request.POST.get("Id")
         try:
             assDetailObj = CarPoolingAssDetail.objects.get(c_id=Id)
+            if assDetailObj.c_userid != request.session[WOPENID]:
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "您无权变动该行程"),
+                                    content_type="application/json")
             if assDetailObj.status != True or assDetailObj.i_status != CurTripStatus.Ing:
+                # todo 行程状态控制，只能取消正在进行的行程，除此之外的一律不准取消
                 return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "该行程已取消|出发|完成，修改无效"), content_type="application/json")
             assDetailObj.i_seat = assDetailObj.i_booked_seat
             assDetailObj.save()

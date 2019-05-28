@@ -1003,7 +1003,7 @@
             mui.confirm("请确认 <b class='desc_red'>" + app.ass.Phone.replace(/\B(?=(?:\d{4})+$)/g, ' ') + "</b> 能联系到您！", "", ["修改手机号", "确认无误"], function (e) {
 
                 if (e.index == 1) {//OK
-
+                                                        // Object 去js处理一下
                     mui.post("/WebApp/UserAss/SavePublish", Object.assign(app.ass,{"id":hh.getQueryString("id")}) ,function (json) {
 
                         if (json.statusCode == "200") {

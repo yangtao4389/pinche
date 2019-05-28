@@ -7,7 +7,7 @@ from datetime import datetime
 from django.shortcuts import render,HttpResponse
 from django.conf import settings
 from common import client,checkparam
-from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail
+from carPooling.models import CarPoolingCity,CarPoolingAssDetail,CarPoolingRecDetail,CurTripStatus
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from common.json_result import RtnDefault,RtnCode
 from carPooling.globalApi import commonGetCurTripTip
@@ -109,36 +109,30 @@ def GetAssList(request):
         startCity = request.POST.get("startCity")
         endCity = request.POST.get("endCity")
         if not startCity or not endCity:
+
             return HttpResponse()
 
-        # 从微信短链接过来的\u处理掉：https://blog.csdn.net/u014519194/article/details/53927149
-        # print(startCity,endCity)
-        # print(type(startCity))
-
-        # if startCity.startswith("\u"):
-        #     startCity = startCity.encode('utf-8').decode('unicode_escape')
-
-
-        # endCity = endCity.encode('utf-8').decode('unicode_escape')
-        # print(startCity,endCity)
 
         # 每页数据
         numPerPage = request.POST.get("numPerPage", 20)
         # if not checkparam.isVaildInt(numPerPage):
         #     return
-        numPerPage = abs(int(numPerPage))
+        try:
+            numPerPage = abs(int(numPerPage))
 
-        # 当前查询页
-        pageNum = request.POST.get("pageNum",1)
-        # if not checkparam.isVaildInt(pageNum):
-        #     return
-        pageNum = int(pageNum)
+            # 当前查询页
+            pageNum = request.POST.get("pageNum",1)
+            # if not checkparam.isVaildInt(pageNum):
+            #     return
+            pageNum = int(pageNum)
 
-        # seatNum 剩余座位数
-        seatNum = request.POST.get("seatNum", 1)
-        # if not checkparam.isVaildInt(seatNum):
-        #     return
-        seatNum = abs(int(seatNum))
+            # seatNum 剩余座位数
+            seatNum = request.POST.get("seatNum", 1)
+            # if not checkparam.isVaildInt(seatNum):
+            #     return
+            seatNum = abs(int(seatNum))
+        except:
+            return HttpResponse()
 
         # goTime 出发时间 2019-02-18
         goTime = request.POST.get("goTime")
@@ -147,16 +141,17 @@ def GetAssList(request):
         else:
             if not checkparam.isVaildDate(goTime):
                 return HttpResponse()
-        # if not checkparam.isVaildDate(goTime):
-        #     return
-        print(goTime)
+
         # 备用字段
         lastId = request.POST.get("lastId","null")
 
         logger.info("获取请求数据：startCity%s-endCity%s-pageNum%s-seatNum%s--goTime%s"%(startCity,endCity,pageNum,seatNum,goTime))
-        allAss = CarPoolingAssDetail.objects.filter(status=True).filter(c_start_city=startCity, c_end_city=endCity).filter(d_go_time__gte=goTime).filter(i_no_booked_seat__gte=seatNum).order_by("d_go_time")
+        allAss = CarPoolingAssDetail.objects.filter(status=True).filter(i_status=CurTripStatus.Ing).filter(c_start_city=startCity, c_end_city=endCity).filter(d_go_time__gte=goTime).filter(i_no_booked_seat__gte=seatNum).order_by("d_go_time")
         paginator = Paginator(allAss, numPerPage)
-        page = paginator.page(pageNum)
+        try:
+            page = paginator.page(pageNum)
+        except:
+            return HttpResponse()
 
         # "CurrentPageIndex": 1, "PageSize": 20, "RowCount": 66, "PageCount": 4, "IsFirstPage": true, "IsLastPage": false, "CurrentRowCount": 20, "CurrentStartIndex": 1, "CurrentEndIndex": 20
         resultDict = dict(
@@ -193,8 +188,6 @@ def GetAssList(request):
         resultDict.update(DataSource=DataSource)
 
 
-
-
         # assList = {"DataSource":[
         #     {"Id":"930302a5-565e-462b-84c4-abcd10922796","GoTime":"2019/2/20 9:00:00","CardOwner":"周正","UserId":"758038ca-84dc-4073-ace7-2616952db52b","BusType":"福特福睿斯。","Line":"温江出发，到达达州南外。","Cash":120.00,"Remark":"顺路上下，支持群价，预订后请电话确认一下。--点击“预订”即可，李。","Seat":2,"GoodNum":0,"BadNum":0,"IsRealName":0,"IsRealDriver":0}],
         #         "CurrentPageIndex":1,
@@ -207,7 +200,7 @@ def GetAssList(request):
         #         "CurrentStartIndex":1,
         #         "CurrentEndIndex":1,
         # }
-        logger.info(resultDict)
+        # logger.info(resultDict)
         return HttpResponse(json.dumps(resultDict), content_type="application/json")
 
 

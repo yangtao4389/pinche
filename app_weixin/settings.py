@@ -34,3 +34,4 @@ template_id_003 = "n-u2NgJ0kSWhuA8TQKQ_mREDPM95w6IsVuiaqTECHXc" # 拼车退订�
 # 乘客模板
 template_id_101 = "2DJdM9YN0F4dGnScsWSqX96zzYVcES_mWmISE0vY6SI" #  订座成功通知
 template_id_102 = "IBsT2h0MHKRxlKanFWeeuORDFzf2WguuHbBivENZGPo" # 退订成功通知
+template_id_103 = "NuLtTyjF9-8pbWNOOEi2e7bjxgTFyOswWLfAJdYl-mA" # 乘客被动取消订单通知

@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8"/>
 
-    <title>同乡拼车e</title>
+    <title>里行</title>
 
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
@@ -63,11 +63,11 @@
 
     <header class="mui-bar mui-bar-nav">
 
-        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.go('/WebApp/UserAss/List')"><span
-                class="mui-icon mui-icon-left-nav"></span>我的行程</a>
+        <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-left" onclick="hh.back('/WebApp/UserAss/List')"><span
+                class="mui-icon mui-icon-left-nav"></span>返回</a>
 
         <a class="mui-btn  mui-btn-link mui-btn-nav mui-pull-right" onclick="hh.go('/WebApp/Home')"><span
-                class="mui-icon mui-icon-home"></span></a>
+                class="mui-icon mui-icon-home"></span>首页</a>
 
         <h1 class="mui-title">车主出行详情</h1>
 
@@ -130,7 +130,7 @@
                                 {{rec.Name}}
 
                                 <!--<a class="desc_red border-bottom-dashed"> {{rec.Phone}}</a>-->
-                                <a class="desc_red border-bottom-dashed" v-bind:href="rec.PhoneUrl"> {{rec.Phone}}</a>
+                                <a class="desc_red border-bottom-dashed"  v-bind:href="'tel:'+rec.Phone"  > {{rec.Phone}}</a>
 
                             </h3>
 
@@ -185,7 +185,7 @@
 
             <img class="mart20" src="/static/carPooling/images/wxqrcode-lwpinche.jpg"/>
 
-            <p class="mui-text-center mui-h6 mart10">微信公众号：同乡拼车e</p>
+            <p class="mui-text-center mui-h6 mart10">微信公众号：里行</p>
 
         </div>
 
