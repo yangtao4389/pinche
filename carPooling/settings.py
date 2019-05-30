@@ -13,6 +13,8 @@ DEFAULT_LOGIN_FULL_PATH = "/WebApp/Home/Login"
 
 # 默认微信登录首页
 
+# 微信关注页面
+DEFAULT_Subscrible_FULL_PATH = "/WebApp/Home/WeiXinSubscrible"
 
 # 默认查询该路段行程
 DEFAULT_ASSLIST_FULL_PATH = WX_DOMAIN+ "/WebApp/Home/AssList?startCity=%s&endCity=%s"

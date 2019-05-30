@@ -3,13 +3,18 @@ import random
 from datetime import datetime, timedelta
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+
 from common import uuid_maker, client,checkparam
+from common.json_result import RtnDefault,RtnCode
+from app_weixin.settings import wx_login,wx_map
+
 from carPooling.models import CarPoolingUserConf, CarPoolingAssDetail
 from carPooling.globalApi import commonGetCurTripTip,CurTripType
 from carPooling.globalSession import LSRU
-from common.json_result import RtnDefault,RtnCode
-from app_weixin.settings import wx_login
-from . import settings
+from carPooling.globalSession import WSUBSCRIBE
+from carPooling.settings import DEFAULT_Subscrible_FULL_PATH
+
+from carPooling import settings
 from logging import getLogger
 logger = getLogger("default")
 
@@ -92,6 +97,11 @@ def WeiXinLoginCallBack(request):
     return HttpResponseRedirect(next_url)
     # return HttpResponse("ok")
 
+def WeiXinSubscrible(request):
+    with open("static/carPooling/src/Subscribe.html", 'rb') as f:
+        html = f.read()
+    return HttpResponse(html)
+
 
 def Login(request):
     '''
@@ -169,7 +179,6 @@ def AssShareTip(request):
     return HttpResponse(html)
 
 
-
 def UserAssPublish(request):
     # 验证是否有手机号
     w_openid = request.session["w_openid"]
@@ -180,6 +189,19 @@ def UserAssPublish(request):
     if not user_conf_obj.c_phone or user_conf_obj.b_phone_status == False:
         request.session[LSRU] = client.get_client_current_full_path(request)
         return HttpResponseRedirect(settings.DEFAULT_LOGIN_FULL_PATH)
+
+    # 验证是否关注
+    if request.session.get(WSUBSCRIBE) != 1:
+        # 这里可以直接跳转到关注页面
+        try:
+            result = wx_map.user_info(w_openid)
+            logger.info("关注：result:%s" % result)
+            if result.subscribe == 1:
+                request.session[WSUBSCRIBE] = 1
+            else:
+                raise Exception()
+        except:
+            return HttpResponseRedirect(DEFAULT_Subscrible_FULL_PATH)
 
     id = request.GET.get("id")
     if not id:
@@ -240,6 +262,19 @@ def UserRecDetail(request):
 
 
 def UserCenter(request):
+    # 验证是否关注
+    w_openid = request.session["w_openid"]
+    if request.session.get(WSUBSCRIBE) != 1:
+        # 这里可以直接跳转到关注页面
+        try:
+            result = wx_map.user_info(w_openid)
+            logger.info("关注：result:%s" % result)
+            if result.subscribe == 1:
+                request.session[WSUBSCRIBE] = 1
+            else:
+                raise Exception()
+        except:
+            return HttpResponseRedirect(DEFAULT_Subscrible_FULL_PATH)
     with open("static/carPooling/src/UserCenter.html", 'rb') as f:
         html = f.read()
     return HttpResponse(html)

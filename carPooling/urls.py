@@ -13,10 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include,re_path
 from django.conf.urls import url
-from carPooling import views,api_home,error,api_userass,api_account,api_userrec
+from carPooling import views,api_home,error,api_userass,api_account,api_userrec,msg_polling
+
+# msg_polling.runserver_from_start()
 
 # 静态页面
 urlpatterns = [
@@ -25,6 +28,7 @@ urlpatterns = [
     url(r"^Home/Login$", views.Login),  # 登录
     url(r"^Home/WeixinLogin$", views.WeixinLogin,name="WeixinLogin"),  # 微信登录
     url(r"^Home/WeiXinLoginCallBack$", views.WeiXinLoginCallBack,name="WeiXinLoginCallBack"),  # 微信登录后的回调
+    url(r"^Home/WeiXinSubscrible$", views.WeiXinSubscrible),  # 微信登录后的回调
 
     url(r"^Home/AssList$", views.AssList),  # 行程列表
     url(r"^Home/AssShareTip$", views.AssShareTip),  # 分享行程
@@ -102,4 +106,9 @@ urlpatterns += [
 # 错误信息
 urlpatterns += [
     url(r"^Error/JsError$", error.JsError),
+]
+
+# 轮询进行通知 两分钟一次
+urlpatterns += [
+    url(r"^lunxun/msg_polling$", msg_polling.runserver_from_start),
 ]

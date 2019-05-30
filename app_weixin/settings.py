@@ -30,6 +30,8 @@ wx_map = WeixinMP(APP_ID,APP_SECRET,ac_path=ac_path, jt_path=jt_path)
 template_id_001 = "6vNq3GK_vT-sR93q78_yK6dz2iSo_7rpOpCo-Ql8-9w" # ***行程发布成功通知
 template_id_002 = "xaRmgH-d59eMl721Ldwk3SiZT5Eu0m6JnQHuDzBa3HI" # 拼车订座通知
 template_id_003 = "n-u2NgJ0kSWhuA8TQKQ_mREDPM95w6IsVuiaqTECHXc" # 拼车退订通知
+template_id_004 = "A9IrbI8VmlIrqMnZUwOsbbaiuhWR7HH1B-ixorD2OX0" # 行程开始通知 车主、乘客共用
+template_id_005 = "f16AT_K3oBfRX90oK_lQ43XVISJf14Z3-u2eaF91WrY"  # 行程结束通知 车主、乘客共用
 
 # 乘客模板
 template_id_101 = "2DJdM9YN0F4dGnScsWSqX96zzYVcES_mWmISE0vY6SI" #  订座成功通知
