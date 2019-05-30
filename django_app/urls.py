@@ -32,3 +32,6 @@ urlpatterns += static('/media/', document_root=MEDIA_ROOT)
 urlpatterns += [
     # url(r"", Home)  # 所有未匹配的都跳到首页
 ]
+from carPooling import views
+from django.conf.urls import handler400, handler403, handler404, handler500
+handler400=handler403=handler404=handler500=views.Home

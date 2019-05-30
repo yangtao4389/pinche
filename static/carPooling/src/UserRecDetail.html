@@ -122,31 +122,35 @@
                                 </template>
 
                                 <template v-else-if="btnShowState==2">
-
-                                    <div class="mui-col-xs-6 padr5">
-
-                                        <button v-on:click="locationSharing()" class="mui-btn mui-btn-block">查看车主位置
-                                        </button>
-
+                                    <div>
+                                        <button class="mui-btn mui-btn-orange mui-btn-block" disabled>行程进行中</button>
                                     </div>
 
-                                    <div class="mui-col-xs-6 padl5">
+                                    <!--<div class="mui-col-xs-6 padr5">-->
 
-                                        <a href="#unbookModal" class="mui-btn mui-btn-orange mui-btn-block">退订座位</a>
+                                        <!--<button v-on:click="locationSharing()" class="mui-btn mui-btn-block">查看车主位置-->
+                                        <!--</button>-->
 
-                                    </div>
+                                    <!--</div>-->
+
+                                    <!--<div class="mui-col-xs-6 padl5">-->
+
+                                        <!--<a href="#unbookModal" class="mui-btn mui-btn-orange mui-btn-block">退订座位</a>-->
+
+                                    <!--</div>-->
 
                                 </template>
                                 <template v-else-if="btnShowState==3">
 
                                     <div class="mui-col-xs-12 pad5">
+                                        <button  class="mui-btn mui-btn-orange mui-btn-block" disabled>行程结束</button>
 
-                                        <a v-if="rec.IsComment==1"
-                                           v-bind:href="'/WebApp/UserComment/ViewComment?recId='+rec.Id"
-                                           class="mui-btn mui-btn-orange mui-btn-block">查看评价</a>
+                                        <!--<a v-if="rec.IsComment==1"-->
+                                           <!--v-bind:href="'/WebApp/UserComment/ViewComment?recId='+rec.Id"-->
+                                           <!--class="mui-btn mui-btn-orange mui-btn-block">查看评价</a>-->
 
-                                        <a v-else v-bind:href="'/WebApp/UserComment/Comment?recId='+rec.Id"
-                                           class="mui-btn mui-btn-orange mui-btn-block">评价车主</a>
+                                        <!--<a v-else v-bind:href="'/WebApp/UserComment/Comment?recId='+rec.Id"-->
+                                           <!--class="mui-btn mui-btn-orange mui-btn-block">评价车主</a>-->
 
                                     </div>
 

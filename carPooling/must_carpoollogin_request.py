@@ -34,9 +34,9 @@ class MustCarpoolloginRequest(MiddlewareMixin):
             # request.session["w_openid"] =None # 预定用户
             w_openid = request.session.get('w_openid')
             logger.info("session中用户id：%s" % (w_openid))
-            if not w_openid:
-                request.session["tmp_current_full_url"] = client.get_client_current_full_path(request)
-                return HttpResponseRedirect(extra_urls[0])
+            # if not w_openid:
+            #     request.session["tmp_current_full_url"] = client.get_client_current_full_path(request)
+            #     return HttpResponseRedirect(extra_urls[0])
 
             # 判断是否关注公众号
             # if request.session.get(WSUBSCRIBE) != 1:
