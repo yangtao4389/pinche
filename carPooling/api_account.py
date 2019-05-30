@@ -1,3 +1,5 @@
+import time
+from datetime import datetime,timedelta
 from carPooling.models import CarPoolingUserConf
 from common.json_result import RtnDefault,RtnCode
 from django.shortcuts import render,HttpResponse,HttpResponseRedirect
@@ -74,6 +76,14 @@ def GetCodeLogin(request):
         # 全局短信验证码：
         smsCode =checkparam.generate_code(4)
         request.session["smsCode"] = smsCode
+        last_sms_send_time = request.session.get("last_sms_send_time")
+        now = time.time()
+        request.session["last_sms_send_time"] = now
+        if last_sms_send_time:
+            if now-60 < last_sms_send_time:
+                logger.info("发送频率过快")
+                return HttpResponse(RtnDefault(RtnCode.STATUS_PARAM, "发送频率过快"), content_type="application/json")
+
         smsSend.smsSend(phone, smsCode)
         return HttpResponse(RtnDefault(RtnCode.STATUS_OK, "发送成功"), content_type="application/json")
 

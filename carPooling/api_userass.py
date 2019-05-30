@@ -458,11 +458,12 @@ def SavePublish(request):
                 "Code": 100,  # 100代表 分享，200代表去用户中心，300代表再次编辑？？
                 "Id": id,
             }
+            GoTime = datetime.strptime(GoTime,"%Y-%m-%d %H:%M:%S")
             template_data = dict(
                 first=dict(value="行程发布成功",color="#173177"),
                 keyword1=dict(value=StartCity,color="#173177"),
                 keyword2=dict(value=EndCity,color="#173177"),
-                keyword3=dict(value=GoTime,color="#173177"),
+                keyword3=dict(value="%s月%s日 %s:%s"%(GoTime.month,GoTime.day,GoTime.hour,GoTime.minute),color="#173177"),
                 keyword4=dict(value=Seat,color="#173177"),
                 keyword5=dict(value=userObj.c_phone,color="#173177"),
                 remark=dict(value="查看请点击我的详情",color="#173177"),

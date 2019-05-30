@@ -36,15 +36,15 @@ def runserver_from_start(request):
     django 不支持一直启动该程序，所以只能用定时器来启动了。
     :return:
     '''
-    POLLING_TIME = 2  # 轮询时间2分钟
+    POLLING_TIME = 4  #4分钟以内的数据 以2分钟的频率去提醒
     #4小时前的时间
 
 
     # while True:
     logger.info("轮询开始")
     cache.get("msg_polling_now",datetime.now())
-    # now = datetime.now()
-    now = datetime(2019, 5, 30, 11, 10, 31, 840000)
+    now = datetime.now()
+    # now = datetime(2019, 5, 30, 11, 10, 31, 840000)
     now_less_minutes = now-timedelta(minutes=POLLING_TIME)
     # 任务一  行程出发提醒
     #                                                                        时间                                          状态                                  位数
@@ -71,10 +71,11 @@ def trip_start_msg(ass_detail_list):
 
 
         # 发送信息
+        GoTime= i.d_go_time
         template_data = dict(
             first=dict(value="您好，您有行程即将开始。", color="#173177"),
             keyword1=dict(value=i.c_id, color="#173177"),
-            keyword2=dict(value=i.d_go_time, color="#173177"),
+            keyword2=dict(value="%s月%s日 %s:%s"%(GoTime.month,GoTime.day,GoTime.hour,GoTime.minute),color="#173177"),
             keyword3=dict(value="%s->%s"%(i.c_start_city,i.c_end_city), color="#173177"),
             # keyword4=dict(value=i.i_booked_seat, color="#173177"),
             # keyword5=dict(value=ass_obj_phone, color="#173177"),
@@ -94,7 +95,7 @@ def trip_start_msg(ass_detail_list):
             template_data = dict(
                 first=dict(value="您好，您有行程即将开始。", color="#173177"),
                 keyword1=dict(value=j.c_id, color="#173177"),
-                keyword2=dict(value=i.d_go_time, color="#173177"),
+                keyword2=dict(value="%s月%s日 %s:%s"%(GoTime.month,GoTime.day,GoTime.hour,GoTime.minute),color="#173177"),
                 keyword3=dict(value="%s->%s" % (i.c_start_city, i.c_end_city), color="#173177"),
                 # keyword4=dict(value=j.i_booked_seat, color="#173177"),
                 # keyword5=dict(value=ass_obj_phone, color="#173177"),

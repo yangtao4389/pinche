@@ -113,13 +113,14 @@ def SaveBook(request):
         print(data)
 
         #todo 向乘客发送订座成功通知
+        GoTime = assDetailObj.d_go_time
         template_data = dict(
             first=dict(value="您已成功预定该座位", color="#173177"),
             keyword1=dict(value="%s->%s"%(assDetailObj.c_start_city,assDetailObj.c_end_city), color="#173177"),
             keyword2=dict(value=assDetailObj.c_card_owner, color="#173177"),
             # keyword3=dict(value=assDetailObj.c_phone, color="#173177"),
             keyword4=dict(value=assDetailObj.c_bus_type, color="#173177"),
-            keyword5=dict(value=assDetailObj.d_go_time, color="#173177"),
+            keyword5=dict(value="%s月%s日 %s:%s"%(GoTime.month,GoTime.day,GoTime.hour,GoTime.minute),color="#173177"),
             remark=dict(value="退订请点击详情", color="#173177"),
         )
         template_url = csettings.DEFAULT_UserRecDetail_FULL_PATH % rec_detail_obj.c_id
