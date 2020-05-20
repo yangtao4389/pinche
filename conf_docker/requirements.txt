@@ -30,7 +30,7 @@ fake-useragent==0.1.11
 ffmpy==0.2.2
 Flask==1.0.2
 future==0.16.0
-httplib2==0.9.2
+httplib2==0.18.0
 idna==2.7
 inflection==0.3.1
 isodate==0.6.0
