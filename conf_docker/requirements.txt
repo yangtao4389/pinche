@@ -71,7 +71,7 @@ swagger-spec-validator==2.4.3
 tablib==0.12.1
 tqdm==4.28.1
 unicodecsv==0.14.1
-urllib3==1.23
+urllib3==1.26.5
 vine==1.1.4
 w3lib==1.19.0
 websockets==6.0
