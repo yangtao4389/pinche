@@ -74,7 +74,7 @@ unicodecsv==0.14.1
 urllib3==1.23
 vine==1.1.4
 w3lib==1.19.0
-websockets==6.0
+websockets==9.1
 Werkzeug==0.14.1
 wstools-py3==0.54.4
 xlrd==1.1.0
