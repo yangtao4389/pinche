@@ -7,7 +7,7 @@ beautifulsoup4==4.6.1
 billiard==3.5.0.4
 bs4==0.0.1
 cached-property==1.4.3
-celery==4.2.1
+celery==5.2.2
 certifi==2018.4.16
 cffi==1.11.5
 chardet==3.0.4
